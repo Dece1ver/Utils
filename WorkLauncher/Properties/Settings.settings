@@ -1,0 +1,18 @@
+﻿<?xml version='1.0' encoding='utf-8'?>
+<SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="WorkLauncher.Properties" GeneratedClassName="Settings">
+  <Profiles />
+  <Settings>
+    <Setting Name="filePath" Type="System.String" Scope="User">
+      <Value Profile="(Default)" />
+    </Setting>
+    <Setting Name="scName" Type="System.String" Scope="User">
+      <Value Profile="(Default)">KVPNCSvc</Value>
+    </Setting>
+    <Setting Name="rdpPath" Type="System.String" Scope="User">
+      <Value Profile="(Default)" />
+    </Setting>
+    <Setting Name="fileName" Type="System.String" Scope="User">
+      <Value Profile="(Default)">kvpncgui</Value>
+    </Setting>
+  </Settings>
+</SettingsFile>
