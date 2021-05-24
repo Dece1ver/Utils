@@ -1,0 +1,13 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net5.0</TargetFramework>
+    <ApplicationIcon>loopa.ico</ApplicationIcon>
+    <Authors>dece1ver</Authors>
+    <Company>dece1ver</Company>
+    <Description>Поиск файлов по содержимому</Description>
+    <Copyright>dece1ver</Copyright>
+  </PropertyGroup>
+
+</Project>
