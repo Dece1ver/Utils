@@ -7,11 +7,13 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "loopa", "loopa\loopa.csproj
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WorkLauncher", "WorkLauncher\WorkLauncher.csproj", "{1A6F97F3-7C10-401A-968E-A955691C5D8A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WormWheelCalc", "WormWheelCalc\WormWheelCalc.csproj", "{05D4B9EF-F97C-48C6-95A0-7525FD80A418}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WormWheelCalc", "WormWheelCalc\WormWheelCalc.csproj", "{05D4B9EF-F97C-48C6-95A0-7525FD80A418}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cutter", "Cutter\Cutter.csproj", "{8AB3C9BC-40DE-4593-8B62-0CFC1A961675}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Cutter", "Cutter\Cutter.csproj", "{8AB3C9BC-40DE-4593-8B62-0CFC1A961675}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KeyViewer", "KeyViewer\KeyViewer.csproj", "{56F6461C-96F8-407E-91E1-8CA9C6442E22}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "KeyViewer", "KeyViewer\KeyViewer.csproj", "{56F6461C-96F8-407E-91E1-8CA9C6442E22}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FolderRenamer", "FolderRenamer\FolderRenamer.csproj", "{66100BA0-B775-4330-8F39-6DB9ADC3CD47}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -39,6 +41,10 @@ Global
 		{56F6461C-96F8-407E-91E1-8CA9C6442E22}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{56F6461C-96F8-407E-91E1-8CA9C6442E22}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{56F6461C-96F8-407E-91E1-8CA9C6442E22}.Release|Any CPU.Build.0 = Release|Any CPU
+		{66100BA0-B775-4330-8F39-6DB9ADC3CD47}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{66100BA0-B775-4330-8F39-6DB9ADC3CD47}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{66100BA0-B775-4330-8F39-6DB9ADC3CD47}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{66100BA0-B775-4330-8F39-6DB9ADC3CD47}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
