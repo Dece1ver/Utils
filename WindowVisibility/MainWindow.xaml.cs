@@ -32,8 +32,8 @@ namespace WindowVisibility
         [return: MarshalAs(UnmanagedType.Bool)]
         static extern bool IsWindowVisible(IntPtr hWnd);
 
-        [DllImport("user32.dll")]
-        public static extern IntPtr FindWindow(string lpClassName, string lpWindowName);
+        [DllImport("user32.dll", EntryPoint = "FindWindow")]
+        public static extern IntPtr FindWindowByCaption(IntPtr ZeroOnly, string lpWindowName);
 
         [DllImport("user32.dll")]
         [return: MarshalAs(UnmanagedType.Bool)]
@@ -52,6 +52,7 @@ namespace WindowVisibility
             {
                 statusTB.Text = "Запуск наблюдения";
                 Process[] processes = Process.GetProcessesByName(processNameTB.Text);
+                
 
                 while (watch)
                 {
@@ -60,42 +61,63 @@ namespace WindowVisibility
                     visibilityIsIconic = false;
                     setProcessButton.Content = "Стоп";
                     processNameTB.IsEnabled = false;
-                    if(processes.Length > 0)
+
+                    IntPtr wHnd = FindWindowByCaption(IntPtr.Zero, processNameTB.Text);
+                    if (wHnd != IntPtr.Zero)
                     {
-                        foreach (Process process in processes)
-                        {
-                            statusTB.Text = "Наблюдение";
-                            IntPtr wHnd = process.MainWindowHandle;
-                            if (wHnd != IntPtr.Zero)
-                            {
-                                visibilityFindWindow = true;
+                        visibilityFindWindow = true;
 
-                            }
-                            if (IsWindowVisible(wHnd))
-                            {
-                                visibilityInWindowVisible = true;
-
-                            }
-                            if (IsIconic(wHnd))
-                            {
-                                visibilityIsIconic = true;
-                            }
-                            else
-                            {
-                                resultTBIsIconic.Text = $"Окно процесса {processNameTB.Text} не найдено.";
-                            }
-                        }
-
-                        resultTBFindWindow.Text = visibilityInWindowVisible.ToString();
-                        resultTBIsWindowVisible.Text = visibilityFindWindow.ToString();
-                        resultTBIsIconic.Text = visibilityIsIconic.ToString();
                     }
-
-                    else
+                    if (IsWindowVisible(wHnd))
                     {
-                        statusTB.Text = "Процесс не найден";
-                        watch = false;
+                        visibilityInWindowVisible = true;
+
                     }
+                    if (IsIconic(wHnd))
+                    {
+                        visibilityIsIconic = true;
+                    }
+                    
+                    resultTBFindWindow.Text = visibilityInWindowVisible.ToString();
+                    resultTBIsWindowVisible.Text = visibilityFindWindow.ToString();
+                    resultTBIsIconic.Text = visibilityIsIconic.ToString();
+
+                    //if (processes.Length > 0)
+                    //{
+                    //    foreach (Process process in processes)
+                    //    {
+                    //        statusTB.Text = "Наблюдение";
+                    //        IntPtr wHnd = process.MainWindowHandle;
+                    //        if (wHnd != IntPtr.Zero)
+                    //        {
+                    //            visibilityFindWindow = true;
+
+                    //        }
+                    //        if (IsWindowVisible(wHnd))
+                    //        {
+                    //            visibilityInWindowVisible = true;
+
+                    //        }
+                    //        if (IsIconic(wHnd))
+                    //        {
+                    //            visibilityIsIconic = true;
+                    //        }
+                    //        else
+                    //        {
+                    //            resultTBIsIconic.Text = $"Окно процесса {processNameTB.Text} не найдено.";
+                    //        }
+                    //    }
+
+                    //    resultTBFindWindow.Text = visibilityInWindowVisible.ToString();
+                    //    resultTBIsWindowVisible.Text = visibilityFindWindow.ToString();
+                    //    resultTBIsIconic.Text = visibilityIsIconic.ToString();
+                    //}
+
+                    //else
+                    //{
+                    //    statusTB.Text = "Процесс не найден";
+                    //    watch = false;
+                    //}
                     await Task.Delay(500);
                 }
                 setProcessButton.Content = "Старт";
@@ -105,6 +127,7 @@ namespace WindowVisibility
             catch (Exception ex)
             {
                 MessageBox.Show(ex.Message);
+                watch = false;
                 statusTB.Text = "Ошибка";
             }
         }
