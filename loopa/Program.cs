@@ -5,11 +5,11 @@ using System.Threading;
 
 namespace loopa
 {
-    class Program
+    internal class Program
     {
-        static bool loading = false;
+        private static bool _loading;
 
-        static void Main(string[] args)
+        private static void Main(string[] args)
         {
 
             string targetDir;
@@ -51,7 +51,6 @@ namespace loopa
                         "Также можно перетащить нужную папку на этот файл, тогда будет искать в ней и всех вложенных каталогах.");
                     Console.Write("\nДля продолжения нажмите любую клавишу...");
                     Console.ReadKey();
-                    continue;
                 }
                 else if (!string.IsNullOrEmpty(searchTarget))
                 {
@@ -64,14 +63,14 @@ namespace loopa
                 Console.WriteLine($"Поиск \"{searchTarget}\" во всех файлах в указанной и всех вложенных папках.");
                 //Console.Write("Подсчет файлов  ");
                 Thread load = new(Loading);
-                loading = true;
+                _loading = true;
                 Stopwatch stopWatch = new();
                 stopWatch.Start();
                 load.Start();
                 files = Directory.GetFiles(targetDir, "*.*", SearchOption.AllDirectories);
                 stopWatch.Stop();
-                TimeSpan ts = stopWatch.Elapsed;
-                loading = false;
+                var ts = stopWatch.Elapsed;
+                _loading = false;
                 int filesCount = files.Length;
                 int filesFound = 0;
                 string[] goodFiles = new string[filesCount];
@@ -112,11 +111,11 @@ namespace loopa
             int i = 0;
             Stopwatch stopWatch = new();
             stopWatch.Start();
-            while (loading)
+            while (_loading)
             {
                 i++;
                 Console.SetCursorPosition(Console.CursorLeft, Console.CursorTop);
-                TimeSpan ts = stopWatch.Elapsed;
+                var ts = stopWatch.Elapsed;
                 switch (i)
                 {
                     case 1:

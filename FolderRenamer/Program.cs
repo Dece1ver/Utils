@@ -7,10 +7,11 @@ using System.Threading;
 
 namespace FolderRenamer
 {
-    class Program
+    internal class Program
     {
-        static bool loading = false;
-        static void Main(string[] args)
+        private static bool _loading;
+
+        private static void Main(string[] args)
         {
             string targetDir;
             if (args.Length == 1 && Directory.Exists(args[0]))
@@ -21,8 +22,8 @@ namespace FolderRenamer
             {
                 targetDir = Directory.GetCurrentDirectory();
             }
-            string oldName = string.Empty;
-            string newName = string.Empty;
+            string oldName;
+            string newName;
 
             while (true)
             {
@@ -41,12 +42,11 @@ namespace FolderRenamer
                         "Также можно перетащить нужную папку на этот файл, тогда будет искать в ней и всех вложенных каталогах.");
                     Console.Write("\nДля продолжения нажмите любую клавишу...");
                     Console.ReadKey();
-                    continue;
                 }
                 else if (!string.IsNullOrEmpty(oldName) || (!string.IsNullOrEmpty(newName)))
                 {
                     Console.WriteLine($"Будет произведена замена \"{oldName}\" на \"{newName}\" во всех найденных папках\n" +
-                        $"Для продолжения нажмите Enter, для повторного указания введите -");
+                        "Для продолжения нажмите Enter, для повторного указания введите -");
                     
                     if (Console.ReadLine() == "-")
                     {
@@ -58,25 +58,25 @@ namespace FolderRenamer
             try
             {
                 Console.Clear();
-                Console.WriteLine($"Подсчет папок.");
+                Console.WriteLine("Подсчет папок.");
                 Thread load = new(Loading);
-                loading = true;
+                _loading = true;
                 Stopwatch stopWatch = new();
                 stopWatch.Start();
                 load.Start();
-                List<Folder> folders = new List<Folder>();
+                var folders = new List<Folder>();
                 string[] dirs = Directory
                                 .EnumerateDirectories(targetDir, "*.*", SearchOption.AllDirectories)
-                                .Where(dir => dir.Split(Path.DirectorySeparatorChar).Last().Contains(oldName))
+                                .Where(dir => dir.Split(Path.DirectorySeparatorChar).Last().Contains(oldName ?? string.Empty))
                                 .ToArray();
                 for (int i = 0; i < dirs.Length; i++)
                 {
                     folders.Add(new Folder { Path = dirs[i] });
                 }
-                List<Folder> sortedFolders = folders.OrderByDescending(x => x.Length).ToList();
+                var sortedFolders = folders.OrderByDescending(x => x.Length).ToList();
                 stopWatch.Stop();
-                TimeSpan ts = stopWatch.Elapsed;
-                loading = false;
+                var ts = stopWatch.Elapsed;
+                _loading = false;
                 int dirsCount = folders.Count;
                 int dirsRenamed = 0;
                 int errors = 0;
@@ -89,17 +89,17 @@ namespace FolderRenamer
                     
                     string dirName = sortedFolders[i].Path.Split(Path.DirectorySeparatorChar).Last();
                     string dirRoot = sortedFolders[i].Path.Remove(sortedFolders[i].Path.LastIndexOf(Path.DirectorySeparatorChar));
-                    string newDir = Path.Combine(dirRoot, dirName.Replace(oldName, newName));
+                    string newDir = Path.Combine(dirRoot, dirName.Replace(oldName ?? string.Empty, newName));
                     try
                     {
 
                         Directory.Move(sortedFolders[i].Path, newDir);
                         dirsRenamed++;
                     }
-                    catch(Exception e)
+                    catch 
                     {
                         errors++;
-                        Console.WriteLine($"\nНе удалось переместить:\n" +
+                        Console.WriteLine("\nНе удалось переместить:\n" +
                             $"с => {sortedFolders[i].Path}\n" +
                             $"в => {newDir}");
                     }
@@ -124,7 +124,7 @@ namespace FolderRenamer
 
         public static string ReplaceLastOccurrence(string source, string find, string replace)
         {
-            int place = source.LastIndexOf(find);
+            int place = source.LastIndexOf(find, StringComparison.Ordinal);
 
             if (place == -1)
                 return source;
@@ -138,11 +138,11 @@ namespace FolderRenamer
             int i = 0;
             Stopwatch stopWatch = new();
             stopWatch.Start();
-            while (loading)
+            while (_loading)
             {
                 i++;
                 Console.SetCursorPosition(Console.CursorLeft, Console.CursorTop);
-                TimeSpan ts = stopWatch.Elapsed;
+                var ts = stopWatch.Elapsed;
                 switch (i)
                 {
                     case 1:
@@ -163,17 +163,15 @@ namespace FolderRenamer
             }
             stopWatch.Stop();
         }
-    class Folder
-        {
-            public int Length { get => GetLength(Path);}
-            public string Path { get; set; }
 
-            private int GetLength(string path)
+        private class Folder
+        {
+            public int Length => GetLength(Path);
+            public string Path { get; init; }
+
+            private static int GetLength(string path)
             {
-                int count = 0;
-                foreach (char c in path)
-                    if (c == System.IO.Path.DirectorySeparatorChar) count++;
-                return count;
+                return path.Count(c => c == System.IO.Path.DirectorySeparatorChar);
             }
         }
 

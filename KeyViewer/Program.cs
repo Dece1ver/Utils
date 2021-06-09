@@ -2,15 +2,13 @@
 
 namespace KeyViewer
 {
-    class Program
+    internal class Program
     {
-        static void Main(string[] args)
+        private static void Main(string[] args)
         {
             while (true)
             {
-                ConsoleKeyInfo pressed;
-                pressed = Console.ReadKey();
-
+                var pressed = Console.ReadKey();
                 Console.WriteLine(" Нажата клавиша: " + pressed.Key);
             }
         }

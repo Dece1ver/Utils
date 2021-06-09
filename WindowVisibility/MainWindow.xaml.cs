@@ -1,21 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
-using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Controls.Primitives;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace WindowVisibility
 {
@@ -30,34 +21,34 @@ namespace WindowVisibility
         }
 
 
-        delegate bool EnumWindowsProc(IntPtr hWnd, IntPtr lParam);
+        private delegate bool EnumWindowsProc(IntPtr hWnd, IntPtr lParam);
 
         [DllImport("user32.dll", SetLastError = true)]
         [return: MarshalAs(UnmanagedType.Bool)]
-        static extern bool EnumWindows(EnumWindowsProc lpEnumFunc, IntPtr lParam);
+        private static extern bool EnumWindows(EnumWindowsProc lpEnumFunc, IntPtr lParam);
 
         [DllImport("user32.dll", SetLastError = true)]
-        static extern int GetWindowText(IntPtr hWnd, StringBuilder lpString, int nMaxCount);
+        private static extern int GetWindowText(IntPtr hWnd, StringBuilder lpString, int nMaxCount);
 
         [DllImport("user32.dll", SetLastError = true)]
-        static extern int GetWindowTextLength(IntPtr hWnd);
+        private static extern int GetWindowTextLength(IntPtr hWnd);
 
         [DllImport("user32.dll", SetLastError = true)]
         [return: MarshalAs(UnmanagedType.Bool)]
-        static extern bool IsWindowVisible(IntPtr hWnd);
+        private static extern bool IsWindowVisible(IntPtr hWnd);
 
         [DllImport("user32.dll", EntryPoint = "FindWindow")]
-        public static extern IntPtr FindWindowByCaption(IntPtr ZeroOnly, string lpWindowName);
+        public static extern IntPtr FindWindowByCaption(IntPtr zeroOnly, string lpWindowName);
 
         [DllImport("user32.dll")]
         [return: MarshalAs(UnmanagedType.Bool)]
-        static extern bool IsIconic(IntPtr hWnd);
+        private static extern bool IsIconic(IntPtr hWnd);
 
-        bool watch = false;
-        bool visibilityInWindowVisible = false;
-        bool visibilityFindWindow = false;
-        bool visibilityIsIconic = false;
-        List<string> windows = new();
+        private bool _watch;
+        private bool _visibilityInWindowVisible;
+        private bool _visibilityFindWindow;
+        private bool _visibilityIsIconic;
+        private List<string> _windows = new();
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
@@ -66,15 +57,15 @@ namespace WindowVisibility
             SearchWindows();
         }
 
-        string GetWindowText(IntPtr hWnd)
+        private static string GetWindowText(IntPtr hWnd)
         {
             int len = GetWindowTextLength(hWnd) + 1;
-            StringBuilder sb = new StringBuilder(len);
+            var sb = new StringBuilder(len);
             len = GetWindowText(hWnd, sb, len);
             return sb.ToString(0, len);
         }
 
-        async void SearchWindows()
+        private async void SearchWindows()
         {
             
             while (true)
@@ -87,49 +78,49 @@ namespace WindowVisibility
                     }
                     return true;
                 }, IntPtr.Zero);
-                windows = tempList;
-                windowsLV.ItemsSource = windows;
+                _windows = tempList;
+                windowsLV.ItemsSource = _windows;
                 await Task.Delay(500);
             }
         }
 
         private async void setProcessButton_Click(object sender, RoutedEventArgs e)
         {
-            watch = !watch;
+            _watch = !_watch;
 
             try
             {
                 statusTB.Text = "Запуск наблюдения";
-                Process[] processes = Process.GetProcessesByName(processNameTB.Text);
+                var processes = Process.GetProcessesByName(processNameTB.Text);
                 
 
-                while (watch)
+                while (_watch)
                 {
-                    visibilityInWindowVisible = false;
-                    visibilityFindWindow = false;
-                    visibilityIsIconic = false;
+                    _visibilityInWindowVisible = false;
+                    _visibilityFindWindow = false;
+                    _visibilityIsIconic = false;
                     setProcessButton.Content = "Стоп";
                     processNameTB.IsEnabled = false;
 
-                    IntPtr wHnd = FindWindowByCaption(IntPtr.Zero, processNameTB.Text);
+                    var wHnd = FindWindowByCaption(IntPtr.Zero, processNameTB.Text);
                     if (wHnd != IntPtr.Zero)
                     {
-                        visibilityFindWindow = true;
+                        _visibilityFindWindow = true;
 
                     }
                     if (IsWindowVisible(wHnd))
                     {
-                        visibilityInWindowVisible = true;
+                        _visibilityInWindowVisible = true;
 
                     }
                     if (IsIconic(wHnd))
                     {
-                        visibilityIsIconic = true;
+                        _visibilityIsIconic = true;
                     }
                     
-                    resultTBFindWindow.Text = visibilityInWindowVisible.ToString();
-                    resultTBIsWindowVisible.Text = visibilityFindWindow.ToString();
-                    resultTBIsIconic.Text = visibilityIsIconic.ToString();
+                    resultTBFindWindow.Text = _visibilityInWindowVisible.ToString();
+                    resultTBIsWindowVisible.Text = _visibilityFindWindow.ToString();
+                    resultTBIsIconic.Text = _visibilityIsIconic.ToString();
 
                     //if (processes.Length > 0)
                     //{
@@ -176,17 +167,17 @@ namespace WindowVisibility
             catch (Exception ex)
             {
                 MessageBox.Show(ex.Message, ex.StackTrace);
-                watch = false;
+                _watch = false;
                 statusTB.Text = "Ошибка";
             }
         }
 
         private void windowsLV_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
-            var item = (sender as System.Windows.Controls.ListView).SelectedItem;
+            var item = (sender as ListView).SelectedItem;
             if (item != null)
             {
-                if (!watch)
+                if (!_watch)
                 {
                     processNameTB.Text = item.ToString();
                 }

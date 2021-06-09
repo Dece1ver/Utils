@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace Cutter
@@ -14,72 +13,70 @@ namespace Cutter
             InitializeComponent();
         }
 
-        string fileName;
-        string lastXY;
-        int lastXYIndex;
-        int parts;
-        int headEndPoint = 0;
-        int endingStartPoint = 0;
-        int partStrings;
-        int startLine;
-        int cutLine;
-        public List<string> body = new List<string> { };
-        public List<string> head = new List<string> { };
-        public List<string> ending = new List<string> { };
-        string[] lines;
-        string feed;
+        private string _fileName;
+        private string _lastXy;
+        private int _lastXyIndex;
+        private int _parts;
+        private int _headEndPoint;
+        private int _endingStartPoint;
+        private int _partStrings;
+        private int _startLine;
+        private int _cutLine;
+        public List<string> Body = new List<string>();
+        public List<string> Head = new List<string>();
+        public List<string> Ending = new List<string>();
+        private string[] _lines;
+        private string _feed;
 
         private void OpenFileDialog1_FileOk(object sender, CancelEventArgs e)
         {
-            body.Clear();
-            head.Clear();
-            ending.Clear();
-            feed = "";
+            Body.Clear();
+            Head.Clear();
+            Ending.Clear();
+            _feed = "";
             label7.Visible = false;
             textBox5.Visible = false;
             button5.Visible = false;
-            headEndPoint = 0;
-            endingStartPoint = 0;
-            fileName = openFileDialog1.FileName;
+            _headEndPoint = 0;
+            _endingStartPoint = 0;
+            _fileName = openFileDialog1.FileName;
             textBox2.Text = openFileDialog1.SafeFileName;
-            long fileSize = new FileInfo(fileName).Length;
+            long fileSize = new FileInfo(_fileName).Length;
             textBox1.Text = "";
             textBox3.Text = "";
-            textBox1.Text += $"Открыт файл:...........{fileName}\r\n";
+            textBox1.Text += $"Открыт файл:...........{_fileName}\r\n";
             textBox1.Text += $"Общий размер:..........{fileSize / 1024} Кб\r\n";
-            textBox1.Text += $"Допустимый размер:.....480 Кб\r\n";
-            parts = (Convert.ToInt32(fileSize / 1024)) / 480 + 1;
-            textBox1.Text += $"Частей:................{parts}\r\n";
-            lines = File.ReadAllLines(fileName);
-            textBox1.Text += $"Строк всего:...........{lines.Length}\r\n";
-            numericUpDown1.Maximum = lines.Length;
-            numericUpDown2.Maximum = lines.Length;
-            partStrings = lines.Length / parts;
-            textBox1.Text += $"Строк в каждой части:..≈ {partStrings.ToString().Remove(partStrings.ToString().Length - 3, 3)}k\r\n";
-            headEndPoint = 0;
-            foreach (string line in lines)
+            textBox1.Text += "Допустимый размер:.....480 Кб\r\n";
+            _parts = (Convert.ToInt32(fileSize / 1024)) / 480 + 1;
+            textBox1.Text += $"Частей:................{_parts}\r\n";
+            _lines = File.ReadAllLines(_fileName);
+            textBox1.Text += $"Строк всего:...........{_lines.Length}\r\n";
+            numericUpDown1.Maximum = _lines.Length;
+            numericUpDown2.Maximum = _lines.Length;
+            _partStrings = _lines.Length / _parts;
+            textBox1.Text += $"Строк в каждой части:..≈ {_partStrings.ToString().Remove(_partStrings.ToString().Length - 3, 3)}k\r\n";
+            _headEndPoint = 0;
+            foreach (string line in _lines)
             {
                 if (line.Contains("F") && line.Contains("G1"))
                 {
                     break;
                 }
-                else
-                {
-                    head.Add(line);
-                    headEndPoint++;
-                }
+
+                Head.Add(line);
+                _headEndPoint++;
             }
-            numericUpDown1.Value = Convert.ToDecimal(headEndPoint);
-            foreach (string line in lines)
+            numericUpDown1.Value = Convert.ToDecimal(_headEndPoint);
+            foreach (string line in _lines)
             {
                 if (line.Contains("F") && line.Contains("G1"))
                 {
-                    feed = line.Remove(0, line.IndexOf('F'));
-                    textBox1.Text += $"Подача:................{feed}\r\n\r\n";
+                    _feed = line.Remove(0, line.IndexOf('F'));
+                    textBox1.Text += $"Подача:................{_feed}\r\n\r\n";
                     break;
                 }
             }
-            if (feed == null || feed == "")
+            if (_feed == null || _feed == "")
             {
                 label7.Visible = true;
                 textBox5.Visible = true;
@@ -87,25 +84,23 @@ namespace Cutter
                 textBox1.AppendText("Подача не обнаружена. Можно установить подачу в появившейся форме." + Environment.NewLine);
             }
 
-            endingStartPoint = 0;
-            Array.Reverse(lines);
-            foreach (string line in lines)
+            _endingStartPoint = 0;
+            Array.Reverse(_lines);
+            foreach (string line in _lines)
             {
                 if (line.Contains("G0"))
                 {
-                    endingStartPoint++;
+                    _endingStartPoint++;
                     break;
                 }
-                else
-                {
-                    endingStartPoint++;
-                }
+
+                _endingStartPoint++;
             }
-            Array.Reverse(lines);
-            endingStartPoint = lines.Length - endingStartPoint;
-            numericUpDown2.Value = Convert.ToDecimal(endingStartPoint) + 1;
-            string[] endLines = new string[lines.Length - endingStartPoint];
-            Array.Copy(lines, endingStartPoint, endLines, 0, (lines.Length - endingStartPoint));
+            Array.Reverse(_lines);
+            _endingStartPoint = _lines.Length - _endingStartPoint;
+            numericUpDown2.Value = Convert.ToDecimal(_endingStartPoint) + 1;
+            string[] endLines = new string[_lines.Length - _endingStartPoint];
+            Array.Copy(_lines, _endingStartPoint, endLines, 0, (_lines.Length - _endingStartPoint));
 
             if ((fileSize / 1024) < 480)
             {
@@ -142,20 +137,20 @@ namespace Cutter
 
         private void Button2_Click(object sender, EventArgs e)
         {
-            head.Clear();
-            head.AddRange(textBox3.Text.Split((string[])null, StringSplitOptions.RemoveEmptyEntries));
+            Head.Clear();
+            Head.AddRange(textBox3.Text.Split((string[])null, StringSplitOptions.RemoveEmptyEntries));
             textBox3.Clear();
-            head.RemoveAt(head.Count - 1);
+            Head.RemoveAt(Head.Count - 1);
             PrintHead();
             textBox1.AppendText("Измененная шапка сохранена." + Environment.NewLine);
         }
 
         private void Button3_Click(object sender, EventArgs e)
         {
-            ending.Clear();
-            ending.AddRange(textBox4.Text.Split((string[])null, StringSplitOptions.RemoveEmptyEntries));
+            Ending.Clear();
+            Ending.AddRange(textBox4.Text.Split((string[])null, StringSplitOptions.RemoveEmptyEntries));
             textBox4.Clear();
-            ending.RemoveAt(ending.Count - 1);
+            Ending.RemoveAt(Ending.Count - 1);
             PrintEnding();
             textBox1.AppendText("Измененная концовка сохранена." + Environment.NewLine);
         }
@@ -164,7 +159,7 @@ namespace Cutter
         private void PrintHead()
         {
             textBox3.Text = "";
-            foreach (string line in head)
+            foreach (string line in Head)
             {
                 textBox3.AppendText(line + Environment.NewLine);
             }
@@ -172,7 +167,7 @@ namespace Cutter
         private void PrintEnding()
         {
             textBox4.Text = "";
-            foreach (string line in ending)
+            foreach (string line in Ending)
             {
                 textBox4.AppendText(line + Environment.NewLine);
             }
@@ -181,13 +176,13 @@ namespace Cutter
         private void NumericUpDown1_ValueChanged(object sender, EventArgs e)
         {
             int count = 0;
-            headEndPoint = Convert.ToInt32(numericUpDown1.Value);
-            head.Clear();
-            foreach (string line in lines)
+            _headEndPoint = Convert.ToInt32(numericUpDown1.Value);
+            Head.Clear();
+            foreach (string line in _lines)
             {
-                if (count < headEndPoint)
+                if (count < _headEndPoint)
                 {
-                    head.Add(line);
+                    Head.Add(line);
                     count++;
                 }
                 else
@@ -200,28 +195,28 @@ namespace Cutter
 
         private void NumericUpDown2_ValueChanged(object sender, EventArgs e)
         {
-            endingStartPoint = Convert.ToInt32(numericUpDown2.Value) - 1;
-            ending.Clear();
-            string[] endLines = new string[lines.Length - endingStartPoint];
-            Array.Copy(lines, endingStartPoint, endLines, 0, (lines.Length - endingStartPoint));
-            ending.AddRange(endLines);
+            _endingStartPoint = Convert.ToInt32(numericUpDown2.Value) - 1;
+            Ending.Clear();
+            string[] endLines = new string[_lines.Length - _endingStartPoint];
+            Array.Copy(_lines, _endingStartPoint, endLines, 0, (_lines.Length - _endingStartPoint));
+            Ending.AddRange(endLines);
             PrintEnding();
         }
 
         private void SaveBody()
         {
-            string[] tempBody = new string[lines.Length - head.Count - ending.Count];
-            Array.Copy(lines, headEndPoint, tempBody, 0, lines.Length - headEndPoint - (lines.Length - endingStartPoint));
-            body.AddRange(tempBody);
+            string[] tempBody = new string[_lines.Length - Head.Count - Ending.Count];
+            Array.Copy(_lines, _headEndPoint, tempBody, 0, _lines.Length - _headEndPoint - (_lines.Length - _endingStartPoint));
+            Body.AddRange(tempBody);
         }
 
         private void Button4_Click(object sender, EventArgs e)
         {
             SaveBody();
-            cutLine = 0;
-            textBox1.AppendText($"Название детали определено: {FindName(head)}" + Environment.NewLine);
-            textBox1.AppendText($"Тело программы определено строками {numericUpDown1.Value} - {numericUpDown2.Value}. Всего {body.Count} строк." + Environment.NewLine);
-            for (int i = 1; i < parts + 1; i++)
+            _cutLine = 0;
+            textBox1.AppendText($"Название детали определено: {FindName(Head)}" + Environment.NewLine);
+            textBox1.AppendText($"Тело программы определено строками {numericUpDown1.Value} - {numericUpDown2.Value}. Всего {Body.Count} строк." + Environment.NewLine);
+            for (int i = 1; i < _parts + 1; i++)
             {
                 CutPart(i);
             }
@@ -229,22 +224,22 @@ namespace Cutter
 
         private void CutPart(int part)
         {
-            using (StreamWriter stream = new StreamWriter($"{openFileDialog1.FileName}-{part}", false))
+            using (var stream = new StreamWriter($"{openFileDialog1.FileName}-{part}", false))
             {
-                startLine = cutLine;
-                if (part != parts)
+                _startLine = _cutLine;
+                if (part != _parts)
                 {
-                    cutLine += partStrings;
+                    _cutLine += _partStrings;
 
                     textBox1.AppendText($"\r\nСоставление части: {part}" + Environment.NewLine);
                     textBox1.AppendText($"Создание файла:................{openFileDialog1.FileName}-{part}" + Environment.NewLine);
-                    textBox1.AppendText($"Изменение названия на:.........{FindName(head)}-{part}" + Environment.NewLine);
+                    textBox1.AppendText($"Изменение названия на:.........{FindName(Head)}-{part}" + Environment.NewLine);
 
                     //
                     // запись шапки
                     //
-                    string newName = FindName(head);
-                    foreach (string line in head)
+                    string newName = FindName(Head);
+                    foreach (string line in Head)
                     {
                         // замена имени
                         if (line.Contains("(") || line.Contains(")"))
@@ -265,12 +260,12 @@ namespace Cutter
                         // замена XY
                         else if (line.Contains("X") && line.Contains("Y") && part > 1)
                         {
-                            if (!lastXY.Contains("G0"))
+                            if (!_lastXy.Contains("G0"))
                             {
-                                lastXY = $"{lastXY.Substring(0, lastXY.IndexOf("X"))}G0{lastXY.Substring(lastXY.IndexOf("X"), lastXY.Length - lastXY.IndexOf("X"))}";
+                                _lastXy = $"{_lastXy.Substring(0, _lastXy.IndexOf("X"))}G0{_lastXy.Substring(_lastXy.IndexOf("X"), _lastXy.Length - _lastXy.IndexOf("X"))}";
                             }
-                            stream.WriteLine(lastXY.Replace("G1", "G0").Replace("G2", "G0").Replace("G3", "G0"));
-                            textBox1.AppendText($"Заменена координат X, Y :......{lastXY.Replace("G1", "G0").Replace("G2", "G0").Replace("G3", "G0")}" + Environment.NewLine);
+                            stream.WriteLine(_lastXy.Replace("G1", "G0").Replace("G2", "G0").Replace("G3", "G0"));
+                            textBox1.AppendText($"Заменена координат X, Y :......{_lastXy.Replace("G1", "G0").Replace("G2", "G0").Replace("G3", "G0")}" + Environment.NewLine);
                         }
                         else
                         {
@@ -278,39 +273,39 @@ namespace Cutter
                         }
                     }
 
-                    textBox1.AppendText($"Смещение для поиска на:........[{cutLine}] {body[cutLine]}" + Environment.NewLine);
+                    textBox1.AppendText($"Смещение для поиска на:........[{_cutLine}] {Body[_cutLine]}" + Environment.NewLine);
                     int count = 0;
-                    foreach (string line in body)
+                    foreach (string line in Body)
                     {
 
-                        if (count >= cutLine && line.Contains("X") && line.Contains("Y"))
+                        if (count >= _cutLine && line.Contains("X") && line.Contains("Y"))
                         {
-                            lastXYIndex = count;
-                            lastXY = line;
+                            _lastXyIndex = count;
+                            _lastXy = line;
                         }
-                        else if (count >= cutLine && line.Contains("G0"))
+                        else if (count >= _cutLine && line.Contains("G0"))
                         {
-                            cutLine = count;
+                            _cutLine = count;
                             break;
                         }
                         count++;
                     }
-                    textBox1.AppendText($"Последние координаты X, Y:.....[{lastXYIndex}] {lastXY}" + Environment.NewLine);
-                    textBox1.AppendText($"Место разделения:..............[{cutLine}] {body[cutLine]}" + Environment.NewLine);
+                    textBox1.AppendText($"Последние координаты X, Y:.....[{_lastXyIndex}] {_lastXy}" + Environment.NewLine);
+                    textBox1.AppendText($"Место разделения:..............[{_cutLine}] {Body[_cutLine]}" + Environment.NewLine);
 
                     //
                     // запись тела
                     //
-                    string[] tempBody = body.GetRange(startLine, cutLine - startLine).ToArray();
+                    string[] tempBody = Body.GetRange(_startLine, _cutLine - _startLine).ToArray();
                     bool feedIsWrited = false;
                     foreach (string line in tempBody)
                     {
                         // добавление подачи
                         if (!feedIsWrited && line.Contains("G1") && part != 1)
                         {
-                            stream.WriteLine(line + feed);
+                            stream.WriteLine(line + _feed);
                             feedIsWrited = true;
-                            textBox1.AppendText($"Добавлена подача:..............{line + feed}" + Environment.NewLine);
+                            textBox1.AppendText($"Добавлена подача:..............{line + _feed}" + Environment.NewLine);
                         }
                         else
                         {
@@ -321,7 +316,7 @@ namespace Cutter
                     //
                     // запись концовки
                     //
-                    foreach (string line in ending)
+                    foreach (string line in Ending)
                     {
                         if (line != "\r\n")
                         {
@@ -335,12 +330,12 @@ namespace Cutter
                     textBox1.AppendText($"\r\nСоставление части: {part}" + Environment.NewLine);
                     textBox1.AppendText("Смещение для поиска не нужно, последняя часть." + Environment.NewLine);
                     textBox1.AppendText($"Создание файла:................{openFileDialog1.FileName}-{part}" + Environment.NewLine);
-                    textBox1.AppendText($"Изменение названия на:.........{FindName(head)}-{part}" + Environment.NewLine);
-                    string newName = FindName(head);
+                    textBox1.AppendText($"Изменение названия на:.........{FindName(Head)}-{part}" + Environment.NewLine);
+                    string newName = FindName(Head);
                     //
                     // запись шапки
                     //
-                    foreach (string line in head)
+                    foreach (string line in Head)
                     {
                         // замена имени
                         if (line.Contains("(") || line.Contains(")"))
@@ -361,12 +356,12 @@ namespace Cutter
                         // замена XY
                         else if (line.Contains("X") && line.Contains("Y") && part > 1)
                         {
-                            if (!lastXY.Contains("G0"))
+                            if (!_lastXy.Contains("G0"))
                             {
-                                lastXY = $"{lastXY.Substring(0, lastXY.IndexOf("X"))}G0{lastXY.Substring(lastXY.IndexOf("X"), lastXY.Length - lastXY.IndexOf("X"))}";
+                                _lastXy = $"{_lastXy.Substring(0, _lastXy.IndexOf("X"))}G0{_lastXy.Substring(_lastXy.IndexOf("X"), _lastXy.Length - _lastXy.IndexOf("X"))}";
                             }
-                            stream.WriteLine(lastXY.Replace("G1", "G0").Replace("G2", "G0").Replace("G3", "G0"));
-                            textBox1.AppendText($"Заменена координат X, Y:.......{lastXY.Replace("G1", "G0").Replace("G2", "G0").Replace("G3", "G0")}" + Environment.NewLine);
+                            stream.WriteLine(_lastXy.Replace("G1", "G0").Replace("G2", "G0").Replace("G3", "G0"));
+                            textBox1.AppendText($"Заменена координат X, Y:.......{_lastXy.Replace("G1", "G0").Replace("G2", "G0").Replace("G3", "G0")}" + Environment.NewLine);
                         }
                         else
                         {
@@ -377,16 +372,16 @@ namespace Cutter
                     //
                     // запись тела
                     //
-                    string[] tempBody = body.GetRange(startLine, body.Count - startLine).ToArray();
+                    string[] tempBody = Body.GetRange(_startLine, Body.Count - _startLine).ToArray();
                     bool feedIsWrited = false;
                     foreach (string line in tempBody)
                     {
                         // добавление подачи
                         if (!feedIsWrited && line.Contains("G1"))
                         {
-                            stream.WriteLine(line + feed);
+                            stream.WriteLine(line + _feed);
                             feedIsWrited = true;
-                            textBox1.AppendText($"Добавлена подача:..............{line + feed}" + Environment.NewLine);
+                            textBox1.AppendText($"Добавлена подача:..............{line + _feed}" + Environment.NewLine);
                         }
                         else
                         {
@@ -397,7 +392,7 @@ namespace Cutter
                     //
                     // запись концовки
                     //
-                    foreach (string line in ending)
+                    foreach (string line in Ending)
                     {
                         stream.WriteLine(line);
                     }
@@ -423,8 +418,8 @@ namespace Cutter
 
         private void Button5_Click(object sender, EventArgs e)
         {
-            feed = textBox5.Text.Contains("F") ? textBox5.Text : $"F{textBox5.Text}";
-            textBox1.AppendText($"Установлена подача:....{feed}" + Environment.NewLine);
+            _feed = textBox5.Text.Contains("F") ? textBox5.Text : $"F{textBox5.Text}";
+            textBox1.AppendText($"Установлена подача:....{_feed}" + Environment.NewLine);
         }
     }
 }

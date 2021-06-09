@@ -1,12 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
+using WormWheelCalc.Properties;
 
 namespace WormWheelCalc
 {
@@ -17,17 +11,17 @@ namespace WormWheelCalc
             InitializeComponent();
         }
 
-        double ToRad(double degrees)
+        private double ToRad(double degrees)
         {
             return degrees * Math.PI / 180;
         }
 
-        double ToDeg(double radians)
+        private double ToDeg(double radians)
         {
             return radians * 180 / Math.PI;
         }
 
-        void SetBoxes()
+        private void SetBoxes()
         {
             if (simpleCalcCB.Checked)
             {
@@ -162,8 +156,8 @@ namespace WormWheelCalc
         private void simpleCalcCB_CheckedChanged(object sender, EventArgs e)
         {
             SetBoxes();
-            Properties.Settings.Default.simpleCalc = simpleCalcCB.Checked;
-            Properties.Settings.Default.Save();
+            Settings.Default.simpleCalc = simpleCalcCB.Checked;
+            Settings.Default.Save();
         }
 
         private void Form1_Load(object sender, EventArgs e)
