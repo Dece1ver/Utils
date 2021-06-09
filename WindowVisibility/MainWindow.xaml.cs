@@ -8,6 +8,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
 using System.Windows.Data;
 using System.Windows.Documents;
 using System.Windows.Input;
@@ -28,7 +29,20 @@ namespace WindowVisibility
             InitializeComponent();
         }
 
-        [DllImport("user32.dll")]
+
+        delegate bool EnumWindowsProc(IntPtr hWnd, IntPtr lParam);
+
+        [DllImport("user32.dll", SetLastError = true)]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        static extern bool EnumWindows(EnumWindowsProc lpEnumFunc, IntPtr lParam);
+
+        [DllImport("user32.dll", SetLastError = true)]
+        static extern int GetWindowText(IntPtr hWnd, StringBuilder lpString, int nMaxCount);
+
+        [DllImport("user32.dll", SetLastError = true)]
+        static extern int GetWindowTextLength(IntPtr hWnd);
+
+        [DllImport("user32.dll", SetLastError = true)]
         [return: MarshalAs(UnmanagedType.Bool)]
         static extern bool IsWindowVisible(IntPtr hWnd);
 
@@ -43,6 +57,41 @@ namespace WindowVisibility
         bool visibilityInWindowVisible = false;
         bool visibilityFindWindow = false;
         bool visibilityIsIconic = false;
+        List<string> windows = new();
+
+        private void Window_Loaded(object sender, RoutedEventArgs e)
+        {
+            //Thread winSearchThread = new Thread(new ThreadStart(SearchWindows));
+            //winSearchThread.Start();
+            SearchWindows();
+        }
+
+        string GetWindowText(IntPtr hWnd)
+        {
+            int len = GetWindowTextLength(hWnd) + 1;
+            StringBuilder sb = new StringBuilder(len);
+            len = GetWindowText(hWnd, sb, len);
+            return sb.ToString(0, len);
+        }
+
+        async void SearchWindows()
+        {
+            
+            while (true)
+            {
+                List<string> tempList = new();
+                EnumWindows((hWnd, lParam) => {
+                    if (IsWindowVisible(hWnd) && GetWindowTextLength(hWnd) != 0)
+                    {
+                        tempList.Add(GetWindowText(hWnd));
+                    }
+                    return true;
+                }, IntPtr.Zero);
+                windows = tempList;
+                windowsLV.ItemsSource = windows;
+                await Task.Delay(500);
+            }
+        }
 
         private async void setProcessButton_Click(object sender, RoutedEventArgs e)
         {
@@ -126,9 +175,21 @@ namespace WindowVisibility
             }
             catch (Exception ex)
             {
-                MessageBox.Show(ex.Message);
+                MessageBox.Show(ex.Message, ex.StackTrace);
                 watch = false;
                 statusTB.Text = "Ошибка";
+            }
+        }
+
+        private void windowsLV_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+        {
+            var item = (sender as System.Windows.Controls.ListView).SelectedItem;
+            if (item != null)
+            {
+                if (!watch)
+                {
+                    processNameTB.Text = item.ToString();
+                }
             }
         }
     }
