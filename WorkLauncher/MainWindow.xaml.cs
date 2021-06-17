@@ -8,6 +8,10 @@ using System.Windows;
 using System.Windows.Input;
 using Microsoft.Win32;
 using WorkLauncher.Properties;
+using Utils.WinAPI.Windows;
+using Keyboard = Utils.WinAPI.Windows.Keyboard;
+using Window = Utils.WinAPI.Windows.Window;
+using System.IO;
 
 namespace WorkLauncher
 {
@@ -24,76 +28,171 @@ namespace WorkLauncher
         private readonly OpenFileDialog _kerioFileDialog = new();
         private readonly OpenFileDialog _rdpFileDialog = new();
         private ServiceController _service = new(Settings.Default.scName);
-        private bool _autoRunRdp;
+        Window _kerioWindow;
+        //string infoText = string.Empty;
 
-        [DllImport("user32.dll")]
-        [return: MarshalAs(UnmanagedType.Bool)]
-        private static extern bool IsWindowVisible(IntPtr hWnd);
+        private void Window_Loaded(object sender, RoutedEventArgs e)
+        {
+            pathTexBox.Text = Settings.Default.filePath;
+            try
+            {
+                if (_service.Status == ServiceControllerStatus.Running)
+                {
+                    WriteInfo("Служба Kerio работает.");
+                }
+                else
+                {
+                    WriteInfo("Cлужба Kerio не запущена.");
+                }
+            }
+            catch (InvalidOperationException)
+            {
+                WriteInfo("Указанная служба не установлена.");
+            }
+            if (Process.GetProcessesByName(Settings.Default.fileName).Length > 0)
+            {
+                WriteInfo("Процесс Kerio VPN работает.");
+            }
+            else
+            {
+                WriteInfo("Процесс Kerio VPN не запущен.");
+            }
 
+            svTexBox.Text = Settings.Default.scName;
+            pathRDPTextBox.Text = Settings.Default.rdpPath;
+            //await Task.Run(() =>
+            //{
+            //    while (true)
+            //    {
+            //        infoTextBox.Text = infoText;
+            //        Task.Delay(200);
+            //    }
+            //});
+        }
+
+        /// <summary>
+        /// Пишет время и сообщение в форму
+        /// </summary>
+        /// <param name="message">Текст сообщения</param>
+        private void WriteInfo(string message)
+        {
+            Application.Current.Dispatcher.InvokeAsync(() => { infoTextBox.Text += $"[{DateTime.Now:MM.dd.yyyy HH:mm:ss}]: {message}\n"; });
+            //infoTextBox.Text += $"[{DateTime.Now:MM.dd.yyyy HH:mm:ss}]: {message}\n";
+            Application.Current.Dispatcher.InvokeAsync(() => { infoTextBox.PageDown(); });
+        }
+
+        /// <summary>
+        /// Пишет время и сообщение в форму
+        /// </summary>
+        /// <param name="message">Текст сообщения</param>
+        //private void SendInfo(string message)
+        //{
+        //    Application.Current.Dispatcher.InvokeAsync(() => { infoTextBox.Text += $"[{DateTime.Now:MM.dd.yyyy HH:mm:ss}]: {message}\n"; });
+        //}
+
+        // файлдаиалог к керио
         private void fileDialogButton_Click(object sender, RoutedEventArgs e)
         {
             _kerioFileDialog.Filter = "EXE Файлы (*.EXE)|*.EXE|Все файлы (*.*)|*.*";
             if (_kerioFileDialog.ShowDialog() == true)
             {
                 Settings.Default.filePath = _kerioFileDialog.FileName;
-                Settings.Default.fileName = _kerioFileDialog.SafeFileName.Replace(".exe", "");
+                Settings.Default.fileName = Path.GetFileNameWithoutExtension(_kerioFileDialog.FileName);
                 Settings.Default.Save();
                 pathTexBox.Text = Settings.Default.filePath;
-                infoTextBox.Text += $"[{DateTime.Now:MM.dd.yyyy HH:mm:ss}]: Исполняемый файл Kerio VPN изменен.{Environment.NewLine}";
-                infoTextBox.Text += $"[{DateTime.Now:MM.dd.yyyy HH:mm:ss}]: Новое имя процесса: {Settings.Default.fileName}" + Environment.NewLine;
+                WriteInfo($"Исполняемый файл Kerio VPN изменен. Новое имя процесса: {Settings.Default.fileName}");
             }
             else
             {
-                infoTextBox.Text += $"[{DateTime.Now:MM.dd.yyyy HH:mm:ss}]: Выбор файла отменен.{Environment.NewLine}";
+                WriteInfo("Выбор файла отменен.");
             }
 
         }
 
+        private void FindAndLaunchKerio()
+        {
+            while (_kerioWindow.Handle == IntPtr.Zero)
+            {
+                Thread.Sleep(500);
+                var kerioWindows = Window.Find(w => w.Text.Equals("Kerio VPN Client"));
+                foreach (var window in kerioWindows)
+                {
+                    _kerioWindow = window;
+                    break;
+                }
+            }
+            Thread.Sleep(700);
+            Keyboard.KeyPress(Keys.Enter);
+            if (File.Exists(Settings.Default.rdpPath) && Path.GetExtension(Settings.Default.rdpPath).Equals(".rdp", StringComparison.OrdinalIgnoreCase))
+            {
+                WriteInfo("Ожидание соединения с VPN");
+                while (_kerioWindow.Visible)
+                {
+                    Thread.Sleep(500);
+                    if (Process.GetProcessesByName(Settings.Default.fileName).Length == 0)
+                    {
+                        WriteInfo("Процесс Kerio VPN остановлен. Запуск соединения прерван.");
+                        return;
+                    }
+                }
+                WriteInfo("Соединение установлено. Запуск RDP.");
+                Process.Start("mstsc", Settings.Default.rdpPath);
+            }
+            else
+            {
+                WriteInfo("Путь к RDP не указан. Автоматического запуска не будет.");
+            }
+        }
+
+
         private void launchButton_Click(object sender, RoutedEventArgs e)
         {
+            _kerioWindow = new Window(IntPtr.Zero);
+            
             try
             {
                 if (_service.Status != ServiceControllerStatus.Running)
                 {
                     _service.Start();
                     _service.WaitForStatus(ServiceControllerStatus.Running, TimeSpan.FromMinutes(1));
-                    infoTextBox.Text += $"[{DateTime.Now:MM.dd.yyyy HH:mm:ss}]: Служба запущена.{Environment.NewLine}";
-                    _ = WatchAndStartProcessAsync();
+                    WriteInfo("Служба запущена.");
                 }
             }
             catch (InvalidOperationException)
             {
-                infoTextBox.Text += $"[{DateTime.Now:MM.dd.yyyy HH:mm:ss}]: Указанная служба не установлена.{Environment.NewLine}";
+                WriteInfo("Указанная служба не установлена.");
                 return;
             }
 
-            Process.Start(Settings.Default.filePath);
-            infoTextBox.Text += $"[{DateTime.Now:MM.dd.yyyy HH:mm:ss}]: Kerio запущен.{Environment.NewLine}";
-            infoTextBox.PageDown();
-
-        }
-
-        private async Task WatchAndStartProcessAsync()
-        {
-            await Task.Run(() =>
+            if (File.Exists(Settings.Default.filePath) && Path.GetFileNameWithoutExtension(Settings.Default.filePath).Equals("kvpncgui", StringComparison.OrdinalIgnoreCase))
             {
-                while (!_autoRunRdp)
+                var processes = Process.GetProcessesByName(Settings.Default.fileName);
+                if (processes.Length > 0)
                 {
-                    Thread.Sleep(500);
-                    foreach (var process in Process.GetProcessesByName("kvpncgui"))
+                    foreach (var process in processes)
                     {
-                        var wHnd = process.MainWindowHandle;
-                        if (IsWindowVisible(wHnd)) continue;
-                        _autoRunRdp = true;
-                        break;
+                        process.CloseMainWindow();
+                        process.Kill();
                     }
                 }
-            });
-            infoTextBox.Text += $"[{DateTime.Now:MM.dd.yyyy HH:mm:ss}]: Соединение установлено.{Environment.NewLine}";
-            Process.Start("mstsc", Settings.Default.rdpPath);
-            infoTextBox.Text += $"[{DateTime.Now:MM.dd.yyyy HH:mm:ss}]: Подключение запущено.{Environment.NewLine}";
-            infoTextBox.PageDown();
-            _autoRunRdp = false;
+                var kerioProcess = Process.Start(Settings.Default.filePath);
+                WriteInfo("Kerio VPN Client запущен.");
+                Thread kerioFindThread = new(new ThreadStart(FindAndLaunchKerio));
+                kerioFindThread.Start();
+                //if (File.Exists(Settings.Default.rdpPath) && Path.GetExtension(Settings.Default.rdpPath).Equals(".rdp", StringComparison.OrdinalIgnoreCase))
+                //{
+                //    WriteInfo("Ожидание соединения с VPN и запуска RDP");
+                //}
+                //else
+                //{
+                //    WriteInfo("Путь к RDP не указан. Автоматического запуска не будет.");
+                //}
+            }
+            else
+            {
+                MessageBox.Show("Указан неверный файл Kerio VPN Client.");
+            }
+
         }
 
         private void stopButton_Click(object sender, RoutedEventArgs e)
@@ -104,55 +203,32 @@ namespace WorkLauncher
                 {
                     _service.Stop();
                     _service.WaitForStatus(ServiceControllerStatus.Stopped, TimeSpan.FromMinutes(1));
-                    infoTextBox.Text += $"[{DateTime.Now:MM.dd.yyyy HH:mm:ss}]: Служба остановлена.{Environment.NewLine}";
-                }
-            }
-            catch (InvalidOperationException)
-            {
-                infoTextBox.Text += $"[{DateTime.Now:MM.dd.yyyy HH:mm:ss}]: Указанная служба не установлена.{Environment.NewLine}";
-            }
-
-            var processes = Process.GetProcessesByName(Settings.Default.fileName);
-            foreach (var process in processes)
-            {
-                process.CloseMainWindow();
-                process.Kill();
-            }
-            infoTextBox.Text += $"[{DateTime.Now:MM.dd.yyyy HH:mm:ss}]: Все процессы Kerio завершены.{Environment.NewLine}";
-            infoTextBox.PageDown();
-
-        }
-
-        private void Window_Loaded(object sender, RoutedEventArgs e)
-        {
-            pathTexBox.Text = Settings.Default.filePath;
-            try
-            {
-                if (_service.Status == ServiceControllerStatus.Running)
-                {
-                    infoTextBox.Text += $"[{DateTime.Now:MM.dd.yyyy HH:mm:ss}]: Служба Kerio работает.{Environment.NewLine}";
+                    WriteInfo("Служба остановлена.");
                 }
                 else
                 {
-                    infoTextBox.Text += $"[{DateTime.Now:MM.dd.yyyy HH:mm:ss}]: Служба Kerio не запущена.{Environment.NewLine}";
+                    WriteInfo("Служба не запущена.");
                 }
             }
             catch (InvalidOperationException)
             {
-                infoTextBox.Text += $"[{DateTime.Now:MM.dd.yyyy HH:mm:ss}]: Указанная служба не установлена.{Environment.NewLine}";
+                WriteInfo("Указанная служба не установлена.");
             }
-            if (Process.GetProcessesByName(Settings.Default.fileName).Length > 0)
+
+            var processes = Process.GetProcessesByName(Settings.Default.fileName);
+            if (processes.Length > 0)
             {
-                infoTextBox.Text += $"[{DateTime.Now:MM.dd.yyyy HH:mm:ss}]: Процесс Kerio VPN работает.{Environment.NewLine}";
+                foreach (var process in processes)
+                {
+                    process.CloseMainWindow();
+                    process.Kill();
+                    WriteInfo("Все процессы Kerio завершены.");
+                }
             }
             else
             {
-                infoTextBox.Text += $"[{DateTime.Now:MM.dd.yyyy HH:mm:ss}]: Процесс Kerio VPN не запущен.{Environment.NewLine}";
+                WriteInfo("Kerio VPN не запущен.");
             }
-
-            svTexBox.Text = Settings.Default.scName;
-            pathRDPTextBox.Text = Settings.Default.rdpPath;
-
         }
 
         private void setSvButton_Click(object sender, RoutedEventArgs e)
@@ -160,8 +236,7 @@ namespace WorkLauncher
             Settings.Default.scName = svTexBox.Text;
             Settings.Default.Save();
             _service = new ServiceController(Settings.Default.scName);
-            infoTextBox.Text += $"[{DateTime.Now:MM.dd.yyyy HH:mm:ss}]: Название службы изменено.{Environment.NewLine}";
-            infoTextBox.PageDown();
+            WriteInfo("Название службы изменено.");
         }
 
         private void changeStatusButton_Click(object sender, RoutedEventArgs e)
@@ -172,19 +247,18 @@ namespace WorkLauncher
                 Settings.Default.rdpPath = _rdpFileDialog.FileName;
                 Settings.Default.Save();
                 pathRDPTextBox.Text = Settings.Default.rdpPath;
-                infoTextBox.Text += $"[{DateTime.Now:MM.dd.yyyy HH:mm:ss}]: Путь к RDP подключению изменен.{Environment.NewLine}";
+                WriteInfo("Путь к RDP изменен.");
             }
             else
             {
-                infoTextBox.Text += $"[{DateTime.Now:MM.dd.yyyy HH:mm:ss}]: Выбор RDP подключения отменен.{Environment.NewLine}";
+                WriteInfo("Выбор RDP отменен.");
             }
         }
 
         private void connectButton_Click(object sender, RoutedEventArgs e)
         {
             Process.Start("mstsc", Settings.Default.rdpPath);
-            infoTextBox.Text += $"[{DateTime.Now:MM.dd.yyyy HH:mm:ss}]: Подключение запущено.{Environment.NewLine}";
-            infoTextBox.PageDown();
+            WriteInfo("Подключение запущено.");
         }
 
         private void clearButton_MouseEnter(object sender, MouseEventArgs e)

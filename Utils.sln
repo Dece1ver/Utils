@@ -15,7 +15,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "KeyViewer", "KeyViewer\KeyV
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FolderRenamer", "FolderRenamer\FolderRenamer.csproj", "{66100BA0-B775-4330-8F39-6DB9ADC3CD47}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WindowVisibility", "WindowVisibility\WindowVisibility.csproj", "{54E2CF1A-9E52-407E-8C7A-6F810C76402A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WindowVisibility", "WindowVisibility\WindowVisibility.csproj", "{54E2CF1A-9E52-407E-8C7A-6F810C76402A}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Utils.WinAPI", "Utils.WinAPI\Utils.WinAPI.csproj", "{B0B2DAEE-0C01-4AF8-9045-0ED58AC196AA}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "o2ewss", "o2ewss\o2ewss.csproj", "{B8EA1A41-8E35-4A42-8866-96CCC5829443}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -51,6 +55,14 @@ Global
 		{54E2CF1A-9E52-407E-8C7A-6F810C76402A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{54E2CF1A-9E52-407E-8C7A-6F810C76402A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{54E2CF1A-9E52-407E-8C7A-6F810C76402A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B0B2DAEE-0C01-4AF8-9045-0ED58AC196AA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B0B2DAEE-0C01-4AF8-9045-0ED58AC196AA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B0B2DAEE-0C01-4AF8-9045-0ED58AC196AA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B0B2DAEE-0C01-4AF8-9045-0ED58AC196AA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B8EA1A41-8E35-4A42-8866-96CCC5829443}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B8EA1A41-8E35-4A42-8866-96CCC5829443}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B8EA1A41-8E35-4A42-8866-96CCC5829443}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B8EA1A41-8E35-4A42-8866-96CCC5829443}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
