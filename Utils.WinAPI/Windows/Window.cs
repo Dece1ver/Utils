@@ -15,6 +15,7 @@ namespace Utils.WinAPI.Windows
         public static IntPtr SendMessage(IntPtr Handle, WM Message, IntPtr wParam, IntPtr lParam) =>
             User32.SendMessage(Handle, Message, wParam, lParam);
 
+
         public static Window[] Find(Func<Window, bool> Selector)
         {
             var result = new List<Window>();
@@ -47,6 +48,8 @@ namespace Utils.WinAPI.Windows
         }
 
         public bool Visible { get => User32.IsWindowVisible(Handle); }
+
+        public bool Iconic { get => User32.IsIconic(Handle); }
 
         public Rectangle Rectangle
         {
@@ -86,6 +89,8 @@ namespace Utils.WinAPI.Windows
         public IntPtr SendMessage(WM Message) => SendMessage(Message, IntPtr.Zero, IntPtr.Zero);
 
         public IntPtr PostMessage(WM Message, IntPtr wParams, IntPtr lParams) => User32.PostMessage(Handle, Message, wParams, lParams);
+
+        public bool ShowWindow(SW Message) => User32.ShowWindow(Handle, (int)Message);
 
         private string GetWindowText()
         {

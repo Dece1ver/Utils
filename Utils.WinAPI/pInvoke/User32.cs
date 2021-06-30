@@ -88,8 +88,15 @@ namespace Utils.WinAPI.pInvoke
         public static extern bool SetWindowPos(IntPtr hWnd, IntPtr hWndInsertAfter, int X, int Y, int cx, int cy, SetWindowPosFlags uFlags);
 
         [DllImport(FileName)]
+        public static extern bool ShowWindow(IntPtr hWnd, int nCmdShow);
+
+        [DllImport(FileName)]
         [return: MarshalAs(UnmanagedType.Bool)]
         public static extern bool IsWindowVisible(IntPtr hWnd);
+
+        [DllImport(FileName)]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        public static extern bool IsIconic(IntPtr hWnd);
 
         [DllImport(FileName)]
         public static extern void keybd_event(byte bVk, byte bScan, int dwFlags, int dwExtraInfo);
