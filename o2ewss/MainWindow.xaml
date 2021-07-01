@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:o2ewss"
         mc:Ignorable="d"
-        Title="MainWindow" Height="240" Width="400" WindowStyle="SingleBorderWindow" ResizeMode="NoResize" Loaded="Window_Loaded">
+        Title="o2ewss - Информация" Height="300" Width="450" WindowStyle="SingleBorderWindow" ResizeMode="NoResize" Loaded="Window_Loaded" ShowInTaskbar="False">
     <Grid>
         <TextBox x:Name="infoTextBox" Background="#FF252526" Foreground="{DynamicResource {x:Static SystemColors.WindowBrushKey}}" FontFamily="Consolas" FontSize="12" TextWrapping="WrapWithOverflow"/>
     </Grid>
