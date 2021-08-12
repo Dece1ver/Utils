@@ -1,0 +1,12 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:p="http://schemas.microsoft.com/winfx/2006/xaml/presentation/options"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <SolidColorBrush x:Key="TitleBarBackgroundBrush" Color="#2d2d30" p:Freeze="true"/>
+    <SolidColorBrush x:Key="WindowBorderBrush" Color="#1b1b1c" p:Freeze="true"/>
+    <SolidColorBrush x:Key="BackgroundBrush" Color="#1e1e1e" p:Freeze="true"/>
+    <SolidColorBrush x:Key="ForegroundBrush" Color="#f1f1f1" p:Freeze="true"/>
+    <SolidColorBrush x:Key="ActiveButtonBrush" Color="#3f3f41" p:Freeze="true"/>
+    <SolidColorBrush x:Key="TransparentBrush" Color="Transparent" p:Freeze="true"/>
+    <SolidColorBrush x:Key="WhilteBrush" Color="White" p:Freeze="true"/>
+    <SolidColorBrush x:Key="RedBrush" Color="Red" p:Freeze="true"/>
+</ResourceDictionary>
