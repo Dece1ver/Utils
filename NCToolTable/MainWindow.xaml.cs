@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -38,9 +39,10 @@ namespace NCToolTable
                 var lines = File.ReadAllLines(filePath);
                 foreach (var line in lines)
                 {
-                    if (line.Contains("T") && line.Contains("("))
+                    if (new Regex(@"T(\d+)", RegexOptions.Compiled).IsMatch(line) && line.Contains("("))
                     {
-                        tools.Add("(" + line.Split("(")[1].Trim());
+                        var fLine = "(" + line.Split("(")[1].Trim();
+                        if (!tools.Contains(fLine)) tools.Add(fLine);
                     }
                 }
                 if (tools.Count > 0)
