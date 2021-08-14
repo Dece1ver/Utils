@@ -12,8 +12,7 @@ namespace MVVM.Template.Infrastructure.Behaviors
 
         private void OnButtonClick(object Sender, RoutedEventArgs E)
         {
-            var window = AssociatedObject.FindVisualRoot() as Window;
-            if (window is null) return;
+            if (!(AssociatedObject.FindVisualRoot() is Window window)) return;
 
             window.WindowState = WindowState.Minimized;
         }
