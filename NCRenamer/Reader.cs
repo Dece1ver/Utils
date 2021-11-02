@@ -16,6 +16,13 @@ namespace NCRenamer
         public static readonly string[] sinumerikExtensions = { ".mpf", ".spf" };
         public static readonly string[] otherNcExtensions = { ".nc", ".tap" };
 
+        public static readonly string[] machineExtensions = otherNcExtensions
+            .Concat(heidenhainExtensions)
+            .Concat(mazatrolExtensions)
+            .Concat(sinumerikExtensions)
+            .ToArray();
+
+
         /// <summary>
         /// Читает файл УП СЧПУ Fanuc в поисках названия УП.
         /// </summary>
@@ -69,12 +76,12 @@ namespace NCRenamer
                 // если файл не пустой и начинается с %
                 if (!string.IsNullOrWhiteSpace(File.ReadAllText(filePath)))
                 {
-                    name = File.ReadAllLines(filePath)[1].Replace("BEGIN PGM ", string.Empty) ; // берем значение между скобок во второй строке
+                    name = File.ReadAllLines(filePath)[0].Replace("BEGIN PGM ", string.Empty).TrimStart('0').Trim() ; // берем название с 1 строки обрезая лишнее
+                    name = name.Remove(name.Length - 3);
                 }
-                // если нет
                 else
                 {
-                    name = string.Empty;
+                    return string.Empty;
                 }
 
             }
@@ -94,7 +101,6 @@ namespace NCRenamer
             }
             return name;
         }
-
 
         /// <summary>
         /// Читает файл УП СЧПУ Mazatrol Smart в поисках названия УП.
@@ -118,7 +124,11 @@ namespace NCRenamer
             }
         }
 
-
+        /// <summary>
+        /// Получает имя УП в зависимости от расширения файла
+        /// </summary>
+        /// <param name="filePath">Путь к файлу УП</param>
+        /// <returns></returns>
         public static string GetNcName(string filePath)
         {
             if (mazatrolExtensions.Contains(Path.GetExtension(filePath)?.ToLower()))
@@ -131,7 +141,7 @@ namespace NCRenamer
             }
             else if (heidenhainExtensions.Contains(Path.GetExtension(filePath)?.ToLower())) 
             {
-                return string.Empty; // написать обработчик
+                return GetHeidenhainName(filePath);
             }
             else
             {
@@ -147,8 +157,15 @@ namespace NCRenamer
         public static void Rename(this FileInfo file, string newName)
         {
             string tempExtension = string.Empty;
-            if (mazatrolExtensions.Contains(file.Extension)) tempExtension = file.Extension; 
-            file.MoveTo(Path.Combine(file.Directory.FullName, newName + tempExtension), true);
+            if (machineExtensions.Contains(file.Extension)) tempExtension = file.Extension;
+            string newFilePath = Path.Combine(file.Directory.FullName, newName + tempExtension);
+            int i = 1;
+            string originalFilePath = newFilePath;
+            while (File.Exists(newFilePath))
+            {
+                newFilePath = $"{originalFilePath} ({i++})";
+            }
+            file.MoveTo(newFilePath);
             //Microsoft.VisualBasic.FileIO.FileSystem.RenameFile(fileInfo.Directory.FullName, newName);
         }
     }
