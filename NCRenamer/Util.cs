@@ -214,12 +214,24 @@ namespace NCRenamer
         /// <summary>
         /// Сохраняет иконку приложения рядом с собой
         /// </summary>
-        private static void SaveIcon()
+        public static string SaveIcon()
         {
-            File.WriteAllBytes("NCRenamer.ico", Properties.Resources.rename);
+            try
+            {
+                File.WriteAllBytes("NCRenamer.ico", Properties.Resources.rename);
+                return "Иконка записана в директорию с программой.";
+            }
+            catch (UnauthorizedAccessException)
+            {
+                return "Недостаточно прав доступа для создания иконки в данной директории.";
+            }
+            catch (Exception ex)
+            {
+                return ex.Message;
+            }
         }
 
-        public static void AddToContextManu()
+        public static string AddToContextManu()
         {
             SaveIcon();
             RegistryKey key;
@@ -234,16 +246,15 @@ namespace NCRenamer
                 key.SetValue("Icon", Path.GetFullPath("NCRenamer.ico"));
                 key = Registry.ClassesRoot.CreateSubKey(@"*\\shell\\" + registryName + "\\command", RegistryKeyPermissionCheck.ReadWriteSubTree, regSecurity);
                 key.SetValue("", $"\"{Path.GetFullPath(Process.GetCurrentProcess().ProcessName)}.exe\" \"%1\"");
-                Console.Write("Программа успешно добавлена в контекстное меню Windows\n\nДля продолжения нажмите любую клавишу...");
+                return "Программа успешно добавлена в контекстное меню Windows\n\nДля продолжения нажмите любую клавишу...";
             }
             catch (UnauthorizedAccessException)
             {
-                Console.WriteLine("\nНедостаточно прав для выполнения операции. Попробуте запустить от имени администратора.");
+                return "\nНедостаточно прав для выполнения операции. Попробуте запустить от имени администратора.";
             }
-            Console.ReadKey();
         }
 
-        public static void RemoveFromContextManu()
+        public static string RemoveFromContextManu()
         {
             RegistryKey key;
             WindowsIdentity identify = WindowsIdentity.GetCurrent();
@@ -255,17 +266,17 @@ namespace NCRenamer
             {
                 key = Registry.ClassesRoot.OpenSubKey(@"*\\shell\\", true);
                 key.DeleteSubKeyTree(registryName);
-                Console.Write("Программа успешно удалена из контекстного меню Windows\n\nДля продолжения нажмите любую клавишу...");
+                return "Программа успешно удалена из контекстного меню Windows\n\nДля продолжения нажмите любую клавишу...";
             }
             catch (UnauthorizedAccessException)
             {
-                Console.WriteLine("\nНедостаточно прав для выполнения операции. Попробуте запустить от имени администратора.");
+                return "\nНедостаточно прав для выполнения операции. Попробуте запустить от имени администратора.";
             }
             catch (ArgumentException)
             {
-                Console.WriteLine("Программы и так нет в контекстном меню\n\nДля продолжения нажмите любую клавишу...");
+                return "Программы и так нет в контекстном меню\n\nДля продолжения нажмите любую клавишу...";
             }
-            Console.ReadKey();
+            
 
         }
         #endregion

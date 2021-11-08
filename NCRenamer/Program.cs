@@ -54,7 +54,8 @@ namespace NCRenamer
                     Console.WriteLine($"{(IsElevated ? string.Empty : "Программа запущена без прав Администратора, работа в ограниченном режиме\n\n")}" +
                         $"[1] Добавить программу в контекстное меню Windows{(IsElevated ? string.Empty : " (недоступно в ограниченном режиме)")}\n" +
                         $"[2] Убрать программу из контекстного меню Windows{(IsElevated ? string.Empty : " (недоступно в ограниченном режиме)")}\n" +
-                        $"[3] О программе\n" +
+                        $"[3] {(File.Exists("NCRenamer.ico") ? "Восстановить иконку" : "Создать иконку")}\n" +
+                        $"[4] О программе\n" +
                         "\n" +
                         "[0] Закрыть программу\n");
                     Console.Write(">");
@@ -66,14 +67,22 @@ namespace NCRenamer
                     if (output is ConsoleKey.D1 or ConsoleKey.NumPad1 && IsElevated)
                     {
                         Console.Clear();
-                        Util.AddToContextManu();
+                        Console.WriteLine(Util.AddToContextManu()); ;
+                        Console.ReadKey();
                     }
                     if (output is ConsoleKey.D2 or ConsoleKey.NumPad2 && IsElevated)
                     {
                         Console.Clear();
-                        Util.RemoveFromContextManu();
+                        Console.WriteLine(Util.RemoveFromContextManu()); ;
+                        Console.ReadKey();
                     }
                     if (output is ConsoleKey.D3 or ConsoleKey.NumPad3)
+                    {
+                        Console.Clear();
+                        Console.WriteLine($"{Util.SaveIcon()}\n\nДля продолжения нажмите любую клавишу...");
+                        Console.ReadKey();
+                    }
+                    if (output is ConsoleKey.D4 or ConsoleKey.NumPad4)
                     {
                         Console.Clear();
                         Console.WriteLine("Программа переименовывает файлы управляющих программ по названию самой управляющей программы.\n\n" +
