@@ -64,6 +64,41 @@ namespace NCRenamer
             return name;
         }
 
+        /// <summary>
+        /// Читает файл УП СЧПУ Sinumerik в поисках названия УП.
+        /// </summary>
+        /// <param name="filePath">Путь к файлу УП Fanuc</param>
+        /// <returns>Возвращает строку содержащую имя УП, при неудаче возвращает значение NONAME</returns>
+        public static string GetSinumerikName(string filePath)
+        {
+            string name;
+            try
+            {
+                if (!string.IsNullOrWhiteSpace(File.ReadAllLines(filePath)[0]))
+                {
+                    name = File.ReadAllLines(filePath)[0].Split('(')[1].Split(')')[0].Trim('\"');
+                }
+                else
+                {
+                    name = string.Empty;
+                }
+            }
+            catch (IndexOutOfRangeException)
+            {
+                name = Nameless;
+            }
+            // любая другая ошибка, н-р ошибка доступа к файлу или что-нибудь еще
+            catch (Exception)
+            {
+                name = string.Empty;
+            }
+            // заменяет все плохие символы на -, чтобы ошибки при записи не было
+            foreach (char badSymbol in Path.GetInvalidPathChars().Union(Path.GetInvalidFileNameChars()))
+            {
+                name = name.Replace(badSymbol, '-');
+            }
+            return name;
+        }
 
         /// <summary>
         /// Читает файл УП СЧПУ Heidenhain в поисках названия УП.
@@ -75,10 +110,10 @@ namespace NCRenamer
             string name;
             try
             {
-                // если файл не пустой и начинается с %
+                // если файл не пустой
                 if (!string.IsNullOrWhiteSpace(File.ReadAllText(filePath)))
                 {
-                    name = File.ReadAllLines(filePath)[0].Replace("BEGIN PGM ", string.Empty).TrimStart('0').Trim(); // берем название с 1 строки обрезая лишнее
+                    name = File.ReadAllLines(filePath)[0].Replace("BEGIN PGM ", string.Empty).TrimStart('0').Trim(); 
                     name = name.Remove(name.Length - 3);
                 }
                 else
@@ -139,7 +174,7 @@ namespace NCRenamer
             }
             else if (sinumerikExtensions.Contains(Path.GetExtension(filePath)?.ToLower()))
             {
-                return string.Empty; // написать обработчик
+                return GetSinumerikName(filePath);
             }
             else if (heidenhainExtensions.Contains(Path.GetExtension(filePath)?.ToLower()))
             {

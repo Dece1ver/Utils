@@ -25,6 +25,7 @@ namespace NCRenamer
             }
             else
             {
+                //Rename(Directory.GetFiles(Directory.GetCurrentDirectory()));
                 RunConsole();
             }
         }
@@ -35,7 +36,7 @@ namespace NCRenamer
             {
                 FileInfo file = new(files[i]);
                 string newName = Util.GetNcName(file.FullName);
-                if (newName == string.Empty) break;
+                if (newName == string.Empty) continue;
                 //if (File.Exists(Path.Combine(file.Directory.FullName, newName))) file.Delete();
                 file.Rename(newName);
             }
@@ -77,10 +78,11 @@ namespace NCRenamer
                         Console.Clear();
                         Console.WriteLine("Программа переименовывает файлы управляющих программ по названию самой управляющей программы.\n\n" +
                             "Поддерживаемые СЧПУ:\n" +
-                            "* Fanuc 0i       [ O0001(НАЗВАНИЕ) ]\n" +
-                            "* Fanuc 0i-*F    [ <НАЗВАНИЕ> ]\n" +
-                            "* Mazatrol Smart [ .PBG | .PBD ]\n" +
-                            "* Hiedenhain     [ BEGIN PGM НАЗВАНИЕ MM ]\n");
+                            "* Fanuc 0i           [ O0001(НАЗВАНИЕ) ]\n" +
+                            "* Fanuc 0i-*F        [ <НАЗВАНИЕ> ]\n" +
+                            "* Mazatrol Smart     [ .PBG | .PBD ]\n" +
+                            "* Sinumerik 840D sl  [ MSG (\"НАЗВАНИЕ\") ]\n" +
+                            "* Hiedenhain         [ BEGIN PGM НАЗВАНИЕ MM ]\n");
                         Console.WriteLine("Использование программы подразумевается вызовом через контекстное меню (ПКМ) по переменовываемым файлам.\n" +
                             "Работа программы происходит без каких-либо уведомлений.\n" +
                             "Если программа определяет файл как УП, то происходит переименование.\n" +
