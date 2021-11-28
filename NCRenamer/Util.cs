@@ -35,17 +35,30 @@ namespace NCRenamer
             string name;
             try
             {
-                // если файл не пустой и начинается с %
                 if (!string.IsNullOrWhiteSpace(File.ReadAllText(filePath)) && File.ReadAllLines(filePath)[0] == "%")
                 {
-                    name = File.ReadAllLines(filePath)[1].Split('(')[1].Split(')')[0]; // берем значение между скобок во второй строке
+                    string nameLine = File.ReadAllLines(filePath)[1];
+                    if (nameLine.StartsWith("<"))
+                    {
+                        name = File.ReadAllLines(filePath)[1].Split('<')[1].Split('>')[0];
+                    }
+                    else
+                    {
+                        name = File.ReadAllLines(filePath)[1].Split('(')[1].Split(')')[0];
+                    }
                 }
-                // если нет
+                else if (File.ReadAllLines(filePath)[0][..4] == "MSG ")
+                {
+                    return GetSinumerikName(filePath) + ".mpf";
+                }
+                else if (File.ReadAllLines(filePath)[0][..9] == "BEGIN PGM")
+                {
+                    return GetHeidenhainName(filePath) + ".h";
+                }
                 else
                 {
                     name = string.Empty;
                 }
-
             }
             catch (IndexOutOfRangeException)
             {
@@ -113,7 +126,7 @@ namespace NCRenamer
                 // если файл не пустой
                 if (!string.IsNullOrWhiteSpace(File.ReadAllText(filePath)))
                 {
-                    name = File.ReadAllLines(filePath)[0].Replace("BEGIN PGM ", string.Empty).TrimStart('0').Trim(); 
+                    name = File.ReadAllLines(filePath)[0].Replace("BEGIN PGM ", string.Empty).TrimStart('0').Trim();
                     name = name.Remove(name.Length - 3);
                 }
                 else
@@ -198,12 +211,12 @@ namespace NCRenamer
             string tempExtension = string.Empty;
             if (machineExtensions.Contains(file.Extension)) tempExtension = file.Extension;
             string newFilePath = Path.Combine(file.Directory.FullName, newName + tempExtension);
-            if (file.FullName + tempExtension == newFilePath) return;
+            if (file.FullName == newFilePath) return;
             int i = 1;
             string originalFilePath = newFilePath;
             while (File.Exists(newFilePath))
             {
-                newFilePath = $"{originalFilePath} ({i++})";
+                newFilePath = $"{Path.GetFileNameWithoutExtension(originalFilePath)} ({i++}){Path.GetExtension(originalFilePath)}";
             }
             file.MoveTo(newFilePath);
             //Microsoft.VisualBasic.FileIO.FileSystem.RenameFile(fileInfo.Directory.FullName, newName);
@@ -276,7 +289,7 @@ namespace NCRenamer
             {
                 return "Программы и так нет в контекстном меню\n\nДля продолжения нажмите любую клавишу...";
             }
-            
+
 
         }
         #endregion

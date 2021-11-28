@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.31105.61
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31903.59
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "loopa", "loopa\loopa.csproj", "{A92AEB9E-6888-47F0-87B5-64BF364FDEAA}"
 EndProject
@@ -33,6 +33,8 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DetailsList", "DetailsList\DetailsList.csproj", "{B564C571-87BE-441C-A33F-5913E347BA4F}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NCRenamer", "NCRenamer\NCRenamer.csproj", "{A635F692-BF35-401A-9E09-EE866F571D06}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Editor3000", "Editor3000\Editor3000.csproj", "{575E6831-DE27-45CD-A045-7AF3BB9E60F0}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -146,6 +148,14 @@ Global
 		{A635F692-BF35-401A-9E09-EE866F571D06}.Release|Any CPU.Build.0 = Release|Any CPU
 		{A635F692-BF35-401A-9E09-EE866F571D06}.Release|x86.ActiveCfg = Release|Any CPU
 		{A635F692-BF35-401A-9E09-EE866F571D06}.Release|x86.Build.0 = Release|Any CPU
+		{575E6831-DE27-45CD-A045-7AF3BB9E60F0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{575E6831-DE27-45CD-A045-7AF3BB9E60F0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{575E6831-DE27-45CD-A045-7AF3BB9E60F0}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{575E6831-DE27-45CD-A045-7AF3BB9E60F0}.Debug|x86.Build.0 = Debug|Any CPU
+		{575E6831-DE27-45CD-A045-7AF3BB9E60F0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{575E6831-DE27-45CD-A045-7AF3BB9E60F0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{575E6831-DE27-45CD-A045-7AF3BB9E60F0}.Release|x86.ActiveCfg = Release|Any CPU
+		{575E6831-DE27-45CD-A045-7AF3BB9E60F0}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -1,0 +1,28 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net6.0-windows</TargetFramework>
+    <Nullable>enable</Nullable>
+    <UseWPF>true</UseWPF>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="Resources\OpenfileDialog_16x.png" />
+    <None Remove="Resources\OpenfileDialog_grey_16x.png" />
+    <None Remove="Resources\SaveFileDialogControl_16x.png" />
+    <None Remove="Resources\Save_grey_16x.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="Resources\OpenfileDialog_16x.png" />
+    <Resource Include="Resources\OpenfileDialog_grey_16x.png" />
+    <Resource Include="Resources\SaveFileDialogControl_16x.png" />
+    <Resource Include="Resources\Save_grey_16x.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="System.Drawing.Common" Version="6.0.0" />
+  </ItemGroup>
+
+</Project>
