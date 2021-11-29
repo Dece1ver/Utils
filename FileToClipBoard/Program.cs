@@ -16,6 +16,7 @@ namespace FileToClipBoard
                 string fileExtension = args[0];
                 if(!fileExtension.StartsWith(".")) fileExtension = "." + fileExtension;
                 string targetDir = args[1];
+                Console.WriteLine($"Поиск самого свежего файла с расширением {fileExtension} в следующей директории:\n{targetDir}");
                 string fileName = string.Empty;
                 DateTime dt = new DateTime(1990, 1, 1);
                 FileSystemInfo[] fileSystemInfo = new DirectoryInfo(targetDir).GetFileSystemInfos();
@@ -36,14 +37,13 @@ namespace FileToClipBoard
                     replacementList.Add(fileName);
                     Clipboard.SetFileDropList(replacementList);
                     Console.WriteLine($"Файл \"{Path.GetFileName(fileName)}\" скопирован в буфер обмена.");
-                    Console.ReadKey();
                 }
             }
             else
             {
                 Console.WriteLine("Программа ищет в целевой папке последний созданный файл с указанным расширением и добавляет его в буфер обмена. \n" +
                     "Необходимо запускать программу передав 2 аргумента:\n\n" +
-                    "\t* Расширение файла (txt);\n" +
+                    "\t* Расширение файла;\n" +
                     "\t* Путь к целевой папке.");
                 Console.ReadKey();
             }
