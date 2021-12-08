@@ -247,14 +247,15 @@ namespace DetailsList.ViewModels
                     var lines = File.ReadLines(file).Take(2).ToArray();
                     if (lines.Length > 0 && lines[0] == "%")
                     {
-                        var detail = GetDetailName(file);
-                        if (!Details.Contains(detail) && !(
-                            new Regex(@"^АР(\d+)", RegexOptions.Compiled).IsMatch(detail) ||
-                            new Regex(@"^АРМ(\d+)", RegexOptions.Compiled).IsMatch(detail) ||
-                            new Regex(@"^АРПГА(\d+)", RegexOptions.Compiled).IsMatch(detail) ||
-                            new Regex(@"^АРКП(\d+)", RegexOptions.Compiled).IsMatch(detail) ||
-                            new Regex(@"^НМГ(\d+)", RegexOptions.Compiled).IsMatch(detail)
-                            ))
+                        var detail = GetDetailName(file, TargetPath);
+                        if (!Details.Contains(detail) && !string.IsNullOrEmpty(detail)
+                            //&& !(
+                            //new Regex(@"^АР(\d+)", RegexOptions.Compiled).IsMatch(detail) ||
+                            //new Regex(@"^АРМ(\d+)", RegexOptions.Compiled).IsMatch(detail) ||
+                            //new Regex(@"^АРПГА(\d+)", RegexOptions.Compiled).IsMatch(detail) ||
+                            //new Regex(@"^АРКП(\d+)", RegexOptions.Compiled).IsMatch(detail) ||
+                            //new Regex(@"^НМГ(\d+)", RegexOptions.Compiled).IsMatch(detail))
+                            )
                         {
                             Details.Add(detail);
                             OnPropertyChanged(nameof(DetailsCount));
@@ -297,9 +298,22 @@ namespace DetailsList.ViewModels
             }
         }
 
-        public static string GetDetailName(string file)
+        public static string GetDetailName(string file, string targetPath)
         {
-            return $"{Directory.GetParent(file).Parent.Name} {Directory.GetParent(file).Name}";
+            string cwd = file;
+            while (cwd != targetPath)
+            {
+                cwd = Directory.GetParent(cwd).FullName;
+                foreach (var sign in Infrastructure.DetailsInfo.numberSigns)
+                {
+                    if (Path.GetFileName(cwd).Contains(sign))
+                    {
+                        return $"{Directory.GetParent(cwd).Name} {Path.GetFileName(cwd)}";
+                    }
+                }
+            }
+            return string.Empty;
+            //return $"{Directory.GetParent(file).Parent.Name} {Directory.GetParent(file).Name}";
         }
 
     }

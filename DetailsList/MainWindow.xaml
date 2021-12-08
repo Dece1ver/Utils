@@ -40,6 +40,7 @@
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="70"/>
                 <ColumnDefinition/>
+                <ColumnDefinition Width="220"/>
             </Grid.ColumnDefinitions>
             <Grid.RowDefinitions>
                 <RowDefinition Height="auto"/>
@@ -48,9 +49,10 @@
             </Grid.RowDefinitions>
             <TextBlock Grid.Row="0" Grid.Column="0" Text="Файлов:"/>
             <TextBlock Grid.Row="0" Grid.Column="1" Text="{Binding FilesCount}"/>
+            <!--<CheckBox Grid.Row="0" Grid.Column="2" Grid.RowSpan="2" Content="Сверхинтеллектуальный режим" VerticalAlignment="Center" HorizontalAlignment="Center"/>-->
             <TextBlock Grid.Row="1" Grid.Column="0" Text="Деталей:"/>
             <TextBlock Grid.Row="1" Grid.Column="1" Text="{Binding DetailsCount}"/>
-            <GroupBox Grid.Row="2" Grid.ColumnSpan="2" Header="Список">
+            <GroupBox Grid.Row="2" Grid.ColumnSpan="3" Header="Список">
                 <TextBox IsReadOnly="True" Text="{Binding DetailsText, UpdateSourceTrigger=PropertyChanged, Mode=OneWay}"/>
             </GroupBox>
         </Grid>
