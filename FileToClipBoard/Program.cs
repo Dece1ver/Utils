@@ -11,7 +11,24 @@ namespace FileToClipBoard
         [STAThread]
         static void Main(string[] args)
         {
-            if (args.Length == 2)
+            if (args.Length == 1)
+            {
+                string fileName = args[0];
+                if (!string.IsNullOrEmpty(fileName) && File.Exists(fileName))
+                {
+                    System.Collections.Specialized.StringCollection replacementList = new System.Collections.Specialized.StringCollection
+                    {
+                        fileName
+                    };
+                    Clipboard.SetFileDropList(replacementList);
+                    Console.WriteLine($"Файл \"{Path.GetFileName(fileName)}\" скопирован в буфер обмена.");
+                }
+                else
+                {
+                    Console.WriteLine($"Файл \"{Path.GetFileName(fileName)}\" не существует.");
+                }
+            }
+            else if (args.Length == 2)
             {
                 string fileExtension = args[0];
                 if(!fileExtension.StartsWith(".")) fileExtension = "." + fileExtension;
@@ -33,16 +50,19 @@ namespace FileToClipBoard
                 }
                 if (!string.IsNullOrEmpty(fileName))
                 {
-                    System.Collections.Specialized.StringCollection replacementList = new System.Collections.Specialized.StringCollection();
-                    replacementList.Add(fileName);
+                    System.Collections.Specialized.StringCollection replacementList = new System.Collections.Specialized.StringCollection
+                    {
+                        fileName
+                    };
                     Clipboard.SetFileDropList(replacementList);
                     Console.WriteLine($"Файл \"{Path.GetFileName(fileName)}\" скопирован в буфер обмена.");
                 }
             }
             else
             {
-                Console.WriteLine("Программа ищет в целевой папке последний созданный файл с указанным расширением и добавляет его в буфер обмена. \n" +
-                    "Необходимо запускать программу передав 2 аргумента:\n\n" +
+                Console.WriteLine("При вызове с одним аргументом программа добавляет в буфер обмена файл, путь к которому был передан.\n\n" +
+                    "При вызове с двумя аргументами программа добавляет в буфер обмена последний созданный файл с указанным расширением находщийся в целевой папке. \n" +
+                    "При передаче двух аргументов нужно передавать:\n" +
                     "\t* Расширение файла;\n" +
                     "\t* Путь к целевой папке.");
                 Console.ReadKey();
