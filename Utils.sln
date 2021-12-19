@@ -42,6 +42,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MassCalc.Fr4.7", "MassCalc.
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FileToClipBoard", "FileToClipBoard\FileToClipBoard.csproj", "{6451D366-B295-4A16-BE67-BD5951BECBA0}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AutoElma", "AutoElma\AutoElma.csproj", "{8AE1E3A4-0E3C-4948-A354-A17C8874FFFA}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -186,6 +188,14 @@ Global
 		{6451D366-B295-4A16-BE67-BD5951BECBA0}.Release|Any CPU.Build.0 = Release|Any CPU
 		{6451D366-B295-4A16-BE67-BD5951BECBA0}.Release|x86.ActiveCfg = Release|Any CPU
 		{6451D366-B295-4A16-BE67-BD5951BECBA0}.Release|x86.Build.0 = Release|Any CPU
+		{8AE1E3A4-0E3C-4948-A354-A17C8874FFFA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8AE1E3A4-0E3C-4948-A354-A17C8874FFFA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8AE1E3A4-0E3C-4948-A354-A17C8874FFFA}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{8AE1E3A4-0E3C-4948-A354-A17C8874FFFA}.Debug|x86.Build.0 = Debug|Any CPU
+		{8AE1E3A4-0E3C-4948-A354-A17C8874FFFA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8AE1E3A4-0E3C-4948-A354-A17C8874FFFA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8AE1E3A4-0E3C-4948-A354-A17C8874FFFA}.Release|x86.ActiveCfg = Release|Any CPU
+		{8AE1E3A4-0E3C-4948-A354-A17C8874FFFA}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
