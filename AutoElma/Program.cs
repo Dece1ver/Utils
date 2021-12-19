@@ -1,10 +1,20 @@
 ﻿using AutoElma;
 using AutoElma.Infrastructure;
 using Newtonsoft.Json;
+using OpenQA.Selenium;
+using OpenQA.Selenium.Chrome;
+using OpenQA.Selenium.Support.UI;
+using WebDriverManager;
+using WebDriverManager.DriverConfigs.Impl;
+
+bool appWork = true;
 
 string settingDir = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Personal), "dece1ver", "AutoElma");
 string settingFile = Path.Combine(settingDir, "settings.json");
-Settings settings = new Settings();
+Settings settings;
+Console.Title = "Auto Elma";
+
+new DriverManager().SetUpDriver(new ChromeConfig());
 
 if (!Directory.Exists(settingDir))
 {
@@ -12,30 +22,52 @@ if (!Directory.Exists(settingDir))
 }
 try
 {
-    settings = JsonConvert.DeserializeObject<Settings>(settingFile);
+    Console.Write("Чтение параметров...");
+    settings = JsonConvert.DeserializeObject<Settings>(File.ReadAllText(settingFile));
+    Console.Write("успешно.\n");
 }
 catch
 {
-    Util.CreateConfig(settingFile, new Settings());
+    Console.Write("неудача.\nЗапись новых параметров...");
+    Util.WriteConfig(settingFile, new Settings());
     settings = JsonConvert.DeserializeObject<Settings>(File.ReadAllText(settingFile));
+    Console.Write("успешно.\n");
 }
 
-while (true)
+while (appWork)
 {
     Console.Clear();
-    Console.WriteLine("Главное меню");
-    Console.WriteLine($"Наименование рабочего процесса: {settings.WorkName}");
-    Console.WriteLine($"Наименование обеденного процесса: {settings.DinnerName}");
-    Console.WriteLine($"Время обеденного процесса: {settings.DinnerTime}");
+    Console.WriteLine("* * * Auto Elma * * *\n");
+    Console.WriteLine($"Наименование рабочего процесса: {settings?.WorkName}");
+    Console.WriteLine($"Наименование обеденного процесса: {settings?.DinnerName}");
+    Console.WriteLine($"Время обеденного процесса, мин: {settings.DinnerTime}");
+    Console.WriteLine($"Автоматическое закрытие задачи: {(settings.AutoConfim ? "Да" : "Нет")}");
+    Console.WriteLine("\nВведите номер действия:");
+    Console.WriteLine($"[1] Отметить работу");
+    Console.WriteLine($"[2] Изменить параметры");
+    Console.WriteLine($"\n[0] Выход");
     Console.Write("\n>");
     var choice = Console.ReadKey().Key;
     switch (choice)
     {
         case ConsoleKey.NumPad1 or ConsoleKey.D1:
-
+            Console.Clear();
+            Console.WriteLine(Util.Work());
             Console.ReadKey();
-                break;
+            break;
+        case ConsoleKey.NumPad2 or ConsoleKey.D2:
+            settings = Util.SetUp(settings);
+            Util.WriteConfig(settingFile, settings);
+            break;
+        case ConsoleKey.NumPad3 or ConsoleKey.D3:
+
+            break;
+        case ConsoleKey.NumPad0 or ConsoleKey.D0:
+            appWork = false;
+            break;
         default:
             break;
     }
 }
+
+

@@ -8,8 +8,17 @@ namespace AutoElma
 {
     public class Settings
     {
-        public string DinnerName { get; set; } = "1.04 Обед *";
-        public string WorkName { get; set; } = "Общепроизводственная деятельность";
-        public int DinnerTime { get; set; } = 30;
+        public string DinnerName { get; set; }
+        public string WorkName { get; set; }
+        public int DinnerTime { get; set; }
+        public bool AutoConfim { get; set; }
+
+        public Settings(string dinnerName = "Обед", string workName = "Общепроизводственная деятельность", int dinnerTime = 30, bool autoConfim = false)
+        {
+            DinnerName = dinnerName;
+            WorkName = workName;
+            DinnerTime = dinnerTime;
+            AutoConfim = autoConfim;
+        }
     }
 }
