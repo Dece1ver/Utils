@@ -4,6 +4,7 @@ using Newtonsoft.Json;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Chrome;
 using OpenQA.Selenium.Support.UI;
+using System.Text;
 using WebDriverManager;
 using WebDriverManager.DriverConfigs.Impl;
 
@@ -24,6 +25,7 @@ try
 {
     Console.Write("Чтение параметров...");
     settings = JsonConvert.DeserializeObject<Settings>(File.ReadAllText(settingFile));
+    if (settings is null) throw new Exception();
     Console.Write("успешно.\n");
 }
 catch
@@ -38,8 +40,10 @@ while (appWork)
 {
     Console.Clear();
     Console.WriteLine("* * * Auto Elma * * *\n");
-    Console.WriteLine($"Наименование рабочего процесса: {settings?.WorkName}");
-    Console.WriteLine($"Наименование обеденного процесса: {settings?.DinnerName}");
+    Console.WriteLine($"Логин Elma: {settings?.Login}");
+    Console.WriteLine($"Пароль Elma: {(settings?.Pass.Length > 0 ? new string('*', settings.Pass.Length) : string.Empty)}");
+    Console.WriteLine($"Наименование рабочего процесса: {settings.WorkName}");
+    Console.WriteLine($"Наименование обеденного процесса: {settings.DinnerName}");
     Console.WriteLine($"Время обеденного процесса, мин: {settings.DinnerTime}");
     Console.WriteLine($"Автоматическое закрытие задачи: {(settings.AutoConfim ? "Да" : "Нет")}");
     Console.WriteLine("\nВведите номер действия:");
@@ -52,7 +56,15 @@ while (appWork)
     {
         case ConsoleKey.NumPad1 or ConsoleKey.D1:
             Console.Clear();
-            Console.WriteLine(Util.Work());
+            string result = Util.Work(settings);
+            if (result == "Завершено.")
+            {
+                Console.WriteLine(result + "\nДля завершения нажмите любую клавишу...");
+                appWork = false;
+                if (!settings.AutoConfim) Console.ReadKey();
+                break;
+            }
+            Console.WriteLine(result + "\nДля завершения нажмите любую клавишу...");
             Console.ReadKey();
             break;
         case ConsoleKey.NumPad2 or ConsoleKey.D2:

@@ -12,13 +12,17 @@ namespace AutoElma
         public string WorkName { get; set; }
         public int DinnerTime { get; set; }
         public bool AutoConfim { get; set; }
+        public string Login { get; set; }
+        public string Pass { get; set; }
 
-        public Settings(string dinnerName = "Обед", string workName = "Общепроизводственная деятельность", int dinnerTime = 30, bool autoConfim = false)
+        public Settings(string dinnerName = "Обед", string workName = "1.4. ПО ПОДРАЗДЕЛЕНИЯМ", int dinnerTime = 60, bool autoConfim = false, string login = "", string pass = "")
         {
             DinnerName = dinnerName;
             WorkName = workName;
             DinnerTime = dinnerTime;
             AutoConfim = autoConfim;
+            Login = login;
+            Pass = pass;
         }
     }
 }
