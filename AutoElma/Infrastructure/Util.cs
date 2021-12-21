@@ -98,14 +98,14 @@ namespace AutoElma.Infrastructure
 
         public static string Work(Settings settings)
         {
-            int width = Console.WindowWidth;
+            int tryout = 10;
             List<string> output = new();
+            output.Log("* * * Отметка работы * * *\n");
             ChromeDriverService chromeservice = ChromeDriverService.CreateDefaultService();
             chromeservice.HideCommandPromptWindow = true;
             using (IWebDriver driver = new ChromeDriver(chromeservice))
             {
                 string link = "http://elma:8000/Tasks/AllTasks/Incoming?FilterId=0";
-                Console.Clear();
                 output.Log("Вход в Elma...");
                 WebDriverWait wait = new(driver, TimeSpan.FromSeconds(10));
                 wait.IgnoreExceptionTypes(typeof(NoSuchElementException), typeof(ElementNotVisibleException));
@@ -115,48 +115,59 @@ namespace AutoElma.Infrastructure
                 driver.FindElement(By.Id("password")).SendKeys(Decrypt(settings.Pass, "http://areopag") + Keys.Enter);
 
                 // поиск задачи на распределение времени
-                output.Log("Поиск задач...");
-                for (int i = 0; i < 5; i++)
+                output.Log("Проверка задач...");
+                for (int i = 0; i < tryout; i++)
                 {
                     Thread.Sleep(500);
                     try
                     {
                         //wait.Until(wd => wd.FindElement(By.LinkText("Распределить рабочее время")).Displayed);
-                        output.Log($"Поиск задач..успешно", true);
+                        driver.FindElement(By.LinkText("Распределить рабочее время"));
+                        output.Log($"Проверка задач..успешно", true);
                         break;
                     }
                     catch (NoSuchElementException)
                     {
-                        output.Log($"Поиск задач...попытка {i + 1}", true);
-                        if (i == 4) return "Нет задач на распределение рабочего времени.";
+                        output.Log($"Проверка задач...попытка {i + 1}", true);
+                        if (i == 4) 
+                        {
+                            output.Log($"Проверка задач...неудача", true);
+                            return "Нет задач на распределение рабочего времени.";
+                        }
                     }
                 }
 
                 int tasksCount = driver.FindElements(By.LinkText("Распределить рабочее время")).Count;
-                if (tasksCount == 0) return "Задач по распределению рабочего времени не обнаружено";
+                if (tasksCount == 0) {
+                    return "Задач по распределению рабочего времени не обнаружено";
+                }
                 while (tasksCount > 0)
                 {
                     if (driver.Url != link) driver.Navigate().GoToUrl(link);
-                    output.Log("Поиск задач...");
-                    for (int i = 0; i < 5; i++)
+                    output.Log("Поиск задачи...");
+                    for (int i = 0; i < tryout; i++)
                     {
                         Thread.Sleep(500);
                         try
                         {
                             //wait.Until(wd => wd.FindElement(By.LinkText("Распределить рабочее время")).Displayed);
-                            output.Log($"Поиск задач..успешно", true);
+                            output.Log($"Поиск задачи...успешно", true);
                             break;
                         }
                         catch (NoSuchElementException)
                         {
-                            output.Log($"Поиск задач...попытка {i + 1}", true);
-                            if (i == 4) return "Нет задач на распределение рабочего времени.";
+                            output.Log($"Поиск задачи...попытка {i + 1}", true);
+                            if (i == 4)
+                            {
+                                output.Log($"Поиск задачи...нудача", true);
+                                return "Нет задач на распределение рабочего времени.";
+                            }
                         }
                     }
 
                     // выбор задачи
                     output.Log("Выбор задачи...");
-                    for (int i = 0; i < 5; i++)
+                    for (int i = 0; i < tryout; i++)
                     {
                         Thread.Sleep(500);
                         try
@@ -168,13 +179,17 @@ namespace AutoElma.Infrastructure
                         catch
                         {
                             output.Log($"Выбор задачи...попытка {i + 1}", true);
-                            if (i == 4) return "Не удалось.";
+                            if (i == 4)
+                            {
+                                output.Log($"Выбор задачи...неудача", true);
+                                return "Не удалось.";
+                            }
                         }
                     }
 
                     // открываем поиск
                     output.Log("Открытваем список...");
-                    for (int i = 0; i < 5; i++)
+                    for (int i = 0; i < tryout; i++)
                     {
                         Thread.Sleep(500);
                         try
@@ -187,13 +202,16 @@ namespace AutoElma.Infrastructure
                         catch
                         {
                             output.Log($"Открытваем список...попытка {i + 1}", true);
-                            if (i == 4) return "Не удалось.";
+                            if (i == 4) {
+                                output.Log($"Открытваем список...неудача", true);
+                                return "Не удалось.";
+                            }
                         }
                     }
 
                     // ищем
                     output.Log($"Ввод наименования обеденного процесса...");
-                    for (int i = 0; i < 5; i++)
+                    for (int i = 0; i < tryout; i++)
                     {
                         Thread.Sleep(500);
                         try
@@ -206,13 +224,16 @@ namespace AutoElma.Infrastructure
                         catch
                         {
                             output.Log($"Ввод наименования обеденного процесса...попытка {i + 1}", true);
-                            if (i == 4) return "Не удалось.";
+                            if (i == 4) {
+                                output.Log($"Ввод наименования обеденного процесса...неудача", true);
+                                return "Не удалось.";
+                            }
                         }
                     }
 
                     // тыкаем первый найденный вариант
                     output.Log($"Выбор первого найденного варианта...");
-                    for (int i = 0; i < 5; i++)
+                    for (int i = 0; i < tryout; i++)
                     {
                         Thread.Sleep(500);
                         try
@@ -225,7 +246,10 @@ namespace AutoElma.Infrastructure
                         catch
                         {
                             output.Log($"Выбор первого найденного варианта...попытка {i + 1}", true);
-                            if (i == 4) return "Не удалось.";
+                            if (i == 4) {
+                                output.Log($"Выбор первого найденного варианта...неудача", true);
+                                return "Не удалось.";
+                            }
                         }
                     }
 
@@ -234,7 +258,7 @@ namespace AutoElma.Infrastructure
                     var time = TimeOnly.FromTimeSpan(TimeSpan.FromMinutes(settings.DinnerTime));
                     if (time.Hour >= 1)
                     {
-                        for (int i = 0; i < 5; i++)
+                        for (int i = 0; i < tryout; i++)
                         {
                             Thread.Sleep(500);
                             try
@@ -247,13 +271,16 @@ namespace AutoElma.Infrastructure
                             catch
                             {
                                 output.Log($"Ввод времени обеда...попытка {i + 1}", true);
-                                if (i == 4) return "Не удалось.";
+                                if (i == 4) {
+                                    output.Log($"Ввод времени обеда...неудача", true);
+                                    return "Не удалось.";
+                                }
                             }
                         }
                     }
                     if (time.Minute >= 1)
                     {
-                        for (int i = 0; i < 5; i++)
+                        for (int i = 0; i < tryout; i++)
                         {
                             Thread.Sleep(500);
                             try
@@ -265,15 +292,18 @@ namespace AutoElma.Infrastructure
                             }
                             catch
                             {
-                                output.Log($"Ввод времени...попытка {i + 1}", true);
-                                if (i == 4) return "Не удалось.";
+                                output.Log($"Ввод времени обеда...попытка {i + 1}", true);
+                                if (i == 4) {
+                                    output.Log($"Ввод времени обеда...неудача", true);
+                                    return "Не удалось.";
+                                }
                             }
                         }
                     }
 
                     // добавляем
                     output.Log($"Подтверждаем обед...");
-                    for (int i = 0; i < 5; i++)
+                    for (int i = 0; i < tryout; i++)
                     {
                         Thread.Sleep(500);
                         try
@@ -286,13 +316,16 @@ namespace AutoElma.Infrastructure
                         catch
                         {
                             output.Log($"Подтверждаем обед...попытка {i + 1}", true);
-                            if (i == 4) return "Не удалось.";
+                            if (i == 4) {
+                                output.Log($"Подтверждаем обед...неудача", true);
+                                return "Не удалось.";
+                            }
                         }
                     }
 
                     // открываем поиск
                     output.Log("Открытваем список...");
-                    for (int i = 0; i < 5; i++)
+                    for (int i = 0; i < tryout; i++)
                     {
                         Thread.Sleep(500);
                         try
@@ -305,13 +338,16 @@ namespace AutoElma.Infrastructure
                         catch
                         {
                             output.Log($"Открытваем список...попытка {i + 1}", true);
-                            if (i == 4) return "Не удалось.";
+                            if (i == 4) {
+                                output.Log($"Открытваем список...неудача {i + 1}", true);
+                                return "Не удалось.";
+                            }
                         }
                     }
 
                     // ищем
                     output.Log($"Ввод наименования рабочего процесса...");
-                    for (int i = 0; i < 5; i++)
+                    for (int i = 0; i < tryout; i++)
                     {
                         Thread.Sleep(500);
                         try
@@ -324,13 +360,16 @@ namespace AutoElma.Infrastructure
                         catch
                         {
                             output.Log($"Ввод наименования рабочего процесса...попытка {i + 1}", true);
-                            if (i == 4) return "Не удалось.";
+                            if (i == 4) {
+                                output.Log($"Ввод наименования рабочего процесса...неудача", true);
+                                return "Не удалось.";
+                            }
                         }
                     }
 
                     // тыкаем первый найденный вариант
                     output.Log($"Выбор первого найденного варианта...");
-                    for (int i = 0; i < 5; i++)
+                    for (int i = 0; i < tryout; i++)
                     {
                         Thread.Sleep(500);
                         try
@@ -343,13 +382,16 @@ namespace AutoElma.Infrastructure
                         catch
                         {
                             output.Log($"Выбор первого найденного варианта...попытка {i + 1}", true);
-                            if (i == 4) return "Не удалось.";
+                            if (i == 4) {
+                                output.Log($"Выбор первого найденного варианта...неудача", true);
+                                return "Не удалось.";
+                            }
                         }
                     }
 
                     // указываем остаточное время
                     output.Log($"Ввод оставшегося времени работы...");
-                    for (int i = 0; i < 5; i++)
+                    for (int i = 0; i < tryout; i++)
                     {
                         Thread.Sleep(500);
                         try
@@ -363,14 +405,17 @@ namespace AutoElma.Infrastructure
                         {
 
                             output.Log($"Ввод оставшегося времени работы...попытка {i + 1}", true);
-                            if (i == 4) return "Не удалось.";
+                            if (i == 4) {
+                                output.Log($"Ввод оставшегося времени работы...неудача", true);
+                                return "Не удалось.";
+                            }
                         }
                     }
 
 
                     // добавляем
                     output.Log($"Подтверждаем работу...");
-                    for (int i = 0; i < 5; i++)
+                    for (int i = 0; i < tryout; i++)
                     {
                         Thread.Sleep(500);
                         try
@@ -383,7 +428,10 @@ namespace AutoElma.Infrastructure
                         catch
                         {
                             output.Log($"Подтверждаем работу...попытка {i + 1}", true);
-                            if (i == 4) return "Не удалось.";
+                            if (i == 4) {
+                                output.Log($"Подтверждаем работу...неудача", true);
+                                return "Не удалось.";
+                            }
                         }
                     }
 
@@ -391,7 +439,7 @@ namespace AutoElma.Infrastructure
                     output.Log($"Подтверждаем выполнение задачи...");
                     if (settings.AutoConfim)
                     {
-                        for (int i = 0; i < 5; i++)
+                        for (int i = 0; i < tryout; i++)
                         {
                             Thread.Sleep(500);
                             try
@@ -406,7 +454,10 @@ namespace AutoElma.Infrastructure
                             {
 
                                 output.Log($"Подтверждаем выполнение задачи...попытка {i + 1}", true);
-                                if (i == 4) return "Не удалось.";
+                                if (i == 4) {
+                                    output.Log($"Подтверждаем выполнение задачи...неудача", true);
+                                    return "Не удалось.";
+                                }
                             }
                         }
                     }
@@ -415,7 +466,7 @@ namespace AutoElma.Infrastructure
                         while (driver.FindElements(By.XPath("//input[contains(@value,\"Выполнено\")]")).Count >= 1)
                         {
                             Thread.Sleep(1000);
-                            output.Log("Ожидание выполнения...");
+                            output.Log("Ожидание подтверждения выполнения задачи...", true);
                         }
                     }
                     tasksCount--;
@@ -431,7 +482,9 @@ namespace AutoElma.Infrastructure
        int keySize = 256)
         {
             if (string.IsNullOrEmpty(plainText))
+                {
                 return "";
+            }
 
             byte[] initialVectorBytes = Encoding.ASCII.GetBytes(initialVector);
             byte[] saltValueBytes = Encoding.ASCII.GetBytes(salt);
@@ -469,7 +522,9 @@ namespace AutoElma.Infrastructure
        int keySize = 256)
         {
             if (string.IsNullOrEmpty(cipherText))
+                {
                 return "";
+            }
 
             byte[] initialVectorBytes = Encoding.ASCII.GetBytes(initialVector);
             byte[] saltValueBytes = Encoding.ASCII.GetBytes(salt);
