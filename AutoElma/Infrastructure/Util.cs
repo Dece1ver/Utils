@@ -82,9 +82,10 @@ namespace AutoElma.Infrastructure
             }
         }
 
-        public static void Log(this List<string> output, string text, bool replaceLast = false)
+        public static void Log(this List<string> output, string text, bool replaceLast = false, bool addDate = true)
         {
             Console.Clear();
+            if (addDate) text = $"[{DateTime.Now:dd.MM.yy HH:mm:ss]}: {text}";
             if (!replaceLast || output.Count == 0)
             {
                 output.Add(text);
@@ -100,7 +101,7 @@ namespace AutoElma.Infrastructure
         {
             int tryout = 10;
             List<string> output = new();
-            output.Log("* * * Отметка работы * * *\n");
+            output.Log("* * * Отметка работы * * *\n", addDate: false);
             ChromeDriverService chromeservice = ChromeDriverService.CreateDefaultService();
             chromeservice.HideCommandPromptWindow = true;
             using (IWebDriver driver = new ChromeDriver(chromeservice))
@@ -109,7 +110,7 @@ namespace AutoElma.Infrastructure
                 output.Log("Вход в Elma...");
                 WebDriverWait wait = new(driver, TimeSpan.FromSeconds(10));
                 wait.IgnoreExceptionTypes(typeof(NoSuchElementException), typeof(ElementNotVisibleException));
-                output.Log("Вход в Elma...успешно", true);
+                output.Log("Вход в Elma...[ОК]", true);
                 driver.Navigate().GoToUrl(link);
                 driver.FindElement(By.Id("login")).SendKeys(settings.Login);
                 driver.FindElement(By.Id("password")).SendKeys(Decrypt(settings.Pass, "http://areopag") + Keys.Enter);
@@ -123,7 +124,7 @@ namespace AutoElma.Infrastructure
                     {
                         //wait.Until(wd => wd.FindElement(By.LinkText("Распределить рабочее время")).Displayed);
                         driver.FindElement(By.LinkText("Распределить рабочее время"));
-                        output.Log($"Проверка задач..успешно", true);
+                        output.Log($"Проверка задач...[ОК]", true);
                         break;
                     }
                     catch (NoSuchElementException)
@@ -131,7 +132,7 @@ namespace AutoElma.Infrastructure
                         output.Log($"Проверка задач...попытка {i + 1}", true);
                         if (i == 4) 
                         {
-                            output.Log($"Проверка задач...неудача", true);
+                            output.Log($"Проверка задач...[НЕУДАЧА]", true);
                             return "Нет задач на распределение рабочего времени.";
                         }
                     }
@@ -151,7 +152,7 @@ namespace AutoElma.Infrastructure
                         try
                         {
                             //wait.Until(wd => wd.FindElement(By.LinkText("Распределить рабочее время")).Displayed);
-                            output.Log($"Поиск задачи...успешно", true);
+                            output.Log($"Поиск задачи...[ОК]", true);
                             break;
                         }
                         catch (NoSuchElementException)
@@ -159,7 +160,7 @@ namespace AutoElma.Infrastructure
                             output.Log($"Поиск задачи...попытка {i + 1}", true);
                             if (i == 4)
                             {
-                                output.Log($"Поиск задачи...нудача", true);
+                                output.Log($"Поиск задачи...[НЕУДАЧА]", true);
                                 return "Нет задач на распределение рабочего времени.";
                             }
                         }
@@ -173,7 +174,7 @@ namespace AutoElma.Infrastructure
                         try
                         {
                             driver.FindElement(By.LinkText("Распределить рабочее время")).Click();
-                            output.Log("Выбор задачи...успешно", true);
+                            output.Log("Выбор задачи...[ОК]", true);
                             break;
                         }
                         catch
@@ -181,7 +182,7 @@ namespace AutoElma.Infrastructure
                             output.Log($"Выбор задачи...попытка {i + 1}", true);
                             if (i == 4)
                             {
-                                output.Log($"Выбор задачи...неудача", true);
+                                output.Log($"Выбор задачи...[НЕУДАЧА]", true);
                                 return "Не удалось.";
                             }
                         }
@@ -196,14 +197,14 @@ namespace AutoElma.Infrastructure
                         {
                             //wait.Until(wd => wd.FindElement(By.ClassName("combobox-icon")).Displayed);
                             driver.FindElement(By.ClassName("combobox-icon")).Click();
-                            output.Log("Открытваем список...успешно", true);
+                            output.Log("Открытваем список...[ОК]", true);
                             break;
                         }
                         catch
                         {
                             output.Log($"Открытваем список...попытка {i + 1}", true);
                             if (i == 4) {
-                                output.Log($"Открытваем список...неудача", true);
+                                output.Log($"Открытваем список...[НЕУДАЧА]", true);
                                 return "Не удалось.";
                             }
                         }
@@ -218,14 +219,14 @@ namespace AutoElma.Infrastructure
                         {
                             //wait.Until(wd => wd.FindElement(By.XPath("//input[@placeholder='Что искать?']")).Displayed);
                             driver.FindElement(By.XPath("//input[@placeholder='Что искать?']")).SendKeys(settings.DinnerName + Keys.Enter);
-                            output.Log("Ввод наименования обеденного процесса...успешно", true);
+                            output.Log("Ввод наименования обеденного процесса...[ОК]", true);
                             break;
                         }
                         catch
                         {
                             output.Log($"Ввод наименования обеденного процесса...попытка {i + 1}", true);
                             if (i == 4) {
-                                output.Log($"Ввод наименования обеденного процесса...неудача", true);
+                                output.Log($"Ввод наименования обеденного процесса...[НЕУДАЧА]", true);
                                 return "Не удалось.";
                             }
                         }
@@ -240,14 +241,14 @@ namespace AutoElma.Infrastructure
                         {
                             //wait.Until(wd => wd.FindElement(By.XPath("//span[contains(@id,\"EntityxCompanyProject\")]")).Displayed);
                             driver.FindElement(By.XPath("//span[contains(@id,\"EntityxCompanyProject\")]")).Click();
-                            output.Log($"Выбор первого найденного варианта...успешно", true);
+                            output.Log($"Выбор первого найденного варианта...[ОК]", true);
                             break;
                         }
                         catch
                         {
                             output.Log($"Выбор первого найденного варианта...попытка {i + 1}", true);
                             if (i == 4) {
-                                output.Log($"Выбор первого найденного варианта...неудача", true);
+                                output.Log($"Выбор первого найденного варианта...[НЕУДАЧА]", true);
                                 return "Не удалось.";
                             }
                         }
@@ -265,14 +266,14 @@ namespace AutoElma.Infrastructure
                             {
                                 //wait.Until(wd => wd.FindElement(By.Id("Entity_WorkedTime_hours")).Displayed);
                                 driver.FindElement(By.Id("Entity_WorkedTime_hours")).SendKeys(time.Hour.ToString());
-                                output.Log($"Ввод времени обеда...успешно", true);
+                                output.Log($"Ввод времени обеда...[ОК]", true);
                                 break;
                             }
                             catch
                             {
                                 output.Log($"Ввод времени обеда...попытка {i + 1}", true);
                                 if (i == 4) {
-                                    output.Log($"Ввод времени обеда...неудача", true);
+                                    output.Log($"Ввод времени обеда...[НЕУДАЧА]", true);
                                     return "Не удалось.";
                                 }
                             }
@@ -287,14 +288,14 @@ namespace AutoElma.Infrastructure
                             {
                                 //wait.Until(wd => wd.FindElement(By.Id("Entity_WorkedTime_minutes")).Displayed);
                                 driver.FindElement(By.Id("Entity_WorkedTime_minutes")).SendKeys(time.Minute.ToString());
-                                output.Log($"Ввод времени обеда...успешно", true);
+                                output.Log($"Ввод времени обеда...[ОК]", true);
                                 break;
                             }
                             catch
                             {
                                 output.Log($"Ввод времени обеда...попытка {i + 1}", true);
                                 if (i == 4) {
-                                    output.Log($"Ввод времени обеда...неудача", true);
+                                    output.Log($"Ввод времени обеда...[НЕУДАЧА]", true);
                                     return "Не удалось.";
                                 }
                             }
@@ -310,14 +311,14 @@ namespace AutoElma.Infrastructure
                         {
                             //wait.Until(wd => wd.FindElement(By.XPath("//a[contains(@class,\"t-button\")]")).Displayed);
                             driver.FindElement(By.XPath("//a[contains(@class,\"t-button\")]")).Click();
-                            output.Log($"Подтверждаем обед...успешно", true);
+                            output.Log($"Подтверждаем обед...[ОК]", true);
                             break;
                         }
                         catch
                         {
                             output.Log($"Подтверждаем обед...попытка {i + 1}", true);
                             if (i == 4) {
-                                output.Log($"Подтверждаем обед...неудача", true);
+                                output.Log($"Подтверждаем обед...[НЕУДАЧА]", true);
                                 return "Не удалось.";
                             }
                         }
@@ -332,14 +333,14 @@ namespace AutoElma.Infrastructure
                         {
                             //wait.Until(wd => wd.FindElement(By.ClassName("combobox-icon")).Displayed);
                             driver.FindElement(By.ClassName("combobox-icon")).Click();
-                            output.Log($"Открытваем список...успешно", true);
+                            output.Log($"Открытваем список...[ОК]", true);
                             break;
                         }
                         catch
                         {
                             output.Log($"Открытваем список...попытка {i + 1}", true);
                             if (i == 4) {
-                                output.Log($"Открытваем список...неудача {i + 1}", true);
+                                output.Log($"Открытваем список...[НЕУДАЧА] {i + 1}", true);
                                 return "Не удалось.";
                             }
                         }
@@ -354,14 +355,14 @@ namespace AutoElma.Infrastructure
                         {
                             //wait.Until(wd => wd.FindElement(By.XPath("//input[@placeholder='Что искать?']")).Displayed);
                             driver.FindElement(By.XPath("//input[@placeholder='Что искать?']")).SendKeys(settings.WorkName + Keys.Enter);
-                            output.Log($"Ввод наименования рабочего процесса...успешно", true);
+                            output.Log($"Ввод наименования рабочего процесса...[ОК]", true);
                             break;
                         }
                         catch
                         {
                             output.Log($"Ввод наименования рабочего процесса...попытка {i + 1}", true);
                             if (i == 4) {
-                                output.Log($"Ввод наименования рабочего процесса...неудача", true);
+                                output.Log($"Ввод наименования рабочего процесса...[НЕУДАЧА]", true);
                                 return "Не удалось.";
                             }
                         }
@@ -376,14 +377,14 @@ namespace AutoElma.Infrastructure
                         {
                             //wait.Until(wd => wd.FindElement(By.XPath("//span[contains(@id,\"EntityxCompanyProject\")]")).Displayed);
                             driver.FindElement(By.XPath("//span[contains(@id,\"EntityxCompanyProject\")]")).Click();
-                            output.Log($"Выбор первого найденного варианта...успешно", true);
+                            output.Log($"Выбор первого найденного варианта...[ОК]", true);
                             break;
                         }
                         catch
                         {
                             output.Log($"Выбор первого найденного варианта...попытка {i + 1}", true);
                             if (i == 4) {
-                                output.Log($"Выбор первого найденного варианта...неудача", true);
+                                output.Log($"Выбор первого найденного варианта...[НЕУДАЧА]", true);
                                 return "Не удалось.";
                             }
                         }
@@ -398,7 +399,7 @@ namespace AutoElma.Infrastructure
                         {
                             //wait.Until(wd => wd.FindElement(By.Id("Entity_WorkedTime_days")).Displayed);
                             driver.FindElement(By.Id("Entity_WorkedTime_days")).SendKeys("1");
-                            output.Log($"Ввод оставшегося времени работы...успешно", true);
+                            output.Log($"Ввод оставшегося времени работы...[ОК]", true);
                             break;
                         }
                         catch
@@ -406,7 +407,7 @@ namespace AutoElma.Infrastructure
 
                             output.Log($"Ввод оставшегося времени работы...попытка {i + 1}", true);
                             if (i == 4) {
-                                output.Log($"Ввод оставшегося времени работы...неудача", true);
+                                output.Log($"Ввод оставшегося времени работы...[НЕУДАЧА]", true);
                                 return "Не удалось.";
                             }
                         }
@@ -422,14 +423,14 @@ namespace AutoElma.Infrastructure
                         {
                             //wait.Until(wd => wd.FindElement(By.XPath("//a[contains(@class,\"t-button\")]")).Displayed);
                             driver.FindElement(By.XPath("//a[contains(@class,\"t-button\")]")).Click();
-                            output.Log($"Подтверждаем работу...успешно", true);
+                            output.Log($"Подтверждаем работу...[ОК]", true);
                             break;
                         }
                         catch
                         {
                             output.Log($"Подтверждаем работу...попытка {i + 1}", true);
                             if (i == 4) {
-                                output.Log($"Подтверждаем работу...неудача", true);
+                                output.Log($"Подтверждаем работу...[НЕУДАЧА]", true);
                                 return "Не удалось.";
                             }
                         }
@@ -446,7 +447,7 @@ namespace AutoElma.Infrastructure
                             {
                                 //wait.Until(wd => wd.FindElement(By.XPath("//input[contains(@value,\"Выполнено\")]")).Displayed);
                                 driver.FindElement(By.XPath("//input[contains(@value,\"Выполнено\")]")).Click();
-                                output.Log($"Подтверждаем выполнение задачи...успешно", true);
+                                output.Log($"Подтверждаем выполнение задачи...[ОК]", true);
                                 Thread.Sleep(3000);
                                 break;
                             }
@@ -455,7 +456,7 @@ namespace AutoElma.Infrastructure
 
                                 output.Log($"Подтверждаем выполнение задачи...попытка {i + 1}", true);
                                 if (i == 4) {
-                                    output.Log($"Подтверждаем выполнение задачи...неудача", true);
+                                    output.Log($"Подтверждаем выполнение задачи...[НЕУДАЧА]", true);
                                     return "Не удалось.";
                                 }
                             }
@@ -466,9 +467,10 @@ namespace AutoElma.Infrastructure
                         while (driver.FindElements(By.XPath("//input[contains(@value,\"Выполнено\")]")).Count >= 1)
                         {
                             Thread.Sleep(1000);
-                            output.Log("Ожидание подтверждения выполнения задачи...", true);
+                            output.Log("\n* * * Ожидание ручного подтверждения (кнопка \"Выполнено\") * * *", true, false);
                         }
                     }
+                    if (tasksCount > 1) output.Log($"[{DateTime.Now:dd.MM.yy HH:mm:ss}]: Запуск следующей задачи", true, false);
                     tasksCount--;
                 }
                 
