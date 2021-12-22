@@ -131,7 +131,7 @@ namespace AutoElma.Infrastructure
                 catch (NoSuchElementException)
                 {
                     output.Log($"Проверка задач...попытка {i + 1}", true);
-                    if (i == 4)
+                    if (i == tryout-1)
                     {
                         output.Log($"Проверка задач...[НЕУДАЧА]", true);
                         return "Нет задач на распределение рабочего времени.";
@@ -160,7 +160,7 @@ namespace AutoElma.Infrastructure
                     catch (NoSuchElementException)
                     {
                         output.Log($"Поиск задачи...попытка {i + 1}", true);
-                        if (i == 4)
+                        if (i == tryout-1)
                         {
                             output.Log($"Поиск задачи...[НЕУДАЧА]", true);
                             return "Нет задач на распределение рабочего времени.";
@@ -182,7 +182,7 @@ namespace AutoElma.Infrastructure
                     catch
                     {
                         output.Log($"Выбор задачи...попытка {i + 1}", true);
-                        if (i == 4)
+                        if (i == tryout-1)
                         {
                             output.Log($"Выбор задачи...[НЕУДАЧА]", true);
                             return "Не удалось.";
@@ -205,7 +205,7 @@ namespace AutoElma.Infrastructure
                     catch
                     {
                         output.Log($"Открытваем список...попытка {i + 1}", true);
-                        if (i == 4)
+                        if (i == tryout-1)
                         {
                             output.Log($"Открытваем список...[НЕУДАЧА]", true);
                             return "Не удалось.";
@@ -228,7 +228,7 @@ namespace AutoElma.Infrastructure
                     catch
                     {
                         output.Log($"Ввод наименования обеденного процесса...попытка {i + 1}", true);
-                        if (i == 4)
+                        if (i == tryout-1)
                         {
                             output.Log($"Ввод наименования обеденного процесса...[НЕУДАЧА]", true);
                             return "Не удалось.";
@@ -251,7 +251,7 @@ namespace AutoElma.Infrastructure
                     catch
                     {
                         output.Log($"Выбор первого найденного варианта...попытка {i + 1}", true);
-                        if (i == 4)
+                        if (i == tryout-1)
                         {
                             output.Log($"Выбор первого найденного варианта...[НЕУДАЧА]", true);
                             return "Не удалось.";
@@ -277,7 +277,7 @@ namespace AutoElma.Infrastructure
                         catch
                         {
                             output.Log($"Ввод времени обеда...попытка {i + 1}", true);
-                            if (i == 4)
+                            if (i == tryout-1)
                             {
                                 output.Log($"Ввод времени обеда...[НЕУДАЧА]", true);
                                 return "Не удалось.";
@@ -300,7 +300,7 @@ namespace AutoElma.Infrastructure
                         catch
                         {
                             output.Log($"Ввод времени обеда...попытка {i + 1}", true);
-                            if (i == 4)
+                            if (i == tryout-1)
                             {
                                 output.Log($"Ввод времени обеда...[НЕУДАЧА]", true);
                                 return "Не удалось.";
@@ -324,7 +324,7 @@ namespace AutoElma.Infrastructure
                     catch
                     {
                         output.Log($"Подтверждаем обед...попытка {i + 1}", true);
-                        if (i == 4)
+                        if (i == tryout-1)
                         {
                             output.Log($"Подтверждаем обед...[НЕУДАЧА]", true);
                             return "Не удалось.";
@@ -347,7 +347,7 @@ namespace AutoElma.Infrastructure
                     catch
                     {
                         output.Log($"Открытваем список...попытка {i + 1}", true);
-                        if (i == 4)
+                        if (i == tryout-1)
                         {
                             output.Log($"Открытваем список...[НЕУДАЧА] {i + 1}", true);
                             return "Не удалось.";
@@ -370,7 +370,7 @@ namespace AutoElma.Infrastructure
                     catch
                     {
                         output.Log($"Ввод наименования рабочего процесса...попытка {i + 1}", true);
-                        if (i == 4)
+                        if (i == tryout-1)
                         {
                             output.Log($"Ввод наименования рабочего процесса...[НЕУДАЧА]", true);
                             return "Не удалось.";
@@ -393,7 +393,7 @@ namespace AutoElma.Infrastructure
                     catch
                     {
                         output.Log($"Выбор первого найденного варианта...попытка {i + 1}", true);
-                        if (i == 4)
+                        if (i == tryout-1)
                         {
                             output.Log($"Выбор первого найденного варианта...[НЕУДАЧА]", true);
                             return "Не удалось.";
@@ -417,7 +417,7 @@ namespace AutoElma.Infrastructure
                     {
 
                         output.Log($"Ввод оставшегося времени работы...попытка {i + 1}", true);
-                        if (i == 4)
+                        if (i == tryout-1)
                         {
                             output.Log($"Ввод оставшегося времени работы...[НЕУДАЧА]", true);
                             return "Не удалось.";
@@ -441,7 +441,7 @@ namespace AutoElma.Infrastructure
                     catch
                     {
                         output.Log($"Подтверждаем работу...попытка {i + 1}", true);
-                        if (i == 4)
+                        if (i == tryout-1)
                         {
                             output.Log($"Подтверждаем работу...[НЕУДАЧА]", true);
                             return "Не удалось.";
@@ -468,7 +468,7 @@ namespace AutoElma.Infrastructure
                         {
 
                             output.Log($"Подтверждаем выполнение задачи...попытка {i + 1}", true);
-                            if (i == 4)
+                            if (i == tryout-1)
                             {
                                 output.Log($"Подтверждаем выполнение задачи...[НЕУДАЧА]", true);
                                 return "Не удалось.";
