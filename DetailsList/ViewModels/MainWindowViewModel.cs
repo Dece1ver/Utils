@@ -136,6 +136,8 @@ namespace DetailsList.ViewModels
         public int? DetailsCount => Details?.Count;
 
         public string DetailsText => string.Join("\n", Details is null ? new List<string>() : Details);
+
+        
         #region Команды
 
 
