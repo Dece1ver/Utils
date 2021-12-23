@@ -1,4 +1,5 @@
-﻿using DetailsList.Infrastructure.Commands;
+﻿using DetailsList.Infrastructure;
+using DetailsList.Infrastructure.Commands;
 using DetailsList.ViewModels.Base;
 using System;
 using System.Collections.Generic;
@@ -30,6 +31,15 @@ namespace DetailsList.ViewModels
             get => _Status;
             set => Set(ref _Status, value);
         }
+
+        private bool _ModeComboboxEnabled = true;
+
+        public bool ModeComboboxEnabled
+        {
+            get => _ModeComboboxEnabled;
+            set => Set(ref _ModeComboboxEnabled, value);
+        }
+
 
         private bool _BrowseButtonEnabled = true;
 
@@ -135,9 +145,25 @@ namespace DetailsList.ViewModels
 
         public int? DetailsCount => Details?.Count;
 
-        public string DetailsText => string.Join("\n", Details is null ? new List<string>() : Details);
+        public string DetailsText {
+            get
+            {
+                Details?.Sort();
+                return string.Join("\n", Details is null ? new List<string>() : Details);
+            }
+        }
 
-        
+        /// <summary>
+        /// Список файлов
+        /// </summary>
+        private FindMode _FindMode = FindMode.General;
+
+        public FindMode FindMode
+        {
+            get => _FindMode;
+            set => Set(ref _FindMode, value);
+        }
+
         #region Команды
 
 
@@ -227,6 +253,7 @@ namespace DetailsList.ViewModels
             Status = "Подсчет файлов";
             BrowseButtonEnabled = false;
             SaveButtonEnabled = false;
+            ModeComboboxEnabled = false;
             OnPropertyChanged(nameof(FilesCount));
             OnPropertyChanged(nameof(DetailsCount));
             OnPropertyChanged(nameof(DetailsText));
@@ -246,24 +273,34 @@ namespace DetailsList.ViewModels
                 Progress++;
                 try
                 {
-                    var lines = File.ReadLines(file).Take(2).ToArray();
-                    if (lines.Length > 0 && lines[0] == "%")
+                    switch (FindMode)
                     {
-                        var detail = GetDetailName(file, TargetPath);
-                        if (!Details.Contains(detail) && !string.IsNullOrEmpty(detail)
-                            //&& !(
-                            //new Regex(@"^АР(\d+)", RegexOptions.Compiled).IsMatch(detail) ||
-                            //new Regex(@"^АРМ(\d+)", RegexOptions.Compiled).IsMatch(detail) ||
-                            //new Regex(@"^АРПГА(\d+)", RegexOptions.Compiled).IsMatch(detail) ||
-                            //new Regex(@"^АРКП(\d+)", RegexOptions.Compiled).IsMatch(detail) ||
-                            //new Regex(@"^НМГ(\d+)", RegexOptions.Compiled).IsMatch(detail))
-                            )
-                        {
-                            Details.Add(detail);
-                            OnPropertyChanged(nameof(DetailsCount));
-                            OnPropertyChanged(nameof(DetailsText));
-                        }
+                        case FindMode.General:
+                            var generalLines = File.ReadLines(file).Take(2).ToArray();
+                            if (generalLines.Length > 0 && generalLines[0] == "%")
+                            {
+                                var generalDetail = GetDetailNameFromPath(file, TargetPath);
+                                if (!Details.Contains(generalDetail) && !string.IsNullOrEmpty(generalDetail)) Details.Add(generalDetail);
+                            }
+                            break;
+                        case FindMode.GeneralOnlyNumbers:
+                            var onlyNumberslines = File.ReadLines(file).Take(2).ToArray();
+                            if (onlyNumberslines.Length > 0 && onlyNumberslines[0] == "%")
+                            {
+                                var generalDetail = GetDetailNameFromPath(file, TargetPath, GetNameOptions.OnlyNumber);
+                                if (!Details.Contains(generalDetail) && !string.IsNullOrEmpty(generalDetail)) Details.Add(generalDetail);
+                            }
+                            break;
+                        case FindMode.Mazak350:
+                            var mazak350Detail = NCRenamer.Util.GetMazatrolSmartName(file).TranslateFromEnNumber().FindNumber();
+
+                            if (!Details.Contains(mazak350Detail) && !string.IsNullOrEmpty(mazak350Detail)) Details.Add(mazak350Detail);
+                            break;
+                        default:
+                            break;
                     }
+                    OnPropertyChanged(nameof(DetailsCount));
+                    OnPropertyChanged(nameof(DetailsText));
                 }
                 catch (Exception e)
                 {
@@ -273,6 +310,7 @@ namespace DetailsList.ViewModels
             Status = "Завершено";
             if(DetailsCount > 0) SaveButtonEnabled = true;
             BrowseButtonEnabled = true;
+            ModeComboboxEnabled = true;
             FindButtonText = "Сформировать";
             GetFilesThreadFlag = false;
         }
@@ -300,7 +338,7 @@ namespace DetailsList.ViewModels
             }
         }
 
-        public static string GetDetailName(string file, string targetPath)
+        public static string GetDetailNameFromPath(string file, string targetPath, GetNameOptions options = GetNameOptions.NameWithNumber)
         {
             string cwd = file;
             while (cwd != targetPath)
@@ -310,7 +348,13 @@ namespace DetailsList.ViewModels
                 {
                     if (Path.GetFileName(cwd).Contains(sign))
                     {
-                        return $"{Directory.GetParent(cwd).Name} {Path.GetFileName(cwd)}";
+                        switch (options)
+                        {
+                            case GetNameOptions.NameWithNumber:
+                                return $"{Directory.GetParent(cwd).Name} {Path.GetFileName(cwd)}";
+                            case GetNameOptions.OnlyNumber:
+                                return Path.GetFileName(cwd);
+                        }
                     }
                 }
             }

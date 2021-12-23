@@ -31,6 +31,9 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NCToolTable", "NCToolTable\NCToolTable.csproj", "{BE686622-6B5E-4781-906A-3EF62BDF08FA}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DetailsList", "DetailsList\DetailsList.csproj", "{B564C571-87BE-441C-A33F-5913E347BA4F}"
+	ProjectSection(ProjectDependencies) = postProject
+		{A635F692-BF35-401A-9E09-EE866F571D06} = {A635F692-BF35-401A-9E09-EE866F571D06}
+	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NCRenamer", "NCRenamer\NCRenamer.csproj", "{A635F692-BF35-401A-9E09-EE866F571D06}"
 EndProject
@@ -42,7 +45,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MassCalc.Fr4.7", "MassCalc.
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FileToClipBoard", "FileToClipBoard\FileToClipBoard.csproj", "{6451D366-B295-4A16-BE67-BD5951BECBA0}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AutoElma", "AutoElma\AutoElma.csproj", "{8AE1E3A4-0E3C-4948-A354-A17C8874FFFA}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AutoElma", "AutoElma\AutoElma.csproj", "{8AE1E3A4-0E3C-4948-A354-A17C8874FFFA}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
