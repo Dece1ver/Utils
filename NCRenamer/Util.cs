@@ -17,6 +17,7 @@ namespace NCRenamer
         public static readonly string[] heidenhainExtensions = { ".h" };
         public static readonly string[] sinumerikExtensions = { ".mpf", ".spf" };
         public static readonly string[] otherNcExtensions = { ".nc", ".tap" };
+        public static readonly string[] pdfExtensions = { ".pdf" };
 
         public static readonly string[] machineExtensions = Array.Empty<string>()
             .Concat(heidenhainExtensions)
@@ -193,11 +194,40 @@ namespace NCRenamer
             {
                 return GetHeidenhainName(filePath);
             }
+            else if (pdfExtensions.Contains(Path.GetExtension(filePath)?.ToLower()))
+            {
+                return GetAreopagPdfName(filePath);
+            }
             else
             {
                 return GetFanucName(filePath);
             }
         }
+
+        private static string GetAreopagPdfName(string filePath)
+        {
+            try
+            {
+                foreach (var line in File.ReadLines(filePath))
+                {
+                    if (line.Contains("ОБОЗНАЧЕНИЕ"))
+                    {
+                        var name = line.Split('>')[1].Split('<')[0];
+                        foreach (char badSymbol in Path.GetInvalidPathChars().Union(Path.GetInvalidFileNameChars()))
+                        {
+                            name = name.Replace(badSymbol, '-');
+                        }
+                        return name + ".pdf";
+                    }
+                }
+                return Nameless;
+            }
+            catch
+            {
+                return Nameless;
+            }
+        }
+
         #endregion
 
         #region Расширения

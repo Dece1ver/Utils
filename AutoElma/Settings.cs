@@ -15,7 +15,7 @@ namespace AutoElma
         public string Login { get; set; }
         public string Pass { get; set; }
 
-        public Settings(string dinnerName = "Обед", string workName = "1.4. ПО ПОДРАЗДЕЛЕНИЯМ", int dinnerTime = 60, bool autoConfim = false, string login = "", string pass = "")
+        public Settings(string dinnerName = "Обед", string workName = "1.04. Общепроизводственая", int dinnerTime = 60, bool autoConfim = false, string login = "", string pass = "")
         {
             DinnerName = dinnerName;
             WorkName = workName;
