@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Threading;
 
 namespace loopa
@@ -33,7 +35,7 @@ namespace loopa
             }
 
 
-            string[] files;
+            IEnumerable<string> files;
             string searchTarget = string.Empty;
 
 
@@ -62,29 +64,35 @@ namespace loopa
                 Console.Clear();
                 Console.WriteLine($"Поиск \"{searchTarget}\" во всех файлах в указанной и всех вложенных папках.");
                 //Console.Write("Подсчет файлов  ");
+                Stopwatch stopWatch = new();
                 Thread load = new(Loading);
                 _loading = true;
-                Stopwatch stopWatch = new();
-                stopWatch.Start();
                 load.Start();
-                files = Directory.GetFiles(targetDir, "*.*", SearchOption.AllDirectories);
+                stopWatch.Start();
+                files = Directory.GetFiles(targetDir, "*.*", SearchOption.AllDirectories).AsEnumerable();
                 stopWatch.Stop();
                 var ts = stopWatch.Elapsed;
                 _loading = false;
-                int filesCount = files.Length;
+                int filesCount = files.Count();
                 int filesFound = 0;
-                string[] goodFiles = new string[filesCount];
+                int filesReaded = 0;
+                List<string> goodFiles = new();
 
                 Console.WriteLine($"\rПодсчет файлов завершен. Всего файлов: {filesCount}. Затрачено времени: {(int)ts.TotalSeconds}.{ts.Milliseconds:D3}с.");
                 stopWatch.Restart();
-                for (int i = 0; i < filesCount; i++)
+                foreach (var file in files)
                 {
+                    filesReaded++;
                     ts = stopWatch.Elapsed;
-                    Console.Write($"\rПрочитано файлов: {i}. Из них подходящих: {filesFound}. Затрачено времени: {(int)ts.TotalSeconds}.{ts.Milliseconds:D3}с.");
-                    if (File.ReadAllText(files[i]).Contains(searchTarget))
+                    Console.Write($"\rПрочитано файлов: {filesReaded}. Из них подходящих: {filesFound}. Затрачено времени: {(int)ts.TotalSeconds}.{ts.Milliseconds:D3}с.");
+                    foreach (var line in File.ReadLines(file))
                     {
-                        goodFiles[filesFound] = files[i];
-                        filesFound++;
+                        if (line.Contains(searchTarget))
+                        {
+                            goodFiles.Add(file);
+                            filesFound++;
+                            break;
+                        }
                     }
                 }
                 stopWatch.Stop();
