@@ -318,6 +318,7 @@ namespace AutoElma.Infrastructure
                     {
                         //wait.Until(wd => wd.FindElement(By.XPath("//a[contains(@class,\"t-button\")]")).Displayed);
                         driver.FindElement(By.XPath("//a[contains(@class,\"t-button\")]")).Click();
+                        driver.FindElement(By.XPath("//a[contains(@class,\"t-button\")]")).Click();
                         output.Log($"Подтверждаем обед...[ОК]", true);
                         break;
                     }
@@ -402,24 +403,80 @@ namespace AutoElma.Infrastructure
                 }
 
                 // указываем остаточное время
-                output.Log($"Ввод оставшегося времени работы...");
+                output.Log($"Поиск оставшегося времени работы...");
+                (string uHours, string uMinutes) = (string.Empty, string.Empty);
                 for (int i = 0; i < tryout; i++)
                 {
                     Thread.Sleep(500);
                     try
                     {
                         //wait.Until(wd => wd.FindElement(By.Id("Entity_WorkedTime_days")).Displayed);
-                        driver.FindElement(By.Id("Entity_WorkedTime_days")).SendKeys("1");
-                        output.Log($"Ввод оставшегося времени работы...[ОК]", true);
+                        var unelapsedTime = driver.FindElement(By.Id("Entity_UnElapsedWorkTime_ValueContainer")).Text.Split('ч');
+                        (uHours, uMinutes) = (
+                            unelapsedTime[0]
+                            .Replace("\"", string.Empty)
+                            .Trim(), 
+                            unelapsedTime[1]
+                            .Replace("\"", string.Empty)
+                            .Replace("мин", string.Empty)
+                            .Trim());
+                        output.Log($"Поиск оставшегося времени работы...[ОК]", true);
                         break;
                     }
                     catch
                     {
 
-                        output.Log($"Ввод оставшегося времени работы...попытка {i + 1}", true);
+                        output.Log($"Поиск оставшегося времени работы...попытка {i + 1}", true);
+                        if (i == tryout - 1)
+                        {
+                            output.Log($"Поиск оставшегося времени работы...[НЕУДАЧА]", true);
+                            return "Не удалось.";
+                        }
+                    }
+                }
+
+                // указываем остаточное время
+                output.Log($"Ввод оставшихся часов работы...");
+                for (int i = 0; i < tryout; i++)
+                {
+                    Thread.Sleep(500);
+                    try
+                    {
+                        //wait.Until(wd => wd.FindElement(By.Id("Entity_WorkedTime_days")).Displayed);
+                        driver.FindElement(By.Id("Entity_WorkedTime_hours")).SendKeys(uHours);
+                        output.Log($"Ввод оставшихся часов работы...[ОК]", true);
+                        break;
+                    }
+                    catch
+                    {
+
+                        output.Log($"Ввод оставшихся часов работы...попытка {i + 1}", true);
                         if (i == tryout-1)
                         {
-                            output.Log($"Ввод оставшегося времени работы...[НЕУДАЧА]", true);
+                            output.Log($"Ввод оставшихся часов работы...[НЕУДАЧА]", true);
+                            return "Не удалось.";
+                        }
+                    }
+                }
+
+                output.Log($"Ввод оставшихся минут работы...");
+                for (int i = 0; i < tryout; i++)
+                {
+                    Thread.Sleep(500);
+                    try
+                    {
+                        //wait.Until(wd => wd.FindElement(By.Id("Entity_WorkedTime_days")).Displayed);
+                        driver.FindElement(By.Id("Entity_WorkedTime_minutes")).SendKeys(uMinutes);
+                        output.Log($"Ввод оставшихся минут работы...[ОК]", true);
+                        break;
+                    }
+                    catch
+                    {
+
+                        output.Log($"Ввод оставшихся минут работы...попытка {i + 1}", true);
+                        if (i == tryout - 1)
+                        {
+                            output.Log($"Ввод оставшихся минут работы...[НЕУДАЧА]", true);
                             return "Не удалось.";
                         }
                     }
@@ -434,6 +491,7 @@ namespace AutoElma.Infrastructure
                     try
                     {
                         //wait.Until(wd => wd.FindElement(By.XPath("//a[contains(@class,\"t-button\")]")).Displayed);
+                        driver.FindElement(By.XPath("//a[contains(@class,\"t-button\")]")).Click();
                         driver.FindElement(By.XPath("//a[contains(@class,\"t-button\")]")).Click();
                         output.Log($"Подтверждаем работу...[ОК]", true);
                         break;

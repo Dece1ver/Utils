@@ -4,6 +4,7 @@ using Newtonsoft.Json;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Chrome;
 using OpenQA.Selenium.Support.UI;
+using System.Diagnostics;
 using System.Text;
 using WebDriverManager;
 using WebDriverManager.DriverConfigs.Impl;
@@ -14,6 +15,7 @@ string settingDir = Path.Combine(Environment.GetFolderPath(Environment.SpecialFo
 string settingFile = Path.Combine(settingDir, "settings.json");
 Settings settings;
 Console.Title = "Auto Elma";
+Console.OutputEncoding = Encoding.UTF8;
 
 new DriverManager().SetUpDriver(new ChromeConfig());
 
@@ -56,15 +58,48 @@ while (appWork)
     {
         case ConsoleKey.NumPad1 or ConsoleKey.D1:
             Console.Clear();
-            string result = Util.Work(settings);
-            if (result == "Завершено.")
+            try
             {
+                string result = Util.Work(settings);
+                if (result == "Завершено.")
+                {
+                    Console.WriteLine(result + "\nДля завершения нажмите любую клавишу...");
+                    appWork = false;
+                    if (!settings.AutoConfim) Console.ReadKey();
+                    break;
+                }
                 Console.WriteLine(result + "\nДля завершения нажмите любую клавишу...");
-                appWork = false;
-                if (!settings.AutoConfim) Console.ReadKey();
-                break;
             }
-            Console.WriteLine(result + "\nДля завершения нажмите любую клавишу...");
+            catch (InvalidOperationException)
+            {
+                Console.Clear();
+                Console.WriteLine("Не удалось отметить процесс. Скорее всего устарел браузер Google Chrome.\n\n" +
+                    "Для обновления сделайте следующее:\n" +
+                    "1. Откройте Google Chrome;\n" +
+                    "2. Откройте страницу обновления (⁞ -> Справка -> О браузере Google Chrome);\n" +
+                    "3. Дождитесь завершения обновления и закройте Google Chrome);\n\n" +
+                    "4. Снова попробуйте запустить отметку рабочего процесса.");
+                Console.WriteLine("\nДля продолжения нажмите любую клавишу...");
+            }
+            catch (WebDriverException ex)
+            {
+                if(ex is NoSuchWindowException)
+                {
+                    Console.Clear();
+                    Console.WriteLine("Процесс прерван. Скорее всего браузер Google Chrome был закрыт.");
+                    Console.WriteLine("\nДля продолжения нажмите любую клавишу...");
+                }
+                else
+                {
+                    Console.Clear();
+                    Console.WriteLine("Не удалось отметить процесс.\n\n" +
+                        $"{ex.Message}\n" +
+                        $"{ex.StackTrace}\n");
+                    Console.WriteLine("\nДля продолжения нажмите любую клавишу...");
+                }
+                
+            }
+            
             Console.ReadKey();
             break;
         case ConsoleKey.NumPad2 or ConsoleKey.D2:
@@ -81,5 +116,3 @@ while (appWork)
             break;
     }
 }
-
-
