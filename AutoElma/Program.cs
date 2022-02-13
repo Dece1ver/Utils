@@ -10,6 +10,7 @@ using WebDriverManager;
 using WebDriverManager.DriverConfigs.Impl;
 
 bool appWork = true;
+bool silent = (Environment.GetCommandLineArgs().Length > 1) && (Environment.GetCommandLineArgs()[1]) == "-auto" ? true : false;
 
 string settingDir = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Personal), "dece1ver", "AutoElma");
 string settingFile = Path.Combine(settingDir, "settings.json");
@@ -40,8 +41,9 @@ catch
 
 while (appWork)
 {
+    
     Console.Clear();
-    Console.WriteLine("* * * Auto Elma * * *\n");
+    Console.WriteLine(!silent ? "* * * Auto Elma * * *\n" : "* * * Auto Elma [AUTO]* * *\n");
     Console.WriteLine($"Логин Elma: {settings?.Login}");
     Console.WriteLine($"Пароль Elma: {(settings?.Pass.Length > 0 ? new string('*', settings.Pass.Length) : string.Empty)}");
     Console.WriteLine($"Наименование рабочего процесса: {settings.WorkName}");
@@ -53,21 +55,33 @@ while (appWork)
     Console.WriteLine($"[2] Изменить параметры");
     Console.WriteLine($"\n[0] Выход");
     Console.Write("\n>");
-    var choice = Console.ReadKey().Key;
+    ConsoleKey choice;
+    if (silent)
+    {
+        choice = ConsoleKey.NumPad1;
+    }
+    else
+    {
+        choice = Console.ReadKey().Key;
+    }
+
     switch (choice)
     {
         case ConsoleKey.NumPad1 or ConsoleKey.D1:
             Console.Clear();
             try
             {
-                string result = Util.Work(settings);
+                string result = Util.Work(settings, silent);
                 if (result == "Завершено.")
                 {
                     Console.WriteLine(result + "\nДля завершения нажмите любую клавишу...");
                     appWork = false;
+                    if (silent) break;
                     if (!settings.AutoConfim) Console.ReadKey();
                     break;
                 }
+                if (silent) appWork = false;
+                if (silent) break;
                 Console.WriteLine(result + "\nДля завершения нажмите любую клавишу...");
             }
             catch (InvalidOperationException)

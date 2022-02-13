@@ -97,11 +97,11 @@ namespace AutoElma.Infrastructure
             Console.WriteLine(string.Join('\n', output), true);
         }
 
-        public static string Work(Settings settings)
+        public static string Work(Settings settings, bool silent = false)
         {
             int tryout = 10;
             List<string> output = new();
-            output.Log("* * * Отметка работы * * *\n", addDate: false);
+            output.Log(!silent ? "* * * Отметка работы * * *\n" : "* * * Отметка работы [AUTO]* * *\n", addDate: false);
             ChromeDriverService chromeservice = ChromeDriverService.CreateDefaultService();
             chromeservice.HideCommandPromptWindow = true;
             output.Log("Запуск Google Chrome...");

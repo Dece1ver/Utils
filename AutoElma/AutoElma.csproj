@@ -6,6 +6,7 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <ApplicationIcon>business.ico</ApplicationIcon>
+    <Description>AutoElma</Description>
   </PropertyGroup>
 
   <ItemGroup>
