@@ -41,7 +41,7 @@ namespace PDFTableParser
                 filePathTB.Text = _tableDialog.FileName;
                 PdfDocument PDF = PdfDocument.FromFile(_tableDialog.FileName);
 
-                string content = Encoding.UTF8.GetString(PDF.BinaryData);
+                string content = PDF.ExtractAllText();
 
                 if (!string.IsNullOrEmpty(content))
                 {

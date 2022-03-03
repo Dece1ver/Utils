@@ -84,9 +84,15 @@ while (appWork)
                 if (silent) break;
                 Console.WriteLine(result + "\nДля завершения нажмите любую клавишу...");
             }
-            catch (InvalidOperationException)
+            catch (InvalidOperationException ex)
             {
                 Console.Clear();
+                try
+                {
+                    if (!File.Exists($"{Environment.UserName}.log")) File.Create($"{Environment.UserName}.log");
+                    File.WriteAllText($"{Environment.UserName}.log", $"[{DateTime.Now:dd.MM.yy HH:mm:ss]}\n{ex.Message}");
+                }
+                catch { }
                 Console.WriteLine("Не удалось отметить процесс. Скорее всего устарел браузер Google Chrome.\n\n" +
                     "Для обновления сделайте следующее:\n" +
                     "1. Откройте Google Chrome;\n" +
