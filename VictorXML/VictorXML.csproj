@@ -6,6 +6,8 @@
     <UseWPF>true</UseWPF>
     <ApplicationIcon>icon.ico</ApplicationIcon>
     <SupportedOSPlatformVersion>7.0</SupportedOSPlatformVersion>
+    <Description>Парсер Ареопаговских спецификаций из XML и запись содержимого в таблицу XLSX</Description>
+    <Copyright>dece1ver</Copyright>
   </PropertyGroup>
 
   <ItemGroup>
