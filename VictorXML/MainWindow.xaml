@@ -5,16 +5,21 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:VictorXML"
         mc:Ignorable="d"
-        Title="Victor XML to Excel" Height="450" Width="800" Loaded="Window_Loaded" WindowStartupLocation="CenterScreen">
+        Title="Victor XML2Excel Areopag Specification Reader Premium Deluxe Mega True Edition" MinHeight="450" Height="450" MinWidth="800" Width="800" Loaded="Window_Loaded" WindowStartupLocation="CenterScreen">
     <Window.Resources>
         <Style TargetType="Button">
             <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="FontFamily" Value="Consolas"/>
+            <Setter Property="FontSize" Value="16"/>
         </Style>
     </Window.Resources>
     <DockPanel LastChildFill="True">
         <StatusBar DockPanel.Dock="Bottom">
             <StatusBarItem>
-                <TextBlock x:Name="statusTextBlock"/>
+                <TextBlock x:Name="statusTextBlock" Text="Выберите XML файл или вставьте содержимое в форму выше"/>
+            </StatusBarItem>
+            <StatusBarItem HorizontalAlignment="Right">
+                <TextBlock Text="dece1ver" HorizontalAlignment="Right" Foreground="{DynamicResource {x:Static SystemColors.ActiveBorderBrushKey}}"/>
             </StatusBarItem>
         </StatusBar>
         <Border BorderThickness="1" BorderBrush="{DynamicResource {x:Static SystemColors.ActiveBorderBrushKey}}">
@@ -22,7 +27,7 @@
                 <Button x:Name="expandButton" DockPanel.Dock="Left" Width="10" Content="&gt;" Click="expandButton_Click" />
                 <Button x:Name="hideButton" DockPanel.Dock="Right" Width="10" Content="&lt;" Click="hideButton_Click" />
                 <DockPanel x:Name="sourceDockPanel">
-                    <Button x:Name="readButton" Content="&gt;" DockPanel.Dock="Bottom" Click="readButton_Click" Height="25" FontFamily="Consolas" FontSize="16"/>
+                    <Button x:Name="readButton" Content="&gt;" DockPanel.Dock="Bottom" Click="readButton_Click" Height="25" />
                     <Grid>
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition/>
@@ -31,12 +36,38 @@
                             <RowDefinition Height="23"/>
                             <RowDefinition/>
                         </Grid.RowDefinitions>
-                        <TextBlock DockPanel.Dock="Top" Text="Содержимое XML:" Grid.Row="0" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        <Button x:Name="openFileButton" DockPanel.Dock="Top" Content="🗁" Grid.Row="0" Click="openFileButton_Click"/>
                         <TextBox x:Name="sourceTextBlock" Width="300" Grid.Row="1"
-                             AutomationProperties.HelpText="Содержимое XML файла"
                              AcceptsReturn="True" VerticalScrollBarVisibility="Auto"
-                             SpellCheck.IsEnabled="False"/>
-                        <!--<TextBlock Text="Сожержимое XML" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="{DynamicResource {x:Static SystemColors.ActiveBorderBrushKey}}" />-->
+                             SpellCheck.IsEnabled="False">
+                            <TextBox.Style>
+                                <Style TargetType="TextBox" xmlns:sys="clr-namespace:System;assembly=mscorlib">
+                                    <Style.Resources>
+                                        <VisualBrush x:Key="CueBannerBrush" AlignmentX="Center" AlignmentY="Center" Stretch="None">
+                                            <VisualBrush.Visual>
+                                                <Label Content="Содержимое XML" Foreground="LightGray" />
+                                            </VisualBrush.Visual>
+                                        </VisualBrush>
+                                    </Style.Resources>
+                                    <Style.Triggers>
+                                        <Trigger Property="Text" Value="{x:Static sys:String.Empty}">
+                                            <Setter Property="Background" Value="{StaticResource CueBannerBrush}" />
+                                        </Trigger>
+                                        <Trigger Property="Text" Value="{x:Null}">
+                                            <Setter Property="Background" Value="{StaticResource CueBannerBrush}" />
+                                        </Trigger>
+                                        <Trigger Property="IsKeyboardFocused" Value="True">
+                                            <Setter Property="Background" Value="{x:Null}" />
+                                        </Trigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </TextBox.Style>
+                        </TextBox>
+                        <!--<TextBlock Grid.Row="1" Text="Сожержимое XML" 
+                                   HorizontalAlignment="Center" VerticalAlignment="Center" 
+                                   Foreground="{DynamicResource {x:Static SystemColors.ActiveBorderBrushKey}}" 
+                                   Visibility="{Binding ElementName=sourceTextBlock, Path=Text.IsEmpty}"
+                                   IsHitTestVisible="False"/>-->
                     </Grid>
                 </DockPanel>
             </DockPanel>
@@ -63,5 +94,5 @@
             </ListView>-->
         </DockPanel>
     </DockPanel>
-    
+
 </Window>

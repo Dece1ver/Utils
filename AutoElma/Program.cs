@@ -119,6 +119,15 @@ while (appWork)
                 }
                 
             }
+            catch (Exception ex)
+            {
+                try
+                {
+                    if (!File.Exists($"{Environment.UserName}.log")) File.Create($"{Environment.UserName}.log");
+                    File.WriteAllText($"{Environment.UserName}.log", $"[{DateTime.Now:dd.MM.yy HH:mm:ss]}\n{ex.Message}");
+                }
+                catch { }
+            }
             
             Console.ReadKey();
             break;

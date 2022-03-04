@@ -134,7 +134,7 @@ namespace VictorXML
                     HideLeftPanel();
                     saveButton.Visibility = Visibility.Visible;
                     resultDataGrid.ItemsSource = parts;
-                    SetStatus("Содержимое прочитано, записать в Excel таблицу можно тыкнув на дискетку.");
+                    SetStatus($"Содержимое прочитано, позиций: {parts.Count}. Записать в Excel таблицу можно тыкнув на дискетку.");
                 }
                 catch (Exception ex)
                 {
@@ -218,6 +218,22 @@ namespace VictorXML
             else
             {
                 SetStatus("Сохранение отменено");
+            }
+        }
+
+        private void openFileButton_Click(object sender, RoutedEventArgs e)
+        {
+            OpenFileDialog openFileDialog = new();
+            openFileDialog.Filter = "Файл XML(*.xml)|*.xml";
+            openFileDialog.DefaultExt = "xslx";
+            if (openFileDialog.ShowDialog() == true)
+            {
+                sourceTextBlock.Text = File.ReadAllText(openFileDialog.FileName);
+                SetStatus($"Открыт файл: \"{openFileDialog.FileName}\", для чтения содержимого нажмите \">\"");
+            }
+            else
+            {
+                SetStatus("Выбор файла отменён");
             }
         }
     }
