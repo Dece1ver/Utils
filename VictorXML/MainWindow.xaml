@@ -12,6 +12,9 @@
             <Setter Property="FontFamily" Value="Consolas"/>
             <Setter Property="FontSize" Value="16"/>
         </Style>
+        <Style TargetType="DataGridColumnHeader">
+            <Setter Property="HorizontalContentAlignment" Value="Center"/>
+        </Style>
     </Window.Resources>
     <DockPanel LastChildFill="True">
         <StatusBar DockPanel.Dock="Bottom">
@@ -76,11 +79,10 @@
             <Button x:Name="saveButton" Content="💾" DockPanel.Dock="Bottom" Click="saveButton_Click" Height="25" FontFamily="Consolas" FontSize="16"/>
             <DataGrid x:Name="resultDataGrid" AutoGenerateColumns="False" CanUserResizeRows="False"
                   CanUserAddRows="False" CanUserDeleteRows="False" IsReadOnly="True" EnableColumnVirtualization="True" 
-                  GridLinesVisibility="None" SelectionUnit="Cell" >
+                  GridLinesVisibility="None" SelectionUnit="Cell" BorderBrush="{DynamicResource {x:Static SystemColors.ActiveBorderBrushKey}}" >
                 <DataGrid.Columns>
-                    <DataGridTextColumn Header="Наименование" Binding="{Binding Path=Name}" Width="auto" />
-                    <DataGridTextColumn Header="Обозначение" Binding="{Binding Path=Number}" Width="*" />
-                    <DataGridTextColumn Header="Количество" Binding="{Binding Path=Quantity}" Width="80" />
+                    <DataGridTextColumn Header="Номенклатура" Binding="{Binding Path=FullName}" Width="auto" />
+                    <DataGridTextColumn Header="Количество" Binding="{Binding Path=Quantity}" Width="*" />
                 </DataGrid.Columns>
             </DataGrid>
             <!--<ListView x:Name="resultListView" >
@@ -94,5 +96,4 @@
             </ListView>-->
         </DockPanel>
     </DockPanel>
-
 </Window>
