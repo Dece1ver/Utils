@@ -5,8 +5,15 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:NCToolTable"
         mc:Ignorable="d"
-        Title="MainWindow" Height="0" Width="0" Loaded="Window_Loaded" ShowInTaskbar="False" Visibility="Collapsed" AllowsTransparency="True" WindowStyle="None" Opacity="0">
-    <Grid>
-
-    </Grid>
+        Title="Инструментоискатель 3000" Height="240" Width="480" Loaded="Window_Loaded" Visibility="Visible" ResizeMode="CanResizeWithGrip" WindowStartupLocation="CenterScreen">
+    <DockPanel>
+        <StatusBar DockPanel.Dock="Bottom">
+            <StatusBarItem>
+                <TextBlock x:Name="statusTB"/>
+            </StatusBarItem>
+        </StatusBar>
+        <Button DockPanel.Dock="Bottom" Height="25" Content="Выбрать вручную" Click="BrowseButton_Click"/>
+        <Button DockPanel.Dock="Bottom" Height="25" Content="Прочитать выбранное" Click="ReadButton_Click"/>
+        <ListView x:Name="windowsLV" BorderBrush="{x:Null}"/>
+    </DockPanel>
 </Window>
