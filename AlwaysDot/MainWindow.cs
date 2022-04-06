@@ -10,11 +10,7 @@ namespace AlwaysDot
         {
             InitializeComponent();
         }
-        private void closeMenuItem_Click(object sender, EventArgs e)
-        {
-            Close();
-        }
-
+        
         private void MainWindow_Load(object sender, EventArgs e)
         {
             _listener = new KeyboardListener();
@@ -32,5 +28,19 @@ namespace AlwaysDot
         {
            
         }
+
+        private void aboutToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            MessageBox.Show(
+                "При включенной RU раскладке программа заменяет запятую на точку при нажатии клавиши Del на цифровой клавиатуре.\n\n2022 © dece1ver", 
+                "О программе Always Dot", 
+                MessageBoxButtons.OK, 
+                MessageBoxIcon.Information);
+        }
+        private void closeMenuItem_Click(object sender, EventArgs e)
+        {
+            Close();
+        }
+
     }
 }
