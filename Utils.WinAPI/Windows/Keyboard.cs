@@ -10,7 +10,7 @@ namespace Utils.WinAPI.Windows
 
         public static void KeyDown(Keys vKey)
         {
-            User32.keybd_event((byte)vKey, 0, KeyeventfExtendedkey, 0);
+           User32.keybd_event((byte)vKey, 0, KeyeventfExtendedkey, 0);
         }
 
         public static void KeyUp(Keys vKey)

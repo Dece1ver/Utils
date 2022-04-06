@@ -49,7 +49,7 @@ namespace WindowVisibility
                     }
                 }
                 windowNameCB.ItemsSource = _winNames;
-                await Task.Delay(500);
+                await Task.Delay(200);
             }
         }
 

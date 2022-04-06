@@ -16,6 +16,8 @@ namespace DetailsList.Infrastructure
         [Description("Обычный [Только обозначение]")]
         GeneralOnlyNumbers,
         [Description("Mazak QTS 350 [Только обозначение]")]
-        Mazak350
+        Mazak350,
+        [Description("Quaser [Только обозначение]")]
+        QuaserOnlyNumbers
     }
 }

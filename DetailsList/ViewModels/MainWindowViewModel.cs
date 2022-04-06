@@ -133,7 +133,7 @@ namespace DetailsList.ViewModels
         public int? FilesCount => Files?.Count;
 
         /// <summary>
-        /// Список файлов
+        /// Список деталей
         /// </summary>
         private List<string> _Details;
 
@@ -154,7 +154,7 @@ namespace DetailsList.ViewModels
         }
 
         /// <summary>
-        /// Список файлов
+        /// Метод поиска
         /// </summary>
         private FindMode _FindMode = FindMode.General;
 
@@ -293,8 +293,16 @@ namespace DetailsList.ViewModels
                             break;
                         case FindMode.Mazak350:
                             var mazak350Detail = NCRenamer.Util.GetMazatrolSmartName(file).TranslateFromEnNumber().FindNumber();
-
                             if (!Details.Contains(mazak350Detail) && !string.IsNullOrEmpty(mazak350Detail)) Details.Add(mazak350Detail);
+                            break;
+                        case FindMode.QuaserOnlyNumbers:
+                            if (Path.GetExtension(file).ToLowerInvariant() != ".h") break;
+                            var quaserLines = File.ReadLines(file).Take(2).ToArray();
+                            if (quaserLines.Length > 0 && quaserLines[0].Contains("BEGIN PGM"))
+                            {
+                                var quaserDetail = GetDetailNameFromPath(file, TargetPath);
+                                if (!Details.Contains(quaserDetail) && !string.IsNullOrEmpty(quaserDetail)) Details.Add(quaserDetail);
+                            }
                             break;
                         default:
                             break;
