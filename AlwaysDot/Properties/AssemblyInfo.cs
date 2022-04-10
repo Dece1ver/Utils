@@ -6,11 +6,11 @@ using System.Runtime.InteropServices;
 // набора атрибутов. Измените значения этих атрибутов для изменения сведений,
 // связанных со сборкой.
 [assembly: AssemblyTitle("AlwaysDot")]
-[assembly: AssemblyDescription("")]
+[assembly: AssemblyDescription("Всегда точка на цифровой клавиатуре")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("AlwaysDot")]
-[assembly: AssemblyCopyright("Copyright ©  2022")]
+[assembly: AssemblyCompany("dece1ver")]
+[assembly: AssemblyProduct("dece1ver.utils")]
+[assembly: AssemblyCopyright("dece1ver © 2022")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
