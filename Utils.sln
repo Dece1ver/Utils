@@ -51,6 +51,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "VictorXML", "VictorXML\Vict
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AlwaysDot", "AlwaysDot\AlwaysDot.csproj", "{E42FCDE9-52BD-4B07-ABFE-65BBB7ACA0C8}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Utils.Website", "Utils.Website\Utils.Website.csproj", "{FF8A531A-C716-41A5-9320-7C6D39E40773}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -219,6 +221,14 @@ Global
 		{E42FCDE9-52BD-4B07-ABFE-65BBB7ACA0C8}.Release|Any CPU.Build.0 = Release|Any CPU
 		{E42FCDE9-52BD-4B07-ABFE-65BBB7ACA0C8}.Release|x86.ActiveCfg = Release|Any CPU
 		{E42FCDE9-52BD-4B07-ABFE-65BBB7ACA0C8}.Release|x86.Build.0 = Release|Any CPU
+		{FF8A531A-C716-41A5-9320-7C6D39E40773}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FF8A531A-C716-41A5-9320-7C6D39E40773}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FF8A531A-C716-41A5-9320-7C6D39E40773}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{FF8A531A-C716-41A5-9320-7C6D39E40773}.Debug|x86.Build.0 = Debug|Any CPU
+		{FF8A531A-C716-41A5-9320-7C6D39E40773}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FF8A531A-C716-41A5-9320-7C6D39E40773}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FF8A531A-C716-41A5-9320-7C6D39E40773}.Release|x86.ActiveCfg = Release|Any CPU
+		{FF8A531A-C716-41A5-9320-7C6D39E40773}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

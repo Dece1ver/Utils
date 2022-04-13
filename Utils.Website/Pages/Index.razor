@@ -1,0 +1,55 @@
+﻿@page "/"
+<MudContainer MaxWidth="MaxWidth.ExtraLarge" Class="mt-3">
+
+    <MudGrid Spacing=1 Class=d-flex pa-1 Justify="Justify.FlexStart">
+        <MudItem xs=12 sm=6 md=4 lg=3>
+            <MudCard>
+                <MudCardHeader>
+                    <CardHeaderAvatar>
+                        <MudAvatar Variant="Variant.Outlined" Image="images/dotred.png"/>
+                    </CardHeaderAvatar>
+                    <CardHeaderContent>
+                        <MudText Typo="Typo.body1">Always Dot</MudText>
+                    </CardHeaderContent>
+                </MudCardHeader>
+                <MudCardContent>
+                    <MudText Typo="Typo.body2">Точка при RU раскладке на цифровой клавиатуре.</MudText>
+                </MudCardContent>
+                <MudCardActions>
+                    <MudButton EndIcon="@Icons.Material.Filled.Download" Link="/alwaysdot.exe" Color="Color.Primary">Скачать</MudButton>
+                    <MudButton EndIcon="@Icons.Material.Filled.Info" Color="Color.Primary" OnClick="OnAlwaysDotAboutClicked">Подробнее</MudButton>
+                </MudCardActions>
+            </MudCard>
+        </MudItem>
+    </MudGrid>
+
+    <MudMessageBox @ref="aboutAlwaysDotMB" Title="О программе Always Dot">
+    <MessageContent>
+        <MudText Typo=Typo.body1>
+            При включенной RU раскладке клавиша Del на цифровой клавиатуре вводит точку вместо запятой.
+        </MudText>
+        <br/>
+        <MudText Typo=Typo.body2>
+            Подробнее:
+        </MudText>
+        <MudText Typo=Typo.body2>
+            При раскладке отличной от EN подменяется нажатие клавиши на цифровой клавиатуре "Del" на нажатие клавиши "/", что приводит к вводу точки и на EN и на RU раскладке.
+            Программа не требует установки и закрывается в системном трее, подмена клавиши производится пока программа запущена. 
+        </MudText>
+    </MessageContent>
+    <YesButton>
+        <MudIconButton Icon="@Icons.Material.Filled.Done" Color="Color.Primary"/>
+    </YesButton>
+    </MudMessageBox>
+</MudContainer>
+
+@code {
+    [Inject] private IDialogService DialogService { get; set; }
+    MudMessageBox aboutAlwaysDotMB { get; set; }
+
+    private async void OnAlwaysDotAboutClicked()
+    {
+        bool? result = await aboutAlwaysDotMB.Show();
+        StateHasChanged();
+    }
+}
