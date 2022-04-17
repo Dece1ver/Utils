@@ -1,6 +1,12 @@
 ﻿@page "/"
-<MudContainer MaxWidth="MaxWidth.ExtraLarge" Class="mt-3">
 
+<style>
+    .ta {
+        margin-right: 10px;
+    }
+</style>
+
+<MudContainer MaxWidth="MaxWidth.ExtraLarge" Class="mt-3">
     <MudGrid Spacing=1 Class=d-flex pa-1 Justify="Justify.FlexStart">
         <MudItem xs=12 sm=6 md=4 lg=3>
             <MudCard>
@@ -21,35 +27,107 @@
                 </MudCardActions>
             </MudCard>
         </MudItem>
+
+        <MudItem xs=12 sm=6 md=4 lg=3>
+            <MudCard>
+                <MudCardHeader>
+                    <CardHeaderAvatar>
+                        <MudAvatar Variant="Variant.Outlined" Image="images/rename.ico"/>
+                    </CardHeaderAvatar>
+                    <CardHeaderContent>
+                        <MudText Typo="Typo.body1">NC Renamer</MudText>
+                    </CardHeaderContent>
+                </MudCardHeader>
+                <MudCardContent>
+                    <MudText Typo="Typo.body2">Переименовыватель УП.</MudText>
+                </MudCardContent>
+                <MudCardActions>
+                    <MudButton EndIcon="@Icons.Material.Filled.Download" Link="/NCRenamer.exe" Color="Color.Primary">Скачать</MudButton>
+                    <MudButton EndIcon="@Icons.Material.Filled.Info" Color="Color.Primary" OnClick="OnNcRenamerAboutClicked">Подробнее</MudButton>
+                </MudCardActions>
+            </MudCard>
+        </MudItem>
     </MudGrid>
 
     <MudMessageBox @ref="aboutAlwaysDotMB" Title="О программе Always Dot">
-    <MessageContent>
-        <MudText Typo=Typo.body1>
-            При включенной RU раскладке клавиша Del на цифровой клавиатуре вводит точку вместо запятой.
-        </MudText>
-        <br/>
-        <MudText Typo=Typo.body2>
-            Подробнее:
-        </MudText>
-        <MudText Typo=Typo.body2>
-            При раскладке отличной от EN подменяется нажатие клавиши на цифровой клавиатуре "Del" на нажатие клавиши "/", что приводит к вводу точки и на EN и на RU раскладке.
-            Программа не требует установки и закрывается в системном трее, подмена клавиши производится пока программа запущена. 
-        </MudText>
-    </MessageContent>
-    <YesButton>
-        <MudIconButton Icon="@Icons.Material.Filled.Done" Color="Color.Primary"/>
-    </YesButton>
+        <MessageContent>
+            <MudText Typo=Typo.body1>
+                При включенной RU раскладке клавиша Del на цифровой клавиатуре вводит точку вместо запятой.
+            </MudText>
+            <br/>
+            <MudText Typo=Typo.body2>
+                Подробнее:
+            </MudText>
+            <MudText Typo=Typo.body2>
+                При раскладке отличной от EN подменяется нажатие клавиши на цифровой клавиатуре "Del" на нажатие клавиши "/", что приводит к вводу точки и на EN и на RU раскладке.
+                Программа не требует установки и закрывается в системном трее, подмена клавиши производится пока программа запущена. 
+            </MudText>
+        </MessageContent>
+        <YesButton>
+            <MudIconButton Icon="@Icons.Material.Filled.Done" Color="Color.Primary"/>
+        </YesButton>
+    </MudMessageBox>
+
+    <MudMessageBox @ref="aboutNcRenamerMB" Title="О программе NC Renamer">
+        <MessageContent>
+            <MudText Typo=Typo.body1>
+                Программа переименовывает файлы управляющих программ по названию самой управляющей программы.<br/><br/>
+                Поддерживаемые СЧПУ:<br/>
+            </MudText>
+            <table cellspacing=10>
+                <tbody>
+                    <tr>
+                        <td>Fanuc 0i</td>
+                        <td>[ O0001(НАЗВАНИЕ) ]</td>
+                    </tr>
+                    <tr>
+                        <td>Fanuc 0i-*F</td>
+                        <td>[ &lt;НАЗВАНИЕ&gt; ]</td>
+                    </tr>
+                    <tr>
+                        <td>Mazatrol Smart</td>
+                        <td>[ .PBG | .PBD ]</td>
+                    </tr>
+                    <tr>
+                        <td>Sinumerik 840D sl</td>
+                        <td>[ MSG ("НАЗВАНИЕ") ]</td>
+                    </tr>
+                    <tr>
+                        <td>Hiedenhain</td>
+                        <td>[ BEGIN PGM НАЗВАНИЕ MM ]</td>
+                    </tr>
+                </tbody>
+            </table>
+            <br/>
+            <MudText Typo=Typo.body2>
+                Подробнее:
+            </MudText>
+            <MudText Typo=Typo.body2>
+                Использование программы подразумевается вызовом через контекстное меню (ПКМ) по переменовываемым файлам.<br/>
+                Работа программы происходит без каких-либо уведомлений.<br/>
+                Если программа определяет файл как УП, то происходит переименование.<br/>
+                Если файл уже существует, он не перезаписывается, а создается копия с добавлением номера.<br/>
+            </MudText>
+        </MessageContent>
+        <YesButton>
+            <MudIconButton Icon="@Icons.Material.Filled.Done" Color="Color.Primary"/>
+        </YesButton>
     </MudMessageBox>
 </MudContainer>
 
 @code {
     [Inject] private IDialogService DialogService { get; set; }
     MudMessageBox aboutAlwaysDotMB { get; set; }
+    MudMessageBox aboutNcRenamerMB { get; set; }
 
     private async void OnAlwaysDotAboutClicked()
     {
         bool? result = await aboutAlwaysDotMB.Show();
+        StateHasChanged();
+    }
+    private async void OnNcRenamerAboutClicked()
+    {
+        bool? result = await aboutNcRenamerMB.Show();
         StateHasChanged();
     }
 }
