@@ -15,6 +15,7 @@ namespace AlwaysDot
         {
             _listener = new KeyboardListener();
             _listener.HookKeyboard();
+            this.Hide();
         }
 
         private void MainWindow_FormClosing(object sender, FormClosingEventArgs e) => _listener.UnHookKeyboard();
