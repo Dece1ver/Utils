@@ -1,0 +1,42 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net6.0-windows</TargetFramework>
+    <Nullable>enable</Nullable>
+    <UseWPF>true</UseWPF>
+    <ApplicationIcon>Stationery-Pen.ico</ApplicationIcon>
+    <Copyright>dece1ver</Copyright>
+    <PackageProjectUrl>https://utils.sunduk.one/</PackageProjectUrl>
+    <PackageIcon>Stationery-Pen128.png</PackageIcon>
+    <RepositoryUrl>https://github.com/dece1ver/Utils</RepositoryUrl>
+    <Description>Подписывалка PDF файлов.</Description>
+    <Company>utils.sunduk</Company>
+    <Authors>dece1ver</Authors>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="Views\Windows\Stationery-Pen32.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="Stationery-Pen.ico" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="V:\Documents\Разработка\Utils\PDFSigner\Stationery-Pen128.png">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="iTextSharp" Version="5.5.13.3" />
+    <PackageReference Include="System.Drawing.Common" Version="6.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="Views\Windows\Stationery-Pen32.png" />
+  </ItemGroup>
+
+</Project>

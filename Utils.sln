@@ -51,7 +51,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "VictorXML", "VictorXML\Vict
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AlwaysDot", "AlwaysDot\AlwaysDot.csproj", "{E42FCDE9-52BD-4B07-ABFE-65BBB7ACA0C8}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Utils.Website", "Utils.Website\Utils.Website.csproj", "{FF8A531A-C716-41A5-9320-7C6D39E40773}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Utils.Website", "Utils.Website\Utils.Website.csproj", "{FF8A531A-C716-41A5-9320-7C6D39E40773}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PDFSigner", "PDFSigner\PDFSigner.csproj", "{B4E41EC0-9591-4160-A1EC-A73AC946D8A7}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -229,6 +231,14 @@ Global
 		{FF8A531A-C716-41A5-9320-7C6D39E40773}.Release|Any CPU.Build.0 = Release|Any CPU
 		{FF8A531A-C716-41A5-9320-7C6D39E40773}.Release|x86.ActiveCfg = Release|Any CPU
 		{FF8A531A-C716-41A5-9320-7C6D39E40773}.Release|x86.Build.0 = Release|Any CPU
+		{B4E41EC0-9591-4160-A1EC-A73AC946D8A7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B4E41EC0-9591-4160-A1EC-A73AC946D8A7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B4E41EC0-9591-4160-A1EC-A73AC946D8A7}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{B4E41EC0-9591-4160-A1EC-A73AC946D8A7}.Debug|x86.Build.0 = Debug|Any CPU
+		{B4E41EC0-9591-4160-A1EC-A73AC946D8A7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B4E41EC0-9591-4160-A1EC-A73AC946D8A7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B4E41EC0-9591-4160-A1EC-A73AC946D8A7}.Release|x86.ActiveCfg = Release|Any CPU
+		{B4E41EC0-9591-4160-A1EC-A73AC946D8A7}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
