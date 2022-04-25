@@ -32,6 +32,46 @@
             <MudCard>
                 <MudCardHeader>
                     <CardHeaderAvatar>
+                        <MudAvatar Variant="Variant.Outlined" Image="images/loopa.png"/>
+                    </CardHeaderAvatar>
+                    <CardHeaderContent>
+                        <MudText Typo="Typo.body1">loopa</MudText>
+                    </CardHeaderContent>
+                </MudCardHeader>
+                <MudCardContent>
+                    <MudText Typo="Typo.body2">Поиск файлов по содержимому.</MudText>
+                </MudCardContent>
+                <MudCardActions>
+                    <MudButton EndIcon="@Icons.Material.Filled.Download" Link="/loopa.exe" Color="Color.Primary">Скачать</MudButton>
+                    <MudButton EndIcon="@Icons.Material.Filled.Info" Color="Color.Primary" OnClick="OnLoopaAboutClicked">Подробнее</MudButton>
+                </MudCardActions>
+            </MudCard>
+        </MudItem>
+
+        <MudItem xs=12 sm=6 md=4 lg=3>
+            <MudCard>
+                <MudCardHeader>
+                    <CardHeaderAvatar>
+                        <MudAvatar Variant="Variant.Outlined" Image="images/rename128.png"/>
+                    </CardHeaderAvatar>
+                    <CardHeaderContent>
+                        <MudText Typo="Typo.body1">NC Renamer</MudText>
+                    </CardHeaderContent>
+                </MudCardHeader>
+                <MudCardContent>
+                    <MudText Typo="Typo.body2">Переименовыватель УП.</MudText>
+                </MudCardContent>
+                <MudCardActions>
+                    <MudButton EndIcon="@Icons.Material.Filled.Download" Link="/NCRenamer.exe" Color="Color.Primary">Скачать</MudButton>
+                    <MudButton EndIcon="@Icons.Material.Filled.Info" Color="Color.Primary" OnClick="OnNcRenamerAboutClicked">Подробнее</MudButton>
+                </MudCardActions>
+            </MudCard>
+        </MudItem>
+
+        <MudItem xs=12 sm=6 md=4 lg=3>
+            <MudCard>
+                <MudCardHeader>
+                    <CardHeaderAvatar>
                         <MudAvatar Variant="Variant.Outlined" Image="images/pdfsigner128.png"/>
                     </CardHeaderAvatar>
                     <CardHeaderContent>
@@ -44,26 +84,6 @@
                 <MudCardActions>
                     <MudButton EndIcon="@Icons.Material.Filled.Download" Link="/PDFSigner.exe" Color="Color.Primary">Скачать</MudButton>
                     <MudButton EndIcon="@Icons.Material.Filled.Info" Color="Color.Primary" OnClick="OnPdfSignerAboutClicked">Подробнее</MudButton>
-                </MudCardActions>
-            </MudCard>
-        </MudItem>
-
-        <MudItem xs=12 sm=6 md=4 lg=3>
-            <MudCard>
-                <MudCardHeader>
-                    <CardHeaderAvatar>
-                        <MudAvatar Variant="Variant.Outlined" Image="images/rename.ico"/>
-                    </CardHeaderAvatar>
-                    <CardHeaderContent>
-                        <MudText Typo="Typo.body1">NC Renamer</MudText>
-                    </CardHeaderContent>
-                </MudCardHeader>
-                <MudCardContent>
-                    <MudText Typo="Typo.body2">Переименовыватель УП.</MudText>
-                </MudCardContent>
-                <MudCardActions>
-                    <MudButton EndIcon="@Icons.Material.Filled.Download" Link="/NCRenamer.exe" Color="Color.Primary">Скачать</MudButton>
-                    <MudButton EndIcon="@Icons.Material.Filled.Info" Color="Color.Primary" OnClick="OnNcRenamerAboutClicked">Подробнее</MudButton>
                 </MudCardActions>
             </MudCard>
         </MudItem>
@@ -93,6 +113,17 @@
         <MessageContent>
             <MudText Typo=Typo.body1>
                 На каждой странице PDF документов создает надпись в левом верхнем углу.
+            </MudText>
+        </MessageContent>
+        <YesButton>
+            <MudIconButton Icon="@Icons.Material.Filled.Done" Color="Color.Primary"/>
+        </YesButton>
+    </MudMessageBox>
+
+    <MudMessageBox @ref="aboutloopaMB" Title="О программе loopa">
+        <MessageContent>
+            <MudText Typo=Typo.body1>
+                Ищет файлы по содержимому. Можно задавать папку для поиска перетаскивая её на файл.
             </MudText>
         </MessageContent>
         <YesButton>
@@ -150,12 +181,18 @@
 @code {
     [Inject] private IDialogService DialogService { get; set; }
     MudMessageBox aboutAlwaysDotMB { get; set; }
-    MudMessageBox aboutPdfSignerMB { get; set; }
     MudMessageBox aboutNcRenamerMB { get; set; }
+    MudMessageBox aboutloopaMB { get; set; }
+    MudMessageBox aboutPdfSignerMB { get; set; }
 
     private async void OnAlwaysDotAboutClicked()
     {
         bool? result = await aboutAlwaysDotMB.Show();
+        StateHasChanged();
+    }
+    private async void OnLoopaAboutClicked()
+    {
+        bool? result = await aboutloopaMB.Show();
         StateHasChanged();
     }
     private async void OnPdfSignerAboutClicked()

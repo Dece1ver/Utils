@@ -24,13 +24,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Include="V:\Documents\Разработка\Utils\PDFSigner\Stationery-Pen128.png">
-      <Pack>True</Pack>
-      <PackagePath>\</PackagePath>
-    </None>
-  </ItemGroup>
-
-  <ItemGroup>
     <PackageReference Include="iTextSharp" Version="5.5.13.3" />
     <PackageReference Include="System.Drawing.Common" Version="6.0.0" />
   </ItemGroup>

@@ -1,20 +1,14 @@
 ﻿using iTextSharp.text;
 using iTextSharp.text.pdf;
 using Microsoft.Win32;
-using PDFSigner.Infrastructure;
 using PDFSigner.Infrastructure.Commands;
 using PDFSigner.ViewModels.Base;
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Text.RegularExpressions;
 using System.Threading;
-using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
 using System.Windows.Input;
 using Application = System.Windows.Application;
 using MessageBox = System.Windows.MessageBox;
@@ -178,16 +172,17 @@ namespace PDFSigner.ViewModels
 
         private void Sign(List<string> files)
         {
+            PdfReader.unethicalreading = true;
             Status = "Подпись файлов";
             ProgressBarVisibility = Visibility.Visible;
             OnPropertyChanged(nameof(ProgressBarVisibility));
             Progress = 0;
-            try
+            foreach (var file in files)
             {
-                foreach (var file in files)
+                var tempName = Path.Combine(Path.GetDirectoryName(file), "~tmp" + Path.GetFileName(file));
+                File.Move(file, tempName, true);
+                try
                 {
-                    var tempName = Path.Combine(Path.GetDirectoryName(file), "~tmp" + Path.GetFileName(file));
-                    File.Move(file, tempName, true);
                     using (var reader = new PdfReader(tempName))
                     {
                         using (var fileStream = new FileStream(
@@ -216,7 +211,7 @@ namespace PDFSigner.ViewModels
                                 contentByte.EndText();
                                 contentByte.Stroke();
                                 contentByte.AddTemplate(importedPage, 0, 0);
-                                
+
                             }
                             document.Close();
                             writer.Close();
@@ -225,14 +220,17 @@ namespace PDFSigner.ViewModels
                     File.Delete(tempName);
                     Progress++;
                 }
-                Status = "Файлы подписаны";
+                
+                catch (Exception ex)
+                {
+                    SignFilesThreadFlag = false;
+                    Status = "Ошибка";
+                    MessageBox.Show(ex.Message, "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
+                    File.Move(tempName, file, true);
+                }
             }
-            catch (Exception ex)
-            {
-                SignFilesThreadFlag = false;
-                Status = "Ошибка";
-                MessageBox.Show(ex.Message, "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
-            }            
+            Status = $"Завершено. Подписано {Progress} файлов.";
+
             ProgressBarVisibility = Visibility.Collapsed;
             OnPropertyChanged(nameof(ProgressBarVisibility));
         }
