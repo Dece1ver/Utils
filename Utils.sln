@@ -55,7 +55,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Utils.Website", "Utils.Webs
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PDFSigner", "PDFSigner\PDFSigner.csproj", "{B4E41EC0-9591-4160-A1EC-A73AC946D8A7}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ToolsInfo", "ToolsInfo\ToolsInfo.csproj", "{6C1293D8-F954-429D-B8B9-3A39B4E422EE}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ToolsInfo", "ToolsInfo\ToolsInfo.csproj", "{6C1293D8-F954-429D-B8B9-3A39B4E422EE}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NCAnalyzer", "NCAnalyzer\NCAnalyzer.csproj", "{AC9DCFDD-3DE7-4BEE-B278-44C200F398A6}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -249,6 +251,14 @@ Global
 		{6C1293D8-F954-429D-B8B9-3A39B4E422EE}.Release|Any CPU.Build.0 = Release|Any CPU
 		{6C1293D8-F954-429D-B8B9-3A39B4E422EE}.Release|x86.ActiveCfg = Release|Any CPU
 		{6C1293D8-F954-429D-B8B9-3A39B4E422EE}.Release|x86.Build.0 = Release|Any CPU
+		{AC9DCFDD-3DE7-4BEE-B278-44C200F398A6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AC9DCFDD-3DE7-4BEE-B278-44C200F398A6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AC9DCFDD-3DE7-4BEE-B278-44C200F398A6}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{AC9DCFDD-3DE7-4BEE-B278-44C200F398A6}.Debug|x86.Build.0 = Debug|Any CPU
+		{AC9DCFDD-3DE7-4BEE-B278-44C200F398A6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AC9DCFDD-3DE7-4BEE-B278-44C200F398A6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AC9DCFDD-3DE7-4BEE-B278-44C200F398A6}.Release|x86.ActiveCfg = Release|Any CPU
+		{AC9DCFDD-3DE7-4BEE-B278-44C200F398A6}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
