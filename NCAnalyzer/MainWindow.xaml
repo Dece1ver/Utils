@@ -33,9 +33,9 @@
             <StatusBarItem>
                 <TextBlock Text="{Binding Status}"/>
             </StatusBarItem>
-            <StatusBarItem HorizontalAlignment="Right" Width="150">
+            <StatusBarItem HorizontalAlignment="Right" Width="150" >
                 <ProgressBar Value="{Binding Progress}" Maximum="{Binding ProgressMaxValue}" 
-                             Visibility="{Binding ProgressBarVisibility}" Width="150" Height="14" Margin="0 0 3 0"/>
+                             Visibility="{Binding ProgressBarVisibility}" Width="141" Height="14" Margin="0 0 3 0"/>
             </StatusBarItem>
         </StatusBar>
         <Grid>
@@ -54,7 +54,7 @@
             <TextBlock Grid.Row="1" Grid.Column="0" Text="Проверено:"/>
             <TextBlock Grid.Row="1" Grid.Column="1" Text="{Binding Progress}"/>
             <GroupBox Grid.Row="2" Grid.ColumnSpan="3" Header="Список">
-                <TextBox IsReadOnly="True" Text="{Binding Report, UpdateSourceTrigger=PropertyChanged, Mode=OneWay}" IsReadOnlyCaretVisible="True" VerticalScrollBarVisibility="Auto" FontFamily="Consolas"/>
+                <TextBox IsReadOnly="True" Text="{Binding Report, UpdateSourceTrigger=PropertyChanged, Mode=OneWay}" IsReadOnlyCaretVisible="True" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto" FontFamily="Consolas"/>
             </GroupBox>
         </Grid>
     </DockPanel>

@@ -35,15 +35,6 @@ namespace NCAnalyzer.ViewModels
             set => Set(ref _Status, value);
         }
 
-        private bool _ModeComboboxEnabled = true;
-
-        public bool ModeComboboxEnabled
-        {
-            get => _ModeComboboxEnabled;
-            set => Set(ref _ModeComboboxEnabled, value);
-        }
-
-
         private bool _BrowseButtonEnabled = true;
 
         public bool BrowseButtonEnabled
@@ -77,12 +68,12 @@ namespace NCAnalyzer.ViewModels
         }
 
 
-        private bool _GetFilesThreadFlag = false;
+        private bool _analyzeFilesThreadFlag = false;
 
-        public bool GetFilesThreadFlag
+        public bool AnalyzeFilesThreadFlag
         {
-            get => _GetFilesThreadFlag;
-            set => Set(ref _GetFilesThreadFlag, value);
+            get => _analyzeFilesThreadFlag;
+            set => Set(ref _analyzeFilesThreadFlag, value);
         }
 
         private double _Progress;
@@ -135,6 +126,26 @@ namespace NCAnalyzer.ViewModels
 
         public int? FilesCount => Files?.Count;
 
+        private double _NcFiles;
+        /// <summary>
+        /// УП
+        /// </summary>
+        public double NcFiles
+        {
+            get => _NcFiles;
+            set => Set(ref _NcFiles, value);
+        }
+
+        /// <summary>
+        /// УП с проблемами
+        /// </summary>
+        private double _BadNcFiles;
+        public double BadNcFiles
+        {
+            get => _BadNcFiles;
+            set => Set(ref _BadNcFiles, value);
+        }
+
         /// <summary>
         /// Отчет
         /// </summary>
@@ -183,15 +194,15 @@ namespace NCAnalyzer.ViewModels
         public ICommand AnalyzeFilesCommand { get; }
         private void OnAnalyzeFilesCommandExecuted(object p)
         {
-            if (!GetFilesThreadFlag)
+            if (!AnalyzeFilesThreadFlag)
             {
-                GetFilesThreadFlag = true;
+                AnalyzeFilesThreadFlag = true;
                 getFilesThread = new Thread(() => AnalyzePrograms(TargetPath)) {IsBackground = true};
                 getFilesThread.Start();
             }
             else
             {
-                GetFilesThreadFlag = false;
+                AnalyzeFilesThreadFlag = false;
             }
         }
         private static bool CanAnalyzeFilesCommandExecute(object p) => true;
@@ -205,9 +216,10 @@ namespace NCAnalyzer.ViewModels
             if (string.IsNullOrEmpty(Report)) return;
             SaveFileDialog saveFileDialog = new();
             saveFileDialog.Filter = "Текстовые файлы (*.txt)|*.txt|Все файлы (*.*)|*.*";
+            saveFileDialog.FileName = "Анализы " + Path.GetFileName(TargetPath) + ".txt";
             if (saveFileDialog.ShowDialog() != true) return;
             File.WriteAllText(saveFileDialog.FileName, Report);
-            Status = $"Список записан в файл \"{saveFileDialog.FileName}\"";
+            Status = $"Отчет записан в файл \"{saveFileDialog.FileName}\"";
         }
         private static bool CanSaveReportCommandExecute(object p) => true;
         #endregion
@@ -226,37 +238,44 @@ namespace NCAnalyzer.ViewModels
 
         private void AnalyzePrograms(string path)
         {
+            
             FindButtonText = "Остановить";
             Files = new List<string>();
+            NcFiles = 0;
+            BadNcFiles = 0;
             Report = string.Empty;
             Status = "Подсчет файлов";
             BrowseButtonEnabled = false;
             SaveButtonEnabled = false;
-            ModeComboboxEnabled = false;
+            Progress = 0;
             OnPropertyChanged(nameof(FilesCount));
             OnPropertyChanged(nameof(Report));
-            ProgressBarVisibility = Visibility.Collapsed;
             GetFiles(path);
             ProgressMaxValue = (double)FilesCount;
-            Progress = 0;
+            OnPropertyChanged(nameof(Progress));
             ProgressBarVisibility = Visibility.Visible;
-            Report += "\n\t*******************************************\n" +
-                      $"\t* Результаты анализов {DateTime.Now:dd.MM.yy - hh.mm.ss} *\n" +
-                      "\t*******************************************\n\n";
+            string reportHeader = "* Результаты анализов\n" +
+                                  $"* Дата: {DateTime.Now:dd.MM.yy - HH:mm:ss}\n" +
+                                  $"* Путь: {TargetPath}\n";
+            Report += reportHeader + '\n';
             foreach (var file in Files)
             {
-                Status = "Проверка файлов на наличие УП";
-                if (!GetFilesThreadFlag) 
+                Status = $"Проверка: {Path.GetFileName(file)}";
+                if (!AnalyzeFilesThreadFlag) 
                 {
                     ProgressBarVisibility = Visibility.Collapsed;
                     break;
                 }
-                Progress++;
-                Status = $"Проверка: {file}";
                 try
                 {
                     var lines = File.ReadLines(file).Take(1).ToList();
-                    if (lines.Count is 0 && lines[0] != "%") continue;
+                    if (lines.Count is 0 || lines[0] != "%")
+                    {
+                        Progress++;
+                        continue;
+                    }
+
+                    NcFiles++;
                     AnalyzeProgram(file, 
                         out var programType, 
                         out var coordinates, 
@@ -268,8 +287,7 @@ namespace NCAnalyzer.ViewModels
                         out var warningsCoolant,
                         out var warningStartPercent,
                         out var warningEndPercent,
-                        out var warningEndProgram,
-                        out var warningsExcessText);
+                        out var warningEndProgram);
                     if (warningsH.Count == 0 &&
                         warningsD.Count == 0 &&
                         warningsBracket.Count == 0 &&
@@ -278,11 +296,14 @@ namespace NCAnalyzer.ViewModels
                         warningsCoolant.Count == 0 &&
                         !warningStartPercent &&
                         !warningEndPercent &&
-                        !warningEndProgram 
-                        //coordinates != "Системы координат отсутствуют\n"
-                        ) continue;
-                    
-                    Report += $"Обнаружены проблемы в УП: {file}\n";
+                        !warningEndProgram)
+                    {
+                        Progress++;
+                        continue;
+                    }
+
+                    BadNcFiles++;
+                    Report += $"({BadNcFiles})\nПроблемы в УП \"{file}\":\n";
                     switch (warningStartPercent)
                     {
                         case true when !warningEndPercent:
@@ -326,6 +347,7 @@ namespace NCAnalyzer.ViewModels
                     }
 
                     Report += '\n';
+                    Progress++;
                     OnPropertyChanged(nameof(Report));
                 }
                 catch (Exception e)
@@ -333,13 +355,16 @@ namespace NCAnalyzer.ViewModels
                     MessageBox.Show(e.Message, e.ToString());
                 }
             }
-            Status = "Завершено";
-            ProgressBarVisibility = Visibility.Visible;
-            if(!string.IsNullOrEmpty(Report)) SaveButtonEnabled = true;
+            Status = AnalyzeFilesThreadFlag ? "Завершено" : "Прервано";
+            if (AnalyzeFilesThreadFlag) ProgressBarVisibility = Visibility.Collapsed;
+            if(!string.IsNullOrEmpty(Report) && Report != reportHeader) SaveButtonEnabled = true;
+            Report = Report.Replace(reportHeader, reportHeader + 
+                                         $"* Файлов: {FilesCount}\n" + 
+                                         $"* УП всего: {NcFiles}\n" + 
+                                         $"* УП с проблемами: {BadNcFiles}\n");
             BrowseButtonEnabled = true;
-            ModeComboboxEnabled = true;
             FindButtonText = "Анализ";
-            GetFilesThreadFlag = false;
+            AnalyzeFilesThreadFlag = false;
         }
 
         private void GetFiles(string path)
@@ -349,12 +374,12 @@ namespace NCAnalyzer.ViewModels
             {
                 foreach (var folder in Directory.GetDirectories(path))
                 {
-                    if (!GetFilesThreadFlag) break;
+                    if (!AnalyzeFilesThreadFlag) break;
                     GetFiles(folder);
                 }
                 foreach (var file in Directory.GetFiles(path))
                 {
-                    if (!GetFilesThreadFlag) break;
+                    if (!AnalyzeFilesThreadFlag) break;
                     Files.Add(file);
                     OnPropertyChanged(nameof(FilesCount));
                 }
@@ -365,7 +390,7 @@ namespace NCAnalyzer.ViewModels
             }
         }
 
-        public static void AnalyzeProgram(
+        public void AnalyzeProgram(
             string programPath, 
             out string caption, 
             out string coordinates, 
@@ -377,9 +402,7 @@ namespace NCAnalyzer.ViewModels
             out List<string> warningsCoolant,
             out bool warningStartPercent,
             out bool warningEndPercent,
-            out bool warningEndProgram,
-            out List<string> warningsExcessText
-            )
+            out bool warningEndProgram)
         {
             //Stopwatch sw = Stopwatch.StartNew();
             warningsH = new List<string>();            // корректор на длину
@@ -391,7 +414,6 @@ namespace NCAnalyzer.ViewModels
             warningStartPercent = false;               // процент в начале
             warningEndPercent = false;                 // процент в конце
             warningEndProgram = true;                  // процент в конце
-            warningsExcessText = new List<string>();   // лишний текст (за скобками)
             var millProgram = false;
             var lines = File.ReadLines(programPath).ToImmutableList();
             List<string> coordinateSystems = new();
@@ -406,9 +428,20 @@ namespace NCAnalyzer.ViewModels
             if (!lines.First().Trim().Equals("%")) warningStartPercent = true;
             if (!lines.Last().Trim().Equals("%")) warningEndPercent = true;
             var fString = "D" + lines.Count.ToString().Length;
-
+            double i = 0;
             foreach (var line in lines)
             {
+                i++;
+                var percent = i / lines.Count * 100;
+                if (percent > 100) percent = 100;
+                Status = $"Проверка: {Path.GetFileName(programPath)} [{Math.Round(percent)}%]";
+
+                if (!AnalyzeFilesThreadFlag) 
+                {
+                    ProgressBarVisibility = Visibility.Collapsed;
+                    warningEndProgram = false;
+                    break;
+                }
                 if (line.Trim().Equals("%")) continue;
                 if (line.StartsWith('<'))
                 {
