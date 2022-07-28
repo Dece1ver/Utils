@@ -333,78 +333,9 @@ namespace AutoElma.Infrastructure
                     }
                 }
 
-                // открываем поиск
-                output.Log("Открытваем список...");
-                for (int i = 0; i < tryout; i++)
-                {
-                    Thread.Sleep(500);
-                    try
-                    {
-                        //wait.Until(wd => wd.FindElement(By.ClassName("combobox-icon")).Displayed);
-                        driver.FindElement(By.ClassName("combobox-icon")).Click();
-                        output.Log($"Открытваем список...[ОК]", true);
-                        break;
-                    }
-                    catch
-                    {
-                        output.Log($"Открытваем список...попытка {i + 1}", true);
-                        if (i == tryout-1)
-                        {
-                            output.Log($"Открытваем список...[НЕУДАЧА] {i + 1}", true);
-                            return "Не удалось.";
-                        }
-                    }
-                }
-
-                // ищем
-                output.Log($"Ввод наименования рабочего процесса...");
-                for (int i = 0; i < tryout; i++)
-                {
-                    Thread.Sleep(500);
-                    try
-                    {
-                        //wait.Until(wd => wd.FindElement(By.XPath("//input[@placeholder='Что искать?']")).Displayed);
-                        driver.FindElement(By.XPath("//input[@placeholder='Что искать?']")).SendKeys(settings.WorkName + Keys.Enter);
-                        output.Log($"Ввод наименования рабочего процесса...[ОК]", true);
-                        break;
-                    }
-                    catch
-                    {
-                        output.Log($"Ввод наименования рабочего процесса...попытка {i + 1}", true);
-                        if (i == tryout-1)
-                        {
-                            output.Log($"Ввод наименования рабочего процесса...[НЕУДАЧА]", true);
-                            return "Не удалось.";
-                        }
-                    }
-                }
-
-                // тыкаем первый найденный вариант
-                output.Log($"Выбор первого найденного варианта...");
-                for (int i = 0; i < tryout; i++)
-                {
-                    Thread.Sleep(500);
-                    try
-                    {
-                        //wait.Until(wd => wd.FindElement(By.XPath("//span[contains(@id,\"EntityxCompanyProject\")]")).Displayed);
-                        driver.FindElement(By.XPath("//span[contains(@id,\"EntityxCompanyProject\")]")).Click();
-                        output.Log($"Выбор первого найденного варианта...[ОК]", true);
-                        break;
-                    }
-                    catch
-                    {
-                        output.Log($"Выбор первого найденного варианта...попытка {i + 1}", true);
-                        if (i == tryout-1)
-                        {
-                            output.Log($"Выбор первого найденного варианта...[НЕУДАЧА]", true);
-                            return "Не удалось.";
-                        }
-                    }
-                }
-
-                // указываем остаточное время
-                output.Log($"Поиск оставшегося времени работы...");
-                (string uHours, string uMinutes) = (string.Empty, string.Empty);
+                // Поиск нераспределенного времени
+                output.Log($"Поиск нераспределенного времени работы...");
+                (var uHours, var uMinutes) = (string.Empty, string.Empty);
                 for (int i = 0; i < tryout; i++)
                 {
                     Thread.Sleep(500);
@@ -414,95 +345,211 @@ namespace AutoElma.Infrastructure
                         var unelapsedTime = driver.FindElement(By.Id("Entity_UnElapsedWorkTime_ValueContainer")).Text.Split('ч');
                         (uHours, uMinutes) = (
                             unelapsedTime[0]
-                            .Replace("\"", string.Empty)
-                            .Trim(), 
+                                .Replace("\"", string.Empty)
+                                .Trim(), 
                             unelapsedTime[1]
-                            .Replace("\"", string.Empty)
-                            .Replace("мин", string.Empty)
-                            .Trim());
-                        output.Log($"Поиск оставшегося времени работы...[ОК]", true);
+                                .Replace("\"", string.Empty)
+                                .Replace("мин", string.Empty)
+                                .Trim());
+                        output.Log($"Поиск нераспределенного времени работы...[ОК]", true);
                         break;
                     }
                     catch
                     {
 
-                        output.Log($"Поиск оставшегося времени работы...попытка {i + 1}", true);
+                        output.Log($"Поиск нераспределенного времени работы...попытка {i + 1}", true);
                         if (i == tryout - 1)
                         {
-                            output.Log($"Поиск оставшегося времени работы...[НЕУДАЧА]", true);
+                            output.Log($"Поиск нераспределенного времени работы...[НЕУДАЧА]", true);
                             return "Не удалось.";
                         }
                     }
                 }
 
-                // указываем остаточное время
-                output.Log($"Ввод оставшихся часов работы...");
-                for (int i = 0; i < tryout; i++)
-                {
-                    Thread.Sleep(500);
-                    try
+                bool move = false;
+                bool setted = false;
+                while ((uHours, uMinutes) != ("", ""))
+                { 
+                    // Поиск нераспределенного времени
+                    output.Log($"Поиск нераспределенного времени работы...");
+                    (uHours, uMinutes) = (string.Empty, string.Empty);
+                    for (int i = 0; i < tryout; i++)
                     {
-                        //wait.Until(wd => wd.FindElement(By.Id("Entity_WorkedTime_days")).Displayed);
-                        driver.FindElement(By.Id("Entity_WorkedTime_hours")).SendKeys(uHours);
-                        output.Log($"Ввод оставшихся часов работы...[ОК]", true);
-                        break;
-                    }
-                    catch
-                    {
-
-                        output.Log($"Ввод оставшихся часов работы...попытка {i + 1}", true);
-                        if (i == tryout-1)
+                        Thread.Sleep(500);
+                        try
                         {
-                            output.Log($"Ввод оставшихся часов работы...[НЕУДАЧА]", true);
-                            return "Не удалось.";
+                            //wait.Until(wd => wd.FindElement(By.Id("Entity_WorkedTime_days")).Displayed);
+                            var unelapsedTime = driver.FindElement(By.Id("Entity_UnElapsedWorkTime_ValueContainer")).Text.Split('ч');
+                            (uHours, uMinutes) = (
+                                unelapsedTime[0]
+                                    .Replace("\"", string.Empty)
+                                    .Trim(), 
+                                unelapsedTime[1]
+                                    .Replace("\"", string.Empty)
+                                    .Replace("мин", string.Empty)
+                                    .Trim());
+                            output.Log($"Поиск нераспределенного времени работы...[ОК]", true);
+                            break;
+                        }
+                        catch
+                        {
+                            output.Log($"Поиск нераспределенного времени работы...попытка {i + 1}", true);
+                            if (i == tryout - 1)
+                            {
+                                if (setted)
+                                {
+                                    output.Log($"Поиск нераспределенного времени работы...[ОТМЕЧЕНО]", true);
+                                    move = true;
+                                    break;
+                                }
+                                output.Log($"Поиск нераспределенного времени работы...[НЕУДАЧА]", true);
+                                return "Не удалось.";
+                            }
                         }
                     }
-                }
+                    if (move) break;
 
-                output.Log($"Ввод оставшихся минут работы...");
-                for (int i = 0; i < tryout; i++)
-                {
-                    Thread.Sleep(500);
-                    try
+                    // открываем поиск
+                    output.Log("Открытваем список...");
+                    for (int i = 0; i < tryout; i++)
                     {
-                        //wait.Until(wd => wd.FindElement(By.Id("Entity_WorkedTime_days")).Displayed);
-                        driver.FindElement(By.Id("Entity_WorkedTime_minutes")).SendKeys(uMinutes);
-                        output.Log($"Ввод оставшихся минут работы...[ОК]", true);
-                        break;
-                    }
-                    catch
-                    {
-
-                        output.Log($"Ввод оставшихся минут работы...попытка {i + 1}", true);
-                        if (i == tryout - 1)
+                        Thread.Sleep(500);
+                        try
                         {
-                            output.Log($"Ввод оставшихся минут работы...[НЕУДАЧА]", true);
-                            return "Не удалось.";
+                            //wait.Until(wd => wd.FindElement(By.ClassName("combobox-icon")).Displayed);
+                            driver.FindElement(By.ClassName("combobox-icon")).Click();
+                            output.Log($"Открытваем список...[ОК]", true);
+                            break;
+                        }
+                        catch
+                        {
+                            output.Log($"Открытваем список...попытка {i + 1}", true);
+                            if (i == tryout-1)
+                            {
+                                output.Log($"Открытваем список...[НЕУДАЧА] {i + 1}", true);
+                                return "Не удалось.";
+                            }
                         }
                     }
-                }
 
-
-                // добавляем
-                output.Log($"Подтверждаем работу...");
-                for (int i = 0; i < tryout; i++)
-                {
-                    Thread.Sleep(500);
-                    try
+                    // ищем
+                    output.Log($"Ввод наименования рабочего процесса...");
+                    for (int i = 0; i < tryout; i++)
                     {
-                        //wait.Until(wd => wd.FindElement(By.XPath("//a[contains(@class,\"t-button\")]")).Displayed);
-                        driver.FindElement(By.XPath("//a[contains(@class,\"t-button\")]")).Click();
-                        driver.FindElement(By.XPath("//a[contains(@class,\"t-button\")]")).Click();
-                        output.Log($"Подтверждаем работу...[ОК]", true);
-                        break;
-                    }
-                    catch
-                    {
-                        output.Log($"Подтверждаем работу...попытка {i + 1}", true);
-                        if (i == tryout-1)
+                        Thread.Sleep(500);
+                        try
                         {
-                            output.Log($"Подтверждаем работу...[НЕУДАЧА]", true);
-                            return "Не удалось.";
+                            //wait.Until(wd => wd.FindElement(By.XPath("//input[@placeholder='Что искать?']")).Displayed);
+                            driver.FindElement(By.XPath("//input[@placeholder='Что искать?']")).SendKeys(settings.WorkName + Keys.Enter);
+                            output.Log($"Ввод наименования рабочего процесса...[ОК]", true);
+                            break;
+                        }
+                        catch
+                        {
+                            output.Log($"Ввод наименования рабочего процесса...попытка {i + 1}", true);
+                            if (i == tryout-1)
+                            {
+                                output.Log($"Ввод наименования рабочего процесса...[НЕУДАЧА]", true);
+                                return "Не удалось.";
+                            }
+                        }
+                    }
+
+                    // тыкаем первый найденный вариант
+                    output.Log($"Выбор первого найденного варианта...");
+                    for (int i = 0; i < tryout; i++)
+                    {
+                        Thread.Sleep(500);
+                        try
+                        {
+                            //wait.Until(wd => wd.FindElement(By.XPath("//span[contains(@id,\"EntityxCompanyProject\")]")).Displayed);
+                            driver.FindElement(By.XPath("//span[contains(@id,\"EntityxCompanyProject\")]")).Click();
+                            output.Log($"Выбор первого найденного варианта...[ОК]", true);
+                            break;
+                        }
+                        catch
+                        {
+                            output.Log($"Выбор первого найденного варианта...попытка {i + 1}", true);
+                            if (i == tryout-1)
+                            {
+                                output.Log($"Выбор первого найденного варианта...[НЕУДАЧА]", true);
+                                return "Не удалось.";
+                            }
+                        }
+                    }
+
+                    
+
+                    // указываем остаточное время
+                    output.Log($"Ввод оставшихся часов работы...");
+                    for (int i = 0; i < tryout; i++)
+                    {
+                        Thread.Sleep(500);
+                        try
+                        {
+                            //wait.Until(wd => wd.FindElement(By.Id("Entity_WorkedTime_days")).Displayed);
+                            driver.FindElement(By.Id("Entity_WorkedTime_hours")).SendKeys(uHours);
+                            output.Log($"Ввод оставшихся часов работы...[ОК]", true);
+                            break;
+                        }
+                        catch
+                        {
+
+                            output.Log($"Ввод оставшихся часов работы...попытка {i + 1}", true);
+                            if (i == tryout-1)
+                            {
+                                output.Log($"Ввод оставшихся часов работы...[НЕУДАЧА]", true);
+                                return "Не удалось.";
+                            }
+                        }
+                    }
+
+                    output.Log($"Ввод оставшихся минут работы...");
+                    for (int i = 0; i < tryout; i++)
+                    {
+                        Thread.Sleep(500);
+                        try
+                        {
+                            //wait.Until(wd => wd.FindElement(By.Id("Entity_WorkedTime_days")).Displayed);
+                            driver.FindElement(By.Id("Entity_WorkedTime_minutes")).SendKeys(uMinutes);
+                            output.Log($"Ввод оставшихся минут работы...[ОК]", true);
+                            break;
+                        }
+                        catch
+                        {
+
+                            output.Log($"Ввод оставшихся минут работы...попытка {i + 1}", true);
+                            if (i == tryout - 1)
+                            {
+                                output.Log($"Ввод оставшихся минут работы...[НЕУДАЧА]", true);
+                                return "Не удалось.";
+                            }
+                        }
+                    }
+
+
+                    // добавляем
+                    output.Log($"Подтверждаем работу...");
+                    for (int i = 0; i < tryout; i++)
+                    {
+                        Thread.Sleep(500);
+                        try
+                        {
+                            //wait.Until(wd => wd.FindElement(By.XPath("//a[contains(@class,\"t-button\")]")).Displayed);
+                            driver.FindElement(By.XPath("//a[contains(@class,\"t-button\")]")).Click();
+                            driver.FindElement(By.XPath("//a[contains(@class,\"t-button\")]")).Click();
+                            output.Log($"Подтверждаем работу...[ОК]", true);
+                            setted = true;
+                            break;
+                        }
+                        catch
+                        {
+                            output.Log($"Подтверждаем работу...попытка {i + 1}", true);
+                            if (i == tryout-1)
+                            {
+                                output.Log($"Подтверждаем работу...[НЕУДАЧА]", true);
+                                return "Не удалось.";
+                            }
                         }
                     }
                 }
@@ -555,7 +602,7 @@ namespace AutoElma.Infrastructure
        int keySize = 256)
         {
             if (string.IsNullOrEmpty(plainText))
-                {
+            {
                 return "";
             }
 
@@ -589,28 +636,29 @@ namespace AutoElma.Infrastructure
             return Convert.ToBase64String(cipherTextBytes);
         }
 
-        public static string Decrypt(string cipherText, string password,
-       string salt = "dece1ver", string hashAlgorithm = "SHA1",
-       int passwordIterations = 2, string initialVector = "OFRna73m*aze01xY",
-       int keySize = 256)
+        public static string Decrypt(string cipherText, 
+            string password,
+            string salt = "dece1ver", string hashAlgorithm = "SHA1",
+            int passwordIterations = 2, string initialVector = "OFRna73m*aze01xY",
+            int keySize = 256)
         {
             if (string.IsNullOrEmpty(cipherText))
-                {
+            {
                 return "";
             }
 
-            byte[] initialVectorBytes = Encoding.ASCII.GetBytes(initialVector);
-            byte[] saltValueBytes = Encoding.ASCII.GetBytes(salt);
-            byte[] cipherTextBytes = Convert.FromBase64String(cipherText);
+            var initialVectorBytes = Encoding.ASCII.GetBytes(initialVector);
+            var saltValueBytes = Encoding.ASCII.GetBytes(salt);
+            var cipherTextBytes = Convert.FromBase64String(cipherText);
 
             PasswordDeriveBytes derivedPassword = new PasswordDeriveBytes(password, saltValueBytes, hashAlgorithm, passwordIterations);
-            byte[] keyBytes = derivedPassword.GetBytes(keySize / 8);
+            var keyBytes = derivedPassword.GetBytes(keySize / 8);
 
             AesCng symmetricKey = new();
             symmetricKey.Mode = CipherMode.CFB;
 
-            byte[] plainTextBytes = new byte[cipherTextBytes.Length];
-            int byteCount = 0;
+            var plainTextBytes = new byte[cipherTextBytes.Length];
+            var byteCount = 0;
 
             using (ICryptoTransform decryptor = symmetricKey.CreateDecryptor(keyBytes, initialVectorBytes))
             {
