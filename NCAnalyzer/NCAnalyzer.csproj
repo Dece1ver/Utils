@@ -8,7 +8,7 @@
     <ApplicationIcon>blood-analysis.ico</ApplicationIcon>
     <Description>Анализатор УП</Description>
     <Copyright>dece1ver</Copyright>
-    <ProduceReferenceAssembly>False</ProduceReferenceAssembly>
+    <ProduceReferenceAssembly>True</ProduceReferenceAssembly>
     <Version>1.0.1</Version>
   </PropertyGroup>
 

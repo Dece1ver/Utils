@@ -257,7 +257,7 @@ namespace NCAnalyzer.ViewModels
             OnPropertyChanged(nameof(Progress));
             ProgressBarVisibility = Visibility.Visible;
             string reportHeader = "* Результаты анализов\n" +
-                                  $"* Версия анализатора: {FileVersionInfo.GetVersionInfo(Assembly.GetExecutingAssembly().Location).FileVersion}\n" +
+                                  $"* Версия анализатора: {Assembly.GetExecutingAssembly().GetName().Version}\n" +
                                   $"* Дата: {DateTime.Now:dd.MM.yy - HH:mm:ss}\n" +
                                   $"* Путь: {TargetPath}\n";
             Report += reportHeader + '\n';
