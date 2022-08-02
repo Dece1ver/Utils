@@ -5,8 +5,10 @@ using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
@@ -255,6 +257,7 @@ namespace NCAnalyzer.ViewModels
             OnPropertyChanged(nameof(Progress));
             ProgressBarVisibility = Visibility.Visible;
             string reportHeader = "* Результаты анализов\n" +
+                                  $"* Версия анализатора: {FileVersionInfo.GetVersionInfo(Assembly.GetExecutingAssembly().Location).FileVersion}\n" +
                                   $"* Дата: {DateTime.Now:dd.MM.yy - HH:mm:ss}\n" +
                                   $"* Путь: {TargetPath}\n";
             Report += reportHeader + '\n';
@@ -535,13 +538,20 @@ namespace NCAnalyzer.ViewModels
                 }
 
                 // фрезерный инструмент
-                if (new Regex(@"T(\d+)", RegexOptions.Compiled).IsMatch(line) && line.Contains("M6") && !line.StartsWith('('))
+                if (new Regex(@"T(\d+)", RegexOptions.Compiled).IsMatch(line) && (line.Contains("M6") || line.Contains("M06")) && !line.StartsWith('('))
                 {
                     millProgram = true;
                     
                     var toolLine = line.Contains('(') 
-                        ? line.Split('T')[1].Replace("M6", string.Empty).Split('(')[0].Replace(" ", string.Empty) 
-                        : line.Split('T')[1].Replace("M6", string.Empty).Replace(" ", string.Empty);
+                        ? line.Split('T')[1]
+                            .Replace("M6", string.Empty)
+                            .Replace("M06", string.Empty)
+                            .Split('(')[0]
+                            .Replace(" ", string.Empty) 
+                        : line.Split('T')[1]
+                            .Replace("M6", string.Empty)
+                            .Replace("M06", string.Empty)
+                            .Replace(" ", string.Empty);
                     currentD = 0;
                     if (int.TryParse(toolLine, out currentToolNo))
                     {
