@@ -415,9 +415,10 @@ namespace NCAnalyzer.ViewModels
             warningsEmptyAddress = new List<string>(); // пустые адреса
             warningsCoolant = new List<string>();      // СОЖ
             warningStartPercent = false;               // процент в начале
-            warningEndPercent = false;                 // процент в конце
+            warningEndPercent = true;                 // процент в конце
             warningEndProgram = true;                  // процент в конце
             var millProgram = false;
+            var lazyAnalyze = false;
             var lines = File.ReadLines(programPath).ToImmutableList();
             List<string> coordinateSystems = new();
             var currentToolNo = 0;
@@ -429,10 +430,10 @@ namespace NCAnalyzer.ViewModels
 
             // проценты
             if (!lines.First().Trim().Equals("%")) warningStartPercent = true;
-            if (!lines.Last().Trim().Equals("%")) warningEndPercent = true;
+            if (!lines.TakeWhile(line => !string.IsNullOrEmpty(line) || !(line.StartsWith('(') && line.EndsWith(')'))).Last().Trim().Equals("%")) warningEndPercent = true;
             var fString = "D" + lines.Count.ToString().Length;
             double i = 0;
-            foreach (var line in lines)
+            foreach (var line in lines.Skip(1))
             {
                 i++;
                 var percent = i / lines.Count * 100;
@@ -445,7 +446,19 @@ namespace NCAnalyzer.ViewModels
                     warningEndProgram = false;
                     break;
                 }
-                if (line.Trim().Equals("%")) continue;
+
+                var lineWithoutParenthesis = line.Trim();
+                lineWithoutParenthesis = new Regex(@"[(][^)]+[)]", RegexOptions.Compiled).Matches(line)
+                    .Aggregate(lineWithoutParenthesis, (current, match) => current.Replace(match.Value, string.Empty));
+                if (string.IsNullOrEmpty(lineWithoutParenthesis)) continue;
+
+                if (lineWithoutParenthesis.Trim().Contains("%"))
+                {
+                    warningEndPercent = false;
+                    break;
+                }
+                if(lazyAnalyze) continue;
+
                 if (line.StartsWith('<'))
                 {
                     if (line.Count(c => c is '<') != line.Count(c => c is '>'))
@@ -455,10 +468,7 @@ namespace NCAnalyzer.ViewModels
                     continue;
                 }
 
-                var lineWithoutParenthesis = line.Trim();
-                lineWithoutParenthesis = new Regex(@"[(][^)]+[)]", RegexOptions.Compiled).Matches(line)
-                    .Aggregate(lineWithoutParenthesis, (current, match) => current.Replace(match.Value, string.Empty));
-                if (string.IsNullOrEmpty(lineWithoutParenthesis)) continue;
+                
 
                 // системы координат
                 if (line.Contains("G54") && !coordinateSystems.Contains("G54") && !line.Contains("G54.1") && !line.Contains("G54P"))
@@ -534,7 +544,8 @@ namespace NCAnalyzer.ViewModels
                 if (lineWithoutParenthesis.Contains("M30") || lineWithoutParenthesis.Contains("M99"))
                 {
                     warningEndProgram = false;
-                    if (currentToolNo != 0 && currentToolComment != string.Empty) break;
+                    lazyAnalyze = true;
+                    //if (currentToolNo != 0 && currentToolComment != string.Empty) break;
                 }
 
                 // фрезерный инструмент
@@ -651,6 +662,13 @@ namespace NCAnalyzer.ViewModels
                 _ => "Системы координат отсутствуют\n"
             };
             //coordinates = $"Время: {sw.ElapsedMilliseconds} мс\n" + coordinates;
+        }
+
+        public static string GetLineWithoutParenthesis(string line)
+        {
+            var lineWithoutParenthesis = line.Trim();
+            return new Regex(@"[(][^)]+[)]", RegexOptions.Compiled).Matches(line)
+                .Aggregate(lineWithoutParenthesis, (current, match) => current.Replace(match.Value, string.Empty));
         }
     }
 }
