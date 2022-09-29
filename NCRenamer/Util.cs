@@ -184,7 +184,7 @@ namespace NCRenamer
         {
             if (mazatrolExtensions.Contains(Path.GetExtension(filePath)?.ToLower()))
             {
-                return GetMazatrolSmartName(filePath);
+                return GetMazatrolSmartName(filePath) + Path.GetExtension(filePath);
             }
             else if (sinumerikExtensions.Contains(Path.GetExtension(filePath)?.ToLower()))
             {
