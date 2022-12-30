@@ -295,6 +295,10 @@ namespace DetailsList.ViewModels
                             var mazak350Detail = NCRenamer.Util.GetMazatrolSmartName(file).TranslateFromEnNumber().FindNumber();
                             if (!Details.Contains(mazak350Detail) && !string.IsNullOrEmpty(mazak350Detail)) Details.Add(mazak350Detail);
                             break;
+                        case FindMode.MazakIntegrex:
+                            var mazakIntegrexDetail = NCRenamer.Util.GetMazatrolIntegrexName(file).TranslateFromEnNumber().Replace(".FREZEROVKA","").FindNumber();
+                            if (!Details.Contains(mazakIntegrexDetail) && !string.IsNullOrEmpty(mazakIntegrexDetail)) Details.Add(mazakIntegrexDetail);
+                            break;
                         case FindMode.QuaserOnlyNumbers:
                             if (Path.GetExtension(file).ToLowerInvariant() != ".h") break;
                             var quaserLines = File.ReadLines(file).Take(2).ToArray();

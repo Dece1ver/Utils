@@ -85,7 +85,7 @@ namespace DetailsList.Infrastructure
                     if (name.Contains(ending)) name = name.Remove(name.IndexOf(ending));
                     if (name.Trim().EndsWith(ending)) name = name.Remove(name.IndexOf(ending));
                 }
-                foreach (var endSetups in new string[] {" 1", " 2", " 3", " 4", " 5", " 6"})
+                foreach (var endSetups in new string[] {" 1", " 2", " 3", " 4", " 5", " 6", ".1", ".2", ".3", ".4", ".5", ".6", ".FREZEROVKA", ".FREZ" })
                 {
                     if (name.Trim().EndsWith(endSetups)) name = name.Remove(name.IndexOf(endSetups));
                 }

@@ -176,6 +176,28 @@ namespace NCRenamer
         }
 
         /// <summary>
+        /// Читает файл УП СЧПУ Mazatrol Smart в поисках названия УП.
+        /// </summary>
+        /// <param name="filePath">Путь к файлу УП Mazatrol Smart</param>
+        /// <returns>Возвращает строку содержащую имя УП, при неудаче возвращает значение NONAME</returns>
+        public static string GetMazatrolIntegrexName(string filePath)
+        {
+            try
+            {
+                string name = Path.GetFileNameWithoutExtension(filePath);
+                foreach (char badSymbol in Path.GetInvalidPathChars().Union(Path.GetInvalidFileNameChars()))
+                {
+                    name = name.Replace(badSymbol, '-');
+                }
+                return name;
+            }
+            catch
+            {
+                return Nameless;
+            }
+        }
+
+        /// <summary>
         /// Получает имя УП в зависимости от расширения файла
         /// </summary>
         /// <param name="filePath">Путь к файлу УП</param>
