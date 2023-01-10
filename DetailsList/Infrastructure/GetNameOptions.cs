@@ -9,6 +9,7 @@ namespace DetailsList.Infrastructure
     public enum GetNameOptions
     {
         NameWithNumber,
-        OnlyNumber
+        OnlyNumber,
+        AsIs
     }
 }

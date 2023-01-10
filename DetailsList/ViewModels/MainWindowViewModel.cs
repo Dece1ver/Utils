@@ -295,9 +295,17 @@ namespace DetailsList.ViewModels
                             var mazak350Detail = NCRenamer.Util.GetMazatrolSmartName(file).TranslateFromEnNumber().FindNumber();
                             if (!Details.Contains(mazak350Detail) && !string.IsNullOrEmpty(mazak350Detail)) Details.Add(mazak350Detail);
                             break;
-                        case FindMode.MazakIntegrex:
-                            var mazakIntegrexDetail = NCRenamer.Util.GetMazatrolIntegrexName(file).TranslateFromEnNumber().Replace(".FREZEROVKA","").FindNumber();
-                            if (!Details.Contains(mazakIntegrexDetail) && !string.IsNullOrEmpty(mazakIntegrexDetail)) Details.Add(mazakIntegrexDetail);
+                        case FindMode.FileName:
+                            var fileNameDetail = NCRenamer.Util.GetPartNameFromFileName(file).TranslateFromEnNumber().Replace(".FREZEROVKA","").FindNumber();
+                            if (!Details.Contains(fileNameDetail) && !string.IsNullOrEmpty(fileNameDetail)) Details.Add(fileNameDetail);
+                            break;
+                        case FindMode.DirName:
+                            if (NCRenamer.Util.machineExtensions.Contains(Path.GetExtension(file).ToLower()))
+                            {
+                                var dirNameDetail = GetDetailNameFromPath(file, TargetPath, GetNameOptions.AsIs).TranslateFromEnNumber().Replace("_"," ");
+                                if (!Details.Contains(dirNameDetail) && !string.IsNullOrEmpty(dirNameDetail)) Details.Add(dirNameDetail);
+                            }
+                            
                             break;
                         case FindMode.QuaserOnlyNumbers:
                             if (Path.GetExtension(file).ToLowerInvariant() != ".h") break;
@@ -356,6 +364,7 @@ namespace DetailsList.ViewModels
             while (cwd != targetPath)
             {
                 cwd = Directory.GetParent(cwd).FullName;
+                if (options == GetNameOptions.AsIs) return Path.GetFileName(cwd);
                 foreach (var sign in Infrastructure.DetailsInfo.numberSigns)
                 {
                     if (Path.GetFileName(cwd).Contains(sign))
