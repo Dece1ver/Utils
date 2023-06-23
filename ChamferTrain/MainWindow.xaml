@@ -5,14 +5,19 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:ChamferTrain"
         mc:Ignorable="d" FontSize="36"
-        Title="Задрачивание фаски" Height="450" Width="800" Loaded="Window_Loaded">
+        Title="Задрачивание фасок и радиусов" Height="450" Width="800" Loaded="Window_Loaded" WindowStartupLocation="CenterScreen" ResizeMode="NoResize">
+    <Window.Resources>
+        <Style TargetType="TextBox">
+            <Setter Property="Margin" Value="0 -1 0 -1"/>
+        </Style>
+    </Window.Resources>
     <DockPanel>
         <TextBlock DockPanel.Dock="Top" x:Name="ScoresText" Text="Побед: 0 | Поражений: 0" HorizontalAlignment="Center" Margin="10 10 0 0" FontSize="18"/>
         <Border Margin="20 10 20 20" DockPanel.Dock="Left" BorderThickness="1" BorderBrush="Black">
-            <Image x:Name="TaskImage" Stretch="Uniform" Source="pack://application:,,,/ChamferTrain;component/ch.png" />
+            <Image x:Name="TaskImage" Stretch="Uniform" />
         </Border>
         <Border Margin="0 10 20 20" DockPanel.Dock="Right" BorderThickness="1" BorderBrush="Black">
-            <Grid >
+            <Grid Margin="10 0 0 0">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="auto"/>
                     <ColumnDefinition/>
@@ -25,7 +30,7 @@
                     <RowDefinition/>
                 </Grid.RowDefinitions>
                 <TextBlock Grid.Row="0" Grid.Column="0" Text="D = "/>
-                <TextBox x:Name="ExtDiamTB" Grid.Row="0" Grid.Column="1" IsReadOnly="True"/>
+                <TextBox x:Name="ExtDiamTB" Grid.Row="0" Grid.Column="1" IsReadOnly="True" Margin="0"/>
 
                 <TextBlock x:Name="TypeTB" Grid.Row="1" Grid.Column="0" Text="C = "/>
                 <TextBox x:Name="CornerTB" Grid.Row="1" Grid.Column="1" IsReadOnly="True"/>
@@ -33,10 +38,12 @@
                 <TextBlock Grid.Row="2" Grid.Column="0" Text="R = "/>
                 <TextBox x:Name="RadiusTB" Grid.Row="2" Grid.Column="1" IsReadOnly="True"/>
 
-                <TextBlock Grid.Row="3" Grid.Column="0" Text="d = "/>
-                <TextBox x:Name="IntDiamTB" Grid.Row="3" Grid.Column="1" IsReadOnly="True"/>
+                <TextBlock x:Name="ResTb" Grid.Row="3" Grid.Column="0" Text="X = " Foreground="Red"/>
+                <TextBox x:Name="ResultTB" Grid.Row="3" Grid.Column="1" Margin="0"/>
 
-                <Button Grid.Column="0" Grid.ColumnSpan="2" Grid.Row="4" BorderThickness="0 1 0 0" BorderBrush="Black" Content="Проверить" Click="Button_Click"/>
+                <Button Grid.Column="0" Grid.ColumnSpan="2" Grid.Row="4" 
+                        Margin="-10 0 0 0" IsDefault="True"
+                        BorderThickness="0 1 0 0" BorderBrush="Black" Content="Проверить" Click="Button_Click"/>
             </Grid>
         </Border>
     </DockPanel>
