@@ -61,6 +61,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NCAnalyzer", "NCAnalyzer\NC
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QuaserSMD", "QuaserSMD\QuaserSMD.csproj", "{88A4B63B-D0FB-441A-B4CA-7AA6987416EE}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ChamferTrain", "ChamferTrain\ChamferTrain.csproj", "{E751C3BA-5C54-4A34-849D-4F54CF457702}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -269,6 +271,14 @@ Global
 		{88A4B63B-D0FB-441A-B4CA-7AA6987416EE}.Release|Any CPU.Build.0 = Release|Any CPU
 		{88A4B63B-D0FB-441A-B4CA-7AA6987416EE}.Release|x86.ActiveCfg = Release|Any CPU
 		{88A4B63B-D0FB-441A-B4CA-7AA6987416EE}.Release|x86.Build.0 = Release|Any CPU
+		{E751C3BA-5C54-4A34-849D-4F54CF457702}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E751C3BA-5C54-4A34-849D-4F54CF457702}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E751C3BA-5C54-4A34-849D-4F54CF457702}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{E751C3BA-5C54-4A34-849D-4F54CF457702}.Debug|x86.Build.0 = Debug|Any CPU
+		{E751C3BA-5C54-4A34-849D-4F54CF457702}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E751C3BA-5C54-4A34-849D-4F54CF457702}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E751C3BA-5C54-4A34-849D-4F54CF457702}.Release|x86.ActiveCfg = Release|Any CPU
+		{E751C3BA-5C54-4A34-849D-4F54CF457702}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
