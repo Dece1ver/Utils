@@ -10,6 +10,7 @@
   <ItemGroup>
     <None Remove="res\ch1.png" />
     <None Remove="res\ch2.png" />
+    <None Remove="res\ch3.png" />
     <None Remove="res\rad1.png" />
     <None Remove="res\rad2.png" />
   </ItemGroup>
@@ -17,6 +18,7 @@
   <ItemGroup>
     <Resource Include="res\ch1.png" />
     <Resource Include="res\ch2.png" />
+    <Resource Include="res\ch3.png" />
     <Resource Include="res\rad1.png" />
     <Resource Include="res\rad2.png" />
   </ItemGroup>

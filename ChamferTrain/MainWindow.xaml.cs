@@ -23,13 +23,14 @@ namespace ChamferTrain
     {
         private double[] _rads = new double[4] { 0.2, 0.4, 0.8, 1.2 };
         private double[] _corners = new double[12] { 0.2, 0.3, 0.5, 0.6, 1, 1.5, 1.6, 2, 2.5, 3, 4, 5 };
+        private double[] _addCorners = new double[6] { 0.2, 0.3, 0.5, 1, 2, 3 };
         private int loses = 0;
         private int wins = 0;
 
         public int Type { get; set; }
-        public int ExtDiameter { get; set; }
-        public int IntDiameter { get; set; }
-        public double Corner { get; set; }
+        public double ExtDiameter { get; set; }
+        public double AddCorner { get; set; }
+        public double Corner { get; set; } = 0;
         public double InsertRadius { get; set; }
         
         public MainWindow()
@@ -45,20 +46,24 @@ namespace ChamferTrain
         private void SetNewData()
         {
             ResultTB.Text = string.Empty;
+            AddResultTB.Text = string.Empty;
             ScoresText.Text = $"Побед: {wins} | Поражений: {loses}";
-            Type = new Random().Next(0, 3);
+            Type = new Random().Next(0, 4);
             switch (Type) {
                 case 0:
+                    HideAdditional();
                     TaskImage.Source = new BitmapImage(new Uri("pack://application:,,,/ChamferTrain;component/res/ch1.png"));
                     TypeTB.Text = "C = ";
                     ResTb.Text = "X = ";
                     break;
                 case 1:
+                    HideAdditional();
                     TaskImage.Source = new BitmapImage(new Uri("pack://application:,,,/ChamferTrain;component/res/ch2.png"));
                     TypeTB.Text = "C = ";
                     ResTb.Text = "Z = ";
                     break;
                 case 2:
+                    HideAdditional();
                     TaskImage.Source = new BitmapImage(new Uri("pack://application:,,,/ChamferTrain;component/res/rad1.png"));
                     TypeTB.Text = "r = ";
                     ResTb.Text = "X = ";
@@ -67,6 +72,12 @@ namespace ChamferTrain
                     TaskImage.Source = new BitmapImage(new Uri("pack://application:,,,/ChamferTrain;component/res/rad2.png"));
                     TypeTB.Text = "r = ";
                     ResTb.Text = "Z = ";
+                    break;
+                case 4:
+                    ShowAdditional();
+                    TaskImage.Source = new BitmapImage(new Uri("pack://application:,,,/ChamferTrain;component/res/ch3.png"));
+                    TypeTB.Text = "C = ";
+                    ResTb.Text = "X = ";
                     break;
                 default:
                     return;
@@ -77,6 +88,8 @@ namespace ChamferTrain
             CornerTB.Text = Corner.ToString("F1").Replace(',','.');
             InsertRadius = _rads[new Random().Next(0, _rads.Length)];
             RadiusTB.Text = InsertRadius.ToString("F1").Replace(',','.');
+            AddCorner = _addCorners[new Random().Next(0, _addCorners.Length)];
+            AddCornerTB.Text = AddCorner.ToString("F1").Replace(",",".");
             ResultTB.Focus();
         }
 
@@ -140,7 +153,20 @@ namespace ChamferTrain
                         MessageBox.Show("Нет", "Нет", MessageBoxButton.OK, MessageBoxImage.Error);
                     }
                     break;
-
+                case 4:
+                    if (double.TryParse(ResultTB.Text.Replace('.', ','), out double ch3res1) && AlmostEq(ch3res1, ExtDiameter - 2 * Corner - InsertRadius)
+                        && double.TryParse(AddResultTB.Text.Replace('.', ','), out double ch3res2) && AlmostEq(ch3res2, ch3res1 - 2 * (AddCorner + InsertRadius)))
+                    {
+                        MessageBox.Show("Успех", "Правильно", MessageBoxButton.OK, MessageBoxImage.Information);
+                        wins++;
+                        SetNewData();
+                    }
+                    else
+                    {
+                        loses++;
+                        MessageBox.Show("Нет", "Неправильно", MessageBoxButton.OK, MessageBoxImage.Error);
+                    }
+                    break;
                 default:
                     return;
             }
@@ -149,5 +175,21 @@ namespace ChamferTrain
         }
 
         static bool AlmostEq(double var1, double var2, double tolerance = 0.01) => Math.Abs(var1 - var2) <= tolerance;
+
+        void HideAdditional()
+        {
+            AddTypeTB.Visibility = Visibility.Collapsed;
+            AddCornerTB.Visibility = Visibility.Collapsed;
+            AddResTb.Visibility = Visibility.Collapsed;
+            AddResultTB.Visibility = Visibility.Collapsed;
+        }
+
+        void ShowAdditional()
+        {
+            AddTypeTB.Visibility = Visibility.Visible;
+            AddCornerTB.Visibility = Visibility.Visible;
+            AddResTb.Visibility = Visibility.Visible;
+            AddResultTB.Visibility = Visibility.Visible;
+        }
     }
 }
