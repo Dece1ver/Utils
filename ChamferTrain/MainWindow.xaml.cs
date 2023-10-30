@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.Metrics;
 using System.Linq;
 using System.Reflection.Metadata;
 using System.Text;
@@ -34,15 +35,17 @@ namespace ChamferTrain
             ChamferExternalReverse,
             ChamferInternalTraditional,
             ChamferInternalReverse,
-            RadiusExternalTraditional,
-            RadiusExternalReverse,
+            RadiusExternalTraditionalG1,
+            RadiusExternalReverseG1,
+            RadiusExternalTraditionalG3,
+            RadiusExternalReverseG2,
             RadiusInternalTraditional,
             RadiusInternalReverse,
         }
         public TaskType Type { get; set; }
-        public double ExtDiameter { get; set; }
+        public double Diameter { get; set; }
         public double AddCorner { get; set; }
-        public double Corner { get; set; } = 0;
+        public double Blunt { get; set; } = 0;
         public double InsertRadius { get; set; }
         
         public MainWindow()
@@ -57,8 +60,8 @@ namespace ChamferTrain
 
         private void SetNewData()
         {
-            ResultTB.Text = string.Empty;
-            AddResultTB.Text = string.Empty;
+            //ResultTB.Text = string.Empty;
+            //AddResultTB.Text = string.Empty;
             ScoresText.Text = $"Побед: {wins} | Поражений: {loses}";
             var taskTypes = Enum.GetValues(typeof(TaskType));
             Type = (TaskType)taskTypes.GetValue(new Random().Next(taskTypes.Length))!;
@@ -66,38 +69,50 @@ namespace ChamferTrain
             {
                 case TaskType.ChamferExternalTraditional:
                     TaskImage.Source = new BitmapImage(new Uri("pack://application:,,,/ChamferTrain;component/res/cha_ext_tra.png"));
+                    BluntLabelTextBox.Text = "C";
+                    ExternalChamferXTextBox.Focus();
                     break;
                 case TaskType.ChamferExternalReverse:
                     TaskImage.Source = new BitmapImage(new Uri("pack://application:,,,/ChamferTrain;component/res/cha_ext_rev.png"));
+                    BluntLabelTextBox.Text = "C";
+                    ExternalChamferReverseZTextBox.Focus();
                     break;
                 case TaskType.ChamferInternalTraditional:
                     TaskImage.Source = new BitmapImage(new Uri("pack://application:,,,/ChamferTrain;component/res/cha_int_tra.png"));
+                    BluntLabelTextBox.Text = "C";
                     break;
                 case TaskType.ChamferInternalReverse:
                     TaskImage.Source = new BitmapImage(new Uri("pack://application:,,,/ChamferTrain;component/res/cha_int_rev.png"));
+                    BluntLabelTextBox.Text = "C";
                     break;
-                case TaskType.RadiusExternalTraditional:
+                case TaskType.RadiusExternalTraditionalG1 or TaskType.RadiusExternalTraditionalG3:
                     TaskImage.Source = new BitmapImage(new Uri("pack://application:,,,/ChamferTrain;component/res/rad_ext_tra.png"));
+                    BluntLabelTextBox.Text = "R";
+                    ExternalRadiusXTextBox.Focus();
                     break;
-                case TaskType.RadiusExternalReverse:
+                case TaskType.RadiusExternalReverseG1 or TaskType.RadiusExternalReverseG2:
                     TaskImage.Source = new BitmapImage(new Uri("pack://application:,,,/ChamferTrain;component/res/rad_ext_rev.png"));
+                    BluntLabelTextBox.Text = "R";
                     break;
                 case TaskType.RadiusInternalTraditional:
                     TaskImage.Source = new BitmapImage(new Uri("pack://application:,,,/ChamferTrain;component/res/rad_int_tra.png"));
+                    BluntLabelTextBox.Text = "R";
                     break;
                 case TaskType.RadiusInternalReverse:
                     TaskImage.Source = new BitmapImage(new Uri("pack://application:,,,/ChamferTrain;component/res/rad_int_rev.png"));
+                    BluntLabelTextBox.Text = "R";
                     break;
             }
-            ExtDiameter = new Random().Next(20, 100);
-            ExtDiamTB.Text = ExtDiameter.ToString();
-            Corner = _corners[new Random().Next(0, _corners.Length)];
-            CornerTB.Text = Corner.ToString("F1").Replace(',','.');
+            Diameter = new Random().Next(20, 100);
+            DiameterTextBlock.Text = $"{Diameter}";
+            Blunt = _corners[new Random().Next(0, _corners.Length)];
+            BluntTextBlock.Text = $"{Blunt:F1}".Replace(',','.');
             InsertRadius = _rads[new Random().Next(0, _rads.Length)];
-            RadiusTB.Text = InsertRadius.ToString("F1").Replace(',','.');
-            AddCorner = _addCorners[new Random().Next(0, _addCorners.Length)];
-            AddCornerTB.Text = AddCorner.ToString("F1").Replace(",",".");
-            ResultTB.Focus();
+            InsertRadiusTextBlock.Text = $"{InsertRadius:F1}".Replace(',','.');
+            
+            //RadiusTB.Text = InsertRadius.ToString("F1").Replace(',','.');
+            //AddCorner = _addCorners[new Random().Next(0, _addCorners.Length)];
+            //AddCornerTB.Text = AddCorner.ToString("F1").Replace(",",".");
         }
 
         private void Button_Click(object sender, RoutedEventArgs e)
@@ -106,79 +121,6 @@ namespace ChamferTrain
             switch (Type)
             {
                 
-
-                    //case 0:
-                    //    if (double.TryParse(ResultTB.Text.Replace('.', ','), out double ch1res) && AlmostEq(ch1res, ExtDiameter - 2 * Corner - InsertRadius))
-                    //    {
-                    //        MessageBox.Show("Успех", "Правильно", MessageBoxButton.OK, MessageBoxImage.Information);
-                    //        wins++;
-                    //        SetNewData();
-                    //    }
-                    //    else
-                    //    {
-                    //        loses++;
-                    //        MessageBox.Show("Нет", "Неправильно", MessageBoxButton.OK, MessageBoxImage.Error);
-                    //    }
-                    //    break;
-                    //case 1:
-                    //    if (double.TryParse(ResultTB.Text.Replace('.', ','), out double ch2res) && AlmostEq(Math.Abs(ch2res), Corner + InsertRadius / 2))
-                    //    {
-                    //        _ = ch2res > 0 
-                    //            ? MessageBox.Show("Первоклассно, но не забывай про минус.", "Правильно", MessageBoxButton.OK, MessageBoxImage.Information) 
-                    //            : MessageBox.Show("Первоклассно", "Правильно", MessageBoxButton.OK, MessageBoxImage.Information);
-                    //        wins++;
-                    //        SetNewData();
-                    //    }
-                    //    else
-                    //    {
-                    //        loses++;
-                    //        MessageBox.Show("Нет", "Неправильно", MessageBoxButton.OK, MessageBoxImage.Error);
-                    //    }
-                    //    break;
-                    //case 2:
-                    //    if (double.TryParse(ResultTB.Text.Replace('.', ','), out double rad1res) && AlmostEq(rad1res, ExtDiameter - 2 * (Corner + InsertRadius)))
-                    //    {
-                    //        MessageBox.Show("Великолепно", "Правильно", MessageBoxButton.OK, MessageBoxImage.Information);
-                    //        wins++;
-                    //        SetNewData();
-                    //    }
-                    //    else
-                    //    {
-                    //        loses++;
-                    //        MessageBox.Show("Нет", "Неправильно", MessageBoxButton.OK, MessageBoxImage.Error);
-                    //    }
-                    //    break;
-                    //case 3:
-                    //    if (double.TryParse(ResultTB.Text.Replace('.', ','), out double rad2res) && AlmostEq(Math.Abs(rad2res), Corner + InsertRadius))
-                    //    {
-                    //        _ = rad2res > 0 
-                    //            ? MessageBox.Show("Норм, но не забывай про минус.", "Правильно", MessageBoxButton.OK, MessageBoxImage.Information) 
-                    //            : MessageBox.Show("Норм", "Правильно", MessageBoxButton.OK, MessageBoxImage.Information);
-                    //        wins++;
-                    //        SetNewData();
-                    //    }
-                    //    else
-                    //    {
-                    //        loses++;
-                    //        MessageBox.Show("Нет", "Нет", MessageBoxButton.OK, MessageBoxImage.Error);
-                    //    }
-                    //    break;
-                    //case 4:
-                    //    if (double.TryParse(ResultTB.Text.Replace('.', ','), out double ch3res1) && AlmostEq(ch3res1, ExtDiameter - 2 * Corner - InsertRadius)
-                    //        && double.TryParse(AddResultTB.Text.Replace('.', ','), out double ch3res2) && AlmostEq(ch3res2, ch3res1 - 2 * (AddCorner + InsertRadius)))
-                    //    {
-                    //        MessageBox.Show("Успех", "Правильно", MessageBoxButton.OK, MessageBoxImage.Information);
-                    //        wins++;
-                    //        SetNewData();
-                    //    }
-                    //    else
-                    //    {
-                    //        loses++;
-                    //        MessageBox.Show("Нет", "Неправильно", MessageBoxButton.OK, MessageBoxImage.Error);
-                    //    }
-                    //    break;
-                    //default:
-                    //    return;
             }
             ScoresText.Text = $"Побед: {wins} | Поражений: {loses} | Успешность: {(double)wins / (double)(wins + loses) * 100:N0}%";
 
@@ -186,20 +128,5 @@ namespace ChamferTrain
 
         static bool AlmostEq(double var1, double var2, double tolerance = 0.01) => Math.Abs(var1 - var2) <= tolerance;
 
-        void HideAdditional()
-        {
-            AddTypeTB.Visibility = Visibility.Collapsed;
-            AddCornerTB.Visibility = Visibility.Collapsed;
-            AddResTb.Visibility = Visibility.Collapsed;
-            AddResultTB.Visibility = Visibility.Collapsed;
-        }
-
-        void ShowAdditional()
-        {
-            AddTypeTB.Visibility = Visibility.Visible;
-            AddCornerTB.Visibility = Visibility.Visible;
-            AddResTb.Visibility = Visibility.Visible;
-            AddResultTB.Visibility = Visibility.Visible;
-        }
     }
 }

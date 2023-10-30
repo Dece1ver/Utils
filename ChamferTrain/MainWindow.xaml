@@ -3,58 +3,155 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:sys="clr-namespace:System;assembly=mscorlib"
         xmlns:local="clr-namespace:ChamferTrain"
-        mc:Ignorable="d" FontSize="36"
-        Title="Задрачивание фасок и радиусов" Height="600" Width="800" Loaded="Window_Loaded" WindowStartupLocation="CenterScreen" ResizeMode="NoResize">
+        mc:Ignorable="d" FontSize="30"
+        Title="Задрачивание фасок и радиусов" Height="600" Width="840" Loaded="Window_Loaded" WindowStartupLocation="CenterScreen" ResizeMode="NoResize">
     <Window.Resources>
         <Style TargetType="TextBox">
-            <Setter Property="Margin" Value="0 -1 0 -1"/>
+            <Setter Property="Margin" Value="0 -6 0 -5"/>
+            <Setter Property="Height" Value="36"/>
+            <Setter Property="FontFamily" Value="Consolas"/>
+            <Setter Property="HorizontalContentAlignment" Value="Center"/>
+            <Style.Triggers>
+                <Trigger Property="Text" Value="">
+                    <Setter Property="BorderBrush" Value="Red" />
+                    <Setter Property="BorderThickness" Value="1" />
+                </Trigger>
+                <Trigger Property="Text" Value="{x:Null}">
+                    <Setter Property="BorderBrush" Value="Red" />
+                    <Setter Property="BorderThickness" Value="1" />
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+        <Style TargetType="TextBlock">
+            <Setter Property="FontFamily" Value="Consolas"/>
+            
+        </Style>
+        <Style TargetType="TextBlock" x:Key="TaskDataTextBoxStyle">
+            <Setter Property="FontFamily" Value="Consolas"/>
+            <Setter Property="FontSize" Value="24"/>
         </Style>
     </Window.Resources>
     <DockPanel>
         <TextBlock DockPanel.Dock="Top" x:Name="ScoresText" Text="Побед: 0 | Поражений: 0" HorizontalAlignment="Center" Margin="10 10 0 0" FontSize="18"/>
-        <DockPanel Width="400" >
+        <DockPanel Width="400" Margin="0 10 0 0">
+            <StackPanel Margin="20 0" DockPanel.Dock="Top" Orientation="Horizontal">
+                <TextBlock Text="D = " Style="{StaticResource TaskDataTextBoxStyle}"/>
+                <TextBlock x:Name="DiameterTextBlock" d:Text="60" Style="{StaticResource TaskDataTextBoxStyle}"/>
+            </StackPanel>
+            <StackPanel Margin="20 0" DockPanel.Dock="Top" Orientation="Horizontal">
+                <TextBlock x:Name="BluntLabelTextBox" Text="C = " Style="{StaticResource TaskDataTextBoxStyle}"/>
+                <TextBlock x:Name="BluntTextBlock" d:Text="3" Style="{StaticResource TaskDataTextBoxStyle}"/>
+            </StackPanel>
+            <StackPanel Margin="20 0" DockPanel.Dock="Top" Orientation="Horizontal">
+                <TextBlock Text="r = " Style="{StaticResource TaskDataTextBoxStyle}"/>
+                <TextBlock x:Name="InsertRadiusTextBlock" d:Text="0.8" Style="{StaticResource TaskDataTextBoxStyle}"/>
+            </StackPanel>
             <Border Margin="20 10 20 20" Padding="5" DockPanel.Dock="Left" BorderThickness="1" BorderBrush="Black">
                 <Image x:Name="TaskImage" Stretch="Uniform" />
             </Border>
         </DockPanel>
-        <Border Margin="0 10 20 20" DockPanel.Dock="Right" BorderThickness="1" BorderBrush="Black">
-            <Grid Margin="10 0 0 0">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="auto"/>
-                    <ColumnDefinition/>
-                </Grid.ColumnDefinitions>
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="auto"/>
-                    <RowDefinition Height="auto"/>
-                    <RowDefinition Height="auto"/>
-                    <RowDefinition Height="auto"/>
-                    <RowDefinition Height="auto"/>
-                    <RowDefinition Height="auto"/>
-                    <RowDefinition/>
-                </Grid.RowDefinitions>
-                <TextBlock Grid.Row="0" Grid.Column="0" Text="D = "/>
-                <TextBox x:Name="ExtDiamTB" Grid.Row="0" Grid.Column="1" IsReadOnly="True" Margin="0"/>
+        <Border Margin="0 10 20 20" Padding="0 1 0 0" DockPanel.Dock="Right" BorderThickness="1" BorderBrush="Black">
+            <DockPanel Margin="00 0 0 0" >
 
-                <TextBlock x:Name="TypeTB" Grid.Row="1" Grid.Column="0" Text="C = "/>
-                <TextBox x:Name="CornerTB" Grid.Row="1" Grid.Column="1" IsReadOnly="True"/>
+                <DockPanel DockPanel.Dock="Top" x:Name="ExternalChamferTaskPanel" Visibility="Collapsed">
+                    <StackPanel DockPanel.Dock="Top" Orientation="Horizontal">
+                        <TextBlock Margin="0 0 0 0" Text="G0 X"/>
+                        <TextBox x:Name="ExternalChamferXTextBox" Width="80" d:Text="56.8"/>
+                        <TextBlock Margin="8 0 0 0" Text="Z1."/>
+                    </StackPanel>
+                    <TextBlock DockPanel.Dock="Top" Text="G1 Z0. F0.2"/>
+                    <StackPanel DockPanel.Dock="Top" Orientation="Horizontal">
+                        <TextBlock Margin="0 0 0 0" Text="G0 X"/>
+                        <TextBlock x:Name="ExternalChamferDiameterTextBox" d:Text="60."/>
+                        <TextBlock Margin="0 0 0 0" Text=" A-45."/>
+                    </StackPanel>
+                    <TextBlock DockPanel.Dock="Top" Text="..."/>
+                </DockPanel>
+                
+                <DockPanel DockPanel.Dock="Top" x:Name="ExternalRadiusG1TaskPanel" Visibility="Visible">
+                    <StackPanel DockPanel.Dock="Top" Orientation="Horizontal">
+                        <TextBlock Margin="0 0 0 0" Text="G0 X"/>
+                        <TextBox x:Name="ExternalRadiusG1XTextBox" Width="80" d:Text="52.4"/>
+                        <TextBlock Margin="8 0 0 0" Text="Z1."/>
+                    </StackPanel>
+                    <TextBlock DockPanel.Dock="Top" Text="G1 Z0. F0.2"/>
+                    <StackPanel DockPanel.Dock="Top" Orientation="Horizontal">
+                        <TextBlock Margin="0 0 0 0" Text="X"/>
+                        <TextBlock x:Name="ExternalRadiusG1DiameterTextBox" d:Text="60."/>
+                        <TextBlock Margin="0 0 0 0" Text=" R"/>
+                        <TextBlock x:Name="ExternalRadiusG1RTextBlock" Margin="0 0 0 0" d:Text="3.8"/>
+                    </StackPanel>
+                    <StackPanel DockPanel.Dock="Top" Orientation="Horizontal">
+                        <TextBlock Margin="0 0 0 0" Text="W"/>
+                        <TextBox x:Name="ExternalRadiusG1ShiftRTextBlock" Margin="0 0 0 0" d:Text="-3.8"/>
+                    </StackPanel>
+                    <TextBlock DockPanel.Dock="Top" Text="..."/>
+                </DockPanel>
+                
+                <DockPanel DockPanel.Dock="Top" x:Name="ExternalRadiusG3TaskPanel" Visibility="Collapsed">
+                    <StackPanel DockPanel.Dock="Top" Orientation="Horizontal">
+                        <TextBlock Margin="0 0 0 0" Text="G0 X"/>
+                        <TextBox x:Name="ExternalRadiusG3XTextBox" Width="80" d:Text="52.4"/>
+                        <TextBlock Margin="8 0 0 0" Text="Z1."/>
+                    </StackPanel>
+                    <TextBlock DockPanel.Dock="Top" Text="G1 Z0. F0.2"/>
+                    <StackPanel DockPanel.Dock="Top" Orientation="Horizontal">
+                        <TextBlock Margin="0 0 0 0" Text="G3 X"/>
+                        <TextBlock x:Name="ExternalRadiusG3DiameterTextBox" d:Text="60."/>
+                        <TextBlock Margin="0 0 0 0" Text=" Z"/>
+                        <TextBox x:Name="ExternalRadiusG3ShiftRTextBlock" Margin="0 0 0 0" d:Text="-3.8"/>
+                        <TextBlock Margin="0 0 0 0" Text=" R"/>
+                        <TextBlock x:Name="ExternalRadiusG3RTextBlock" Margin="0 0 0 0" d:Text="3.8"/>
+                    </StackPanel>
+                    <TextBlock DockPanel.Dock="Top" Text="..."/>
+                </DockPanel>
 
-                <TextBlock x:Name="AddTypeTB" Grid.Row="2" Grid.Column="0" Text="r = " Visibility="Collapsed"/>
-                <TextBox x:Name="AddCornerTB" Grid.Row="2" Grid.Column="1" IsReadOnly="True" Visibility="Collapsed"/>
-
-                <TextBlock Grid.Row="3" Grid.Column="0" Text="R = "/>
-                <TextBox x:Name="RadiusTB" Grid.Row="3" Grid.Column="1" IsReadOnly="True"/>
-
-                <TextBlock x:Name="ResTb" Grid.Row="4" Grid.Column="0" Text="X = " Foreground="Red"/>
-                <TextBox x:Name="ResultTB" Grid.Row="4" Grid.Column="1" Margin="0"/>
-
-                <TextBlock x:Name="AddResTb" Grid.Row="5" Grid.Column="0" Text="X = " Foreground="Blue" Visibility="Collapsed"/>
-                <TextBox x:Name="AddResultTB" Grid.Row="5" Grid.Column="1" Margin="0" Visibility="Collapsed"/>
-
-                <Button Grid.Column="0" Grid.ColumnSpan="2" Grid.Row="6" 
-                        Margin="-10 0 0 0" IsDefault="True"
+                <DockPanel DockPanel.Dock="Top" x:Name="ExternalChamferReverseTaskPanel" Margin="10 0 0 0" Visibility="Collapsed">
+                    <StackPanel DockPanel.Dock="Top" Orientation="Horizontal">
+                        <TextBlock Margin="0 0 0 0" Text="G0 X"/>
+                        <TextBlock x:Name="ExternalChamferReverseApprDiamTextBlock" Margin="0 0 0 0" d:Text="61."/>
+                        <TextBlock Margin="0 0 0 0" Text=" Z"/>
+                        <TextBox x:Name="ExternalChamferReverseZTextBox" Width="94" d:Text="-3.4"/>
+                        <TextBlock Margin="8 0 0 0" Text="S200 M3"/>
+                    </StackPanel>
+                    <StackPanel DockPanel.Dock="Top" Orientation="Horizontal">
+                        <TextBlock Text="G1 X"/>
+                        <TextBlock x:Name="ExternalChamferReverseDiamTextBlock" d:Text="60."/>
+                        <TextBlock Text=" F0.2"/>
+                    </StackPanel>
+                    <TextBlock DockPanel.Dock="Top" Text="Z0. A-45."/>
+                    <StackPanel DockPanel.Dock="Top" Orientation="Horizontal">
+                        <TextBlock Margin="0 0 0 0" Text="G1 X"/>
+                        <TextBlock x:Name="ExternalChamferReverseEndTextBlock" Margin="0 0 0 0" d:Text="-1.6"/>
+                    </StackPanel>
+                </DockPanel>
+                
+                <DockPanel DockPanel.Dock="Top" x:Name="ExternalRadiusReverseTaskPanel" Margin="10 0 0 0" Visibility="Collapsed">
+                    <StackPanel DockPanel.Dock="Top" Orientation="Horizontal">
+                        <TextBlock Margin="0 0 0 0" Text="G0 X"/>
+                        <TextBlock x:Name="ExternalRadiusReverseApprDiamTextBlock" Margin="0 0 0 0" d:Text="61."/>
+                        <TextBlock Margin="0 0 0 0" Text=" Z"/>
+                        <TextBox x:Name="ExternalRadiusReverseZTextBox" Width="94" d:Text="-3.4"/>
+                        <TextBlock Margin="8 0 0 0" Text="S200 M3"/>
+                    </StackPanel>
+                    <StackPanel DockPanel.Dock="Top" Orientation="Horizontal">
+                        <TextBlock Text="G1 X"/>
+                        <TextBlock x:Name="ExternalRadiusReverseDiamTextBlock" d:Text="60."/>
+                        <TextBlock Text=" F0.2"/>
+                    </StackPanel>
+                    <TextBlock DockPanel.Dock="Top" Text="Z0. A-45."/>
+                    <StackPanel DockPanel.Dock="Top" Orientation="Horizontal">
+                        <TextBlock Margin="0 0 0 0" Text="G1 X"/>
+                        <TextBlock x:Name="ExternalRadiusReverseEndTextBlock" Margin="0 0 0 0" d:Text="-1.6"/>
+                    </StackPanel>
+                </DockPanel>
+                
+                <Button DockPanel.Dock="Bottom" Grid.Column="0" Grid.ColumnSpan="2" Grid.Row="6" 
+                        Margin="0" IsDefault="True"
                         BorderThickness="0 1 0 0" BorderBrush="Black" Content="Проверить" Click="Button_Click"/>
-            </Grid>
+            </DockPanel>
         </Border>
     </DockPanel>
 </Window>
