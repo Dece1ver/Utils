@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:ChamferTrain"
         mc:Ignorable="d" FontSize="36"
-        Title="Задрачивание фасок и радиусов" Height="450" Width="800" Loaded="Window_Loaded" WindowStartupLocation="CenterScreen" ResizeMode="NoResize">
+        Title="Задрачивание фасок и радиусов" Height="600" Width="800" Loaded="Window_Loaded" WindowStartupLocation="CenterScreen" ResizeMode="NoResize">
     <Window.Resources>
         <Style TargetType="TextBox">
             <Setter Property="Margin" Value="0 -1 0 -1"/>
@@ -13,9 +13,11 @@
     </Window.Resources>
     <DockPanel>
         <TextBlock DockPanel.Dock="Top" x:Name="ScoresText" Text="Побед: 0 | Поражений: 0" HorizontalAlignment="Center" Margin="10 10 0 0" FontSize="18"/>
-        <Border Margin="20 10 20 20" DockPanel.Dock="Left" BorderThickness="1" BorderBrush="Black">
-            <Image x:Name="TaskImage" Stretch="Uniform" />
-        </Border>
+        <DockPanel Width="400" >
+            <Border Margin="20 10 20 20" Padding="5" DockPanel.Dock="Left" BorderThickness="1" BorderBrush="Black">
+                <Image x:Name="TaskImage" Stretch="Uniform" />
+            </Border>
+        </DockPanel>
         <Border Margin="0 10 20 20" DockPanel.Dock="Right" BorderThickness="1" BorderBrush="Black">
             <Grid Margin="10 0 0 0">
                 <Grid.ColumnDefinitions>

@@ -11,16 +11,32 @@
     <None Remove="res\ch1.png" />
     <None Remove="res\ch2.png" />
     <None Remove="res\ch3.png" />
+    <None Remove="res\cha_ext_rev.png" />
+    <None Remove="res\cha_ext_tra.png" />
+    <None Remove="res\cha_int_rev.png" />
+    <None Remove="res\cha_int_tra.png" />
     <None Remove="res\rad1.png" />
     <None Remove="res\rad2.png" />
+    <None Remove="res\rad_ext_rev.png" />
+    <None Remove="res\rad_ext_tra.png" />
+    <None Remove="res\rad_int_rev.png" />
+    <None Remove="res\rad_int_tra.png" />
   </ItemGroup>
 
   <ItemGroup>
     <Resource Include="res\ch1.png" />
     <Resource Include="res\ch2.png" />
     <Resource Include="res\ch3.png" />
+    <Resource Include="res\cha_ext_rev.png" />
+    <Resource Include="res\cha_ext_tra.png" />
+    <Resource Include="res\cha_int_rev.png" />
+    <Resource Include="res\cha_int_tra.png" />
     <Resource Include="res\rad1.png" />
     <Resource Include="res\rad2.png" />
+    <Resource Include="res\rad_ext_rev.png" />
+    <Resource Include="res\rad_ext_tra.png" />
+    <Resource Include="res\rad_int_rev.png" />
+    <Resource Include="res\rad_int_tra.png" />
   </ItemGroup>
 
 </Project>

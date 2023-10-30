@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection.Metadata;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
@@ -27,7 +28,18 @@ namespace ChamferTrain
         private int loses = 0;
         private int wins = 0;
 
-        public int Type { get; set; }
+        public enum TaskType
+        {
+            ChamferExternalTraditional,
+            ChamferExternalReverse,
+            ChamferInternalTraditional,
+            ChamferInternalReverse,
+            RadiusExternalTraditional,
+            RadiusExternalReverse,
+            RadiusInternalTraditional,
+            RadiusInternalReverse,
+        }
+        public TaskType Type { get; set; }
         public double ExtDiameter { get; set; }
         public double AddCorner { get; set; }
         public double Corner { get; set; } = 0;
@@ -48,39 +60,34 @@ namespace ChamferTrain
             ResultTB.Text = string.Empty;
             AddResultTB.Text = string.Empty;
             ScoresText.Text = $"Побед: {wins} | Поражений: {loses}";
-            Type = new Random().Next(0, 4);
-            switch (Type) {
-                case 0:
-                    HideAdditional();
-                    TaskImage.Source = new BitmapImage(new Uri("pack://application:,,,/ChamferTrain;component/res/ch1.png"));
-                    TypeTB.Text = "C = ";
-                    ResTb.Text = "X = ";
+            var taskTypes = Enum.GetValues(typeof(TaskType));
+            Type = (TaskType)taskTypes.GetValue(new Random().Next(taskTypes.Length))!;
+            switch (Type)
+            {
+                case TaskType.ChamferExternalTraditional:
+                    TaskImage.Source = new BitmapImage(new Uri("pack://application:,,,/ChamferTrain;component/res/cha_ext_tra.png"));
                     break;
-                case 1:
-                    HideAdditional();
-                    TaskImage.Source = new BitmapImage(new Uri("pack://application:,,,/ChamferTrain;component/res/ch2.png"));
-                    TypeTB.Text = "C = ";
-                    ResTb.Text = "Z = ";
+                case TaskType.ChamferExternalReverse:
+                    TaskImage.Source = new BitmapImage(new Uri("pack://application:,,,/ChamferTrain;component/res/cha_ext_rev.png"));
                     break;
-                case 2:
-                    HideAdditional();
-                    TaskImage.Source = new BitmapImage(new Uri("pack://application:,,,/ChamferTrain;component/res/rad1.png"));
-                    TypeTB.Text = "r = ";
-                    ResTb.Text = "X = ";
+                case TaskType.ChamferInternalTraditional:
+                    TaskImage.Source = new BitmapImage(new Uri("pack://application:,,,/ChamferTrain;component/res/cha_int_tra.png"));
                     break;
-                case 3:
-                    TaskImage.Source = new BitmapImage(new Uri("pack://application:,,,/ChamferTrain;component/res/rad2.png"));
-                    TypeTB.Text = "r = ";
-                    ResTb.Text = "Z = ";
+                case TaskType.ChamferInternalReverse:
+                    TaskImage.Source = new BitmapImage(new Uri("pack://application:,,,/ChamferTrain;component/res/cha_int_rev.png"));
                     break;
-                case 4:
-                    ShowAdditional();
-                    TaskImage.Source = new BitmapImage(new Uri("pack://application:,,,/ChamferTrain;component/res/ch3.png"));
-                    TypeTB.Text = "C = ";
-                    ResTb.Text = "X = ";
+                case TaskType.RadiusExternalTraditional:
+                    TaskImage.Source = new BitmapImage(new Uri("pack://application:,,,/ChamferTrain;component/res/rad_ext_tra.png"));
                     break;
-                default:
-                    return;
+                case TaskType.RadiusExternalReverse:
+                    TaskImage.Source = new BitmapImage(new Uri("pack://application:,,,/ChamferTrain;component/res/rad_ext_rev.png"));
+                    break;
+                case TaskType.RadiusInternalTraditional:
+                    TaskImage.Source = new BitmapImage(new Uri("pack://application:,,,/ChamferTrain;component/res/rad_int_tra.png"));
+                    break;
+                case TaskType.RadiusInternalReverse:
+                    TaskImage.Source = new BitmapImage(new Uri("pack://application:,,,/ChamferTrain;component/res/rad_int_rev.png"));
+                    break;
             }
             ExtDiameter = new Random().Next(20, 100);
             ExtDiamTB.Text = ExtDiameter.ToString();
@@ -95,83 +102,86 @@ namespace ChamferTrain
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
+            MessageBox.Show(Type.ToString());
             switch (Type)
             {
-                case 0:
-                    if (double.TryParse(ResultTB.Text.Replace('.', ','), out double ch1res) && AlmostEq(ch1res, ExtDiameter - 2 * Corner - InsertRadius))
-                    {
-                        MessageBox.Show("Успех", "Правильно", MessageBoxButton.OK, MessageBoxImage.Information);
-                        wins++;
-                        SetNewData();
-                    }
-                    else
-                    {
-                        loses++;
-                        MessageBox.Show("Нет", "Неправильно", MessageBoxButton.OK, MessageBoxImage.Error);
-                    }
-                    break;
-                case 1:
-                    if (double.TryParse(ResultTB.Text.Replace('.', ','), out double ch2res) && AlmostEq(Math.Abs(ch2res), Corner + InsertRadius / 2))
-                    {
-                        _ = ch2res > 0 
-                            ? MessageBox.Show("Первоклассно, но не забывай про минус.", "Правильно", MessageBoxButton.OK, MessageBoxImage.Information) 
-                            : MessageBox.Show("Первоклассно", "Правильно", MessageBoxButton.OK, MessageBoxImage.Information);
-                        wins++;
-                        SetNewData();
-                    }
-                    else
-                    {
-                        loses++;
-                        MessageBox.Show("Нет", "Неправильно", MessageBoxButton.OK, MessageBoxImage.Error);
-                    }
-                    break;
-                case 2:
-                    if (double.TryParse(ResultTB.Text.Replace('.', ','), out double rad1res) && AlmostEq(rad1res, ExtDiameter - 2 * (Corner + InsertRadius)))
-                    {
-                        MessageBox.Show("Великолепно", "Правильно", MessageBoxButton.OK, MessageBoxImage.Information);
-                        wins++;
-                        SetNewData();
-                    }
-                    else
-                    {
-                        loses++;
-                        MessageBox.Show("Нет", "Неправильно", MessageBoxButton.OK, MessageBoxImage.Error);
-                    }
-                    break;
-                case 3:
-                    if (double.TryParse(ResultTB.Text.Replace('.', ','), out double rad2res) && AlmostEq(Math.Abs(rad2res), Corner + InsertRadius))
-                    {
-                        _ = rad2res > 0 
-                            ? MessageBox.Show("Норм, но не забывай про минус.", "Правильно", MessageBoxButton.OK, MessageBoxImage.Information) 
-                            : MessageBox.Show("Норм", "Правильно", MessageBoxButton.OK, MessageBoxImage.Information);
-                        wins++;
-                        SetNewData();
-                    }
-                    else
-                    {
-                        loses++;
-                        MessageBox.Show("Нет", "Нет", MessageBoxButton.OK, MessageBoxImage.Error);
-                    }
-                    break;
-                case 4:
-                    if (double.TryParse(ResultTB.Text.Replace('.', ','), out double ch3res1) && AlmostEq(ch3res1, ExtDiameter - 2 * Corner - InsertRadius)
-                        && double.TryParse(AddResultTB.Text.Replace('.', ','), out double ch3res2) && AlmostEq(ch3res2, ch3res1 - 2 * (AddCorner + InsertRadius)))
-                    {
-                        MessageBox.Show("Успех", "Правильно", MessageBoxButton.OK, MessageBoxImage.Information);
-                        wins++;
-                        SetNewData();
-                    }
-                    else
-                    {
-                        loses++;
-                        MessageBox.Show("Нет", "Неправильно", MessageBoxButton.OK, MessageBoxImage.Error);
-                    }
-                    break;
-                default:
-                    return;
+                
+
+                    //case 0:
+                    //    if (double.TryParse(ResultTB.Text.Replace('.', ','), out double ch1res) && AlmostEq(ch1res, ExtDiameter - 2 * Corner - InsertRadius))
+                    //    {
+                    //        MessageBox.Show("Успех", "Правильно", MessageBoxButton.OK, MessageBoxImage.Information);
+                    //        wins++;
+                    //        SetNewData();
+                    //    }
+                    //    else
+                    //    {
+                    //        loses++;
+                    //        MessageBox.Show("Нет", "Неправильно", MessageBoxButton.OK, MessageBoxImage.Error);
+                    //    }
+                    //    break;
+                    //case 1:
+                    //    if (double.TryParse(ResultTB.Text.Replace('.', ','), out double ch2res) && AlmostEq(Math.Abs(ch2res), Corner + InsertRadius / 2))
+                    //    {
+                    //        _ = ch2res > 0 
+                    //            ? MessageBox.Show("Первоклассно, но не забывай про минус.", "Правильно", MessageBoxButton.OK, MessageBoxImage.Information) 
+                    //            : MessageBox.Show("Первоклассно", "Правильно", MessageBoxButton.OK, MessageBoxImage.Information);
+                    //        wins++;
+                    //        SetNewData();
+                    //    }
+                    //    else
+                    //    {
+                    //        loses++;
+                    //        MessageBox.Show("Нет", "Неправильно", MessageBoxButton.OK, MessageBoxImage.Error);
+                    //    }
+                    //    break;
+                    //case 2:
+                    //    if (double.TryParse(ResultTB.Text.Replace('.', ','), out double rad1res) && AlmostEq(rad1res, ExtDiameter - 2 * (Corner + InsertRadius)))
+                    //    {
+                    //        MessageBox.Show("Великолепно", "Правильно", MessageBoxButton.OK, MessageBoxImage.Information);
+                    //        wins++;
+                    //        SetNewData();
+                    //    }
+                    //    else
+                    //    {
+                    //        loses++;
+                    //        MessageBox.Show("Нет", "Неправильно", MessageBoxButton.OK, MessageBoxImage.Error);
+                    //    }
+                    //    break;
+                    //case 3:
+                    //    if (double.TryParse(ResultTB.Text.Replace('.', ','), out double rad2res) && AlmostEq(Math.Abs(rad2res), Corner + InsertRadius))
+                    //    {
+                    //        _ = rad2res > 0 
+                    //            ? MessageBox.Show("Норм, но не забывай про минус.", "Правильно", MessageBoxButton.OK, MessageBoxImage.Information) 
+                    //            : MessageBox.Show("Норм", "Правильно", MessageBoxButton.OK, MessageBoxImage.Information);
+                    //        wins++;
+                    //        SetNewData();
+                    //    }
+                    //    else
+                    //    {
+                    //        loses++;
+                    //        MessageBox.Show("Нет", "Нет", MessageBoxButton.OK, MessageBoxImage.Error);
+                    //    }
+                    //    break;
+                    //case 4:
+                    //    if (double.TryParse(ResultTB.Text.Replace('.', ','), out double ch3res1) && AlmostEq(ch3res1, ExtDiameter - 2 * Corner - InsertRadius)
+                    //        && double.TryParse(AddResultTB.Text.Replace('.', ','), out double ch3res2) && AlmostEq(ch3res2, ch3res1 - 2 * (AddCorner + InsertRadius)))
+                    //    {
+                    //        MessageBox.Show("Успех", "Правильно", MessageBoxButton.OK, MessageBoxImage.Information);
+                    //        wins++;
+                    //        SetNewData();
+                    //    }
+                    //    else
+                    //    {
+                    //        loses++;
+                    //        MessageBox.Show("Нет", "Неправильно", MessageBoxButton.OK, MessageBoxImage.Error);
+                    //    }
+                    //    break;
+                    //default:
+                    //    return;
             }
             ScoresText.Text = $"Побед: {wins} | Поражений: {loses} | Успешность: {(double)wins / (double)(wins + loses) * 100:N0}%";
-            
+
         }
 
         static bool AlmostEq(double var1, double var2, double tolerance = 0.01) => Math.Abs(var1 - var2) <= tolerance;
