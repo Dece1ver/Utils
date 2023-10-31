@@ -34,13 +34,17 @@ namespace ChamferTrain
             ChamferExternalTraditional,
             ChamferExternalReverse,
             ChamferInternalTraditional,
+            ChamferInternalTraditionalС,
             ChamferInternalReverse,
+            ChamferInternalReverseС,
             RadiusExternalTraditionalG1,
             RadiusExternalReverseG1,
             RadiusExternalTraditionalG3,
             RadiusExternalReverseG2,
-            RadiusInternalTraditional,
-            RadiusInternalReverse,
+            RadiusInternalTraditionalG1,
+            RadiusInternalTraditionalG2,
+            RadiusInternalReverseG1,
+            RadiusInternalReverseG3,
         }
         public TaskType Type { get; set; }
         public double Diameter { get; set; }
@@ -88,7 +92,7 @@ namespace ChamferTrain
                 case TaskType.RadiusExternalTraditionalG1 or TaskType.RadiusExternalTraditionalG3:
                     TaskImage.Source = new BitmapImage(new Uri("pack://application:,,,/ChamferTrain;component/res/rad_ext_tra.png"));
                     BluntLabelTextBox.Text = "R";
-                    ExternalRadiusXTextBox.Focus();
+                    ExternalRadiusG1XTextBox.Focus();
                     break;
                 case TaskType.RadiusExternalReverseG1 or TaskType.RadiusExternalReverseG2:
                     TaskImage.Source = new BitmapImage(new Uri("pack://application:,,,/ChamferTrain;component/res/rad_ext_rev.png"));
