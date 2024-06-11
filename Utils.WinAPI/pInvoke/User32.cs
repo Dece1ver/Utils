@@ -19,6 +19,17 @@ namespace Utils.WinAPI.pInvoke
         [DllImport(FileName, CharSet = CharSet.Auto, SetLastError = false)]
         public static extern IntPtr SendMessage(IntPtr hWnd, WM Msg, IntPtr wParam, IntPtr lParam);
 
+        /// <summary>
+        /// Отправка сообщения окну
+        /// </summary>
+        /// <param name="hWnd">Дескриптор окна</param>
+        /// <param name="Msg">Сообщение</param>
+        /// <param name="wParam">Старший параметр</param>
+        /// <param name="lParam">Младший параметр</param>
+        /// <returns></returns>
+        [DllImport(FileName, CharSet = CharSet.Auto, SetLastError = false)]
+        public static extern IntPtr SendMessage(IntPtr hWnd, WM Msg, IntPtr wParam, StringBuilder lParam);
+
         #endregion
 
         #region PostMessage

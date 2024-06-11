@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
@@ -23,9 +24,12 @@ namespace NCToolTable
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
+    /// 
+   
     public partial class MainWindow : System.Windows.Window
     {
         bool autoclose;
+        
         public MainWindow(bool autoclose)
         {
             InitializeComponent();
@@ -134,13 +138,14 @@ namespace NCToolTable
 
         private async Task GetWindows(bool loop)
         {
+            
             do
             {
                 await Task.Delay(200);
                 List<string> windows = new();
                 foreach (var window in Window.Find(w => w.Text.Contains("CIMCO Edit")))
                 {
-                    windows.Add(window.Text);
+                    windows.Add(window.Text2);
                 }
                 windowsLV.ItemsSource = windows;
             } while (loop);

@@ -36,10 +36,23 @@ namespace Utils.WinAPI.Windows
         /// <summary>Идентификатор окна</summary>
         public IntPtr Handle { get; }
 
-        /// <summary>Текст (заголовок) окна</summary>
+        /// <summary>Заголовок окна полученный с помощью GetWindowText()</summary>
         public string Text
         {
             get => GetWindowText();
+            set
+            {
+                if (!SetWindowText(value))
+                    ThrowLastWin32Error();
+            }
+        }
+
+        /// <summary>
+        /// Заголовок окна полученный с помощью GetWindowText()
+        /// </summary>
+        public string Text2
+        {
+            get => GetWindowText2();
             set
             {
                 if (!SetWindowText(value))
@@ -97,6 +110,14 @@ namespace Utils.WinAPI.Windows
             var buffer = new StringBuilder(User32.GetWindowTextLength(Handle) + 1);
             if (buffer.Capacity > 0)
                 User32.GetWindowText(Handle, buffer, (uint)buffer.Capacity);
+            return buffer.ToString();
+        }
+
+        private string GetWindowText2()
+        {
+            var buffer = new StringBuilder(User32.GetWindowTextLength(Handle) + 1);
+            if (buffer.Capacity > 0)
+                User32.SendMessage(Handle, WM.GETTEXT, (IntPtr)buffer.Capacity, buffer);
             return buffer.ToString();
         }
 
