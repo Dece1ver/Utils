@@ -65,7 +65,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ChamferTrain", "ChamferTrai
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OrdersCounter", "OrdersCounter\OrdersCounter.csproj", "{598753FA-0659-4E2F-B781-56904B8B5D80}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NCProgramStat", "NCProgramStat\NCProgramStat.csproj", "{1F1E632F-67B3-420A-857E-0E5411AD2417}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NCProgramStat", "NCProgramStat\NCProgramStat.csproj", "{1F1E632F-67B3-420A-857E-0E5411AD2417}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExposeFiles", "ExposeFiles\ExposeFiles.csproj", "{5C5A1CD4-0D1A-471A-A3A3-3AA0CA884D46}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -299,6 +301,14 @@ Global
 		{1F1E632F-67B3-420A-857E-0E5411AD2417}.Release|Any CPU.Build.0 = Release|Any CPU
 		{1F1E632F-67B3-420A-857E-0E5411AD2417}.Release|x86.ActiveCfg = Release|Any CPU
 		{1F1E632F-67B3-420A-857E-0E5411AD2417}.Release|x86.Build.0 = Release|Any CPU
+		{5C5A1CD4-0D1A-471A-A3A3-3AA0CA884D46}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5C5A1CD4-0D1A-471A-A3A3-3AA0CA884D46}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5C5A1CD4-0D1A-471A-A3A3-3AA0CA884D46}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{5C5A1CD4-0D1A-471A-A3A3-3AA0CA884D46}.Debug|x86.Build.0 = Debug|Any CPU
+		{5C5A1CD4-0D1A-471A-A3A3-3AA0CA884D46}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5C5A1CD4-0D1A-471A-A3A3-3AA0CA884D46}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5C5A1CD4-0D1A-471A-A3A3-3AA0CA884D46}.Release|x86.ActiveCfg = Release|Any CPU
+		{5C5A1CD4-0D1A-471A-A3A3-3AA0CA884D46}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

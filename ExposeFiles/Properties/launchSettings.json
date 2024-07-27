@@ -1,0 +1,11 @@
+{
+  "profiles": {
+    "ExposeFiles": {
+      "commandName": "Project"
+    },
+    "ExposeFiles+Arg": {
+      "commandName": "Project",
+      "commandLineArgs": "\"C:\\output_fanuc\""
+    }
+  }
+}
