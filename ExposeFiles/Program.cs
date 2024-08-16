@@ -9,10 +9,9 @@ namespace ExposeFiles
 
         static void Main(string[] args)
         {
-            Console.InputEncoding = System.Text.Encoding.UTF8;
-            Console.OutputEncoding = System.Text.Encoding.UTF8;
             var app = new CommandApp<RemoveHiddenCommand>();
             app.Run(args);
+            Console.ReadLine();
         }
     }
 
@@ -32,13 +31,13 @@ namespace ExposeFiles
                 return 1;
             }
 
-            AnsiConsole.MarkupLine($"[yellow]Начинаем обработку директории: {settings.DirectoryPath}[/]");
+            AnsiConsole.MarkupLine($"[yellow]Проверка директории: {settings.DirectoryPath}[/]");
 
             string[] files = Array.Empty<string>();
+            AnsiConsole.WriteLine();
             AnsiConsole.Status()
-            .Spinner(Spinner.Known.BouncingBall)
+            .Spinner(Spinner.Known.Default)
             .Start("Подсчет файлов", ctx => {
-                Thread.Sleep(5000);
                 files = Directory.GetFiles(settings.DirectoryPath, "*", SearchOption.AllDirectories);
             });
             
@@ -48,7 +47,6 @@ namespace ExposeFiles
                 return 1;
             }
             ProcessFiles(files);
-
             return 0;
         }
 

@@ -1,4 +1,5 @@
 ﻿using ClosedXML.Excel;
+using DocumentFormat.OpenXml.Spreadsheet;
 using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
@@ -84,38 +85,44 @@ namespace NCProgramStat
 
         private async void GetInfoButton_Click(object sender, RoutedEventArgs e)
         {
-            if(!File.Exists(_fileName)) 
+            if (!File.Exists(_fileName))
             {
                 MessageBox.Show("Файл не существует.");
                 return;
             }
-            await Task.Run(() =>
+
+            try
             {
-                try
+                Dispatcher.Invoke(() =>
                 {
-                    Dispatcher.Invoke(() => NotSendedPrograms.Clear());
+                    NotSendedPrograms.Clear();
                     ShowProgressBar();
                     SetStatus("Открытие файла...");
-                    using (var fs = new FileStream(_fileName, FileMode.Open, FileAccess.ReadWrite, FileShare.None))
+                });
+                var progress = new Progress<int>(value =>
+                {
+                    _ProgressBar.Value = value;
+                });
+                var totalPrograms = 0;
+                await Task.Run(() =>
+                {
+                    using (var fs = new FileStream(_fileName, FileMode.Open, FileAccess.ReadWrite, FileShare.None, 4096, true))
                     {
-                        var wb = new XLWorkbook(fs, new ClosedXML.Excel.LoadOptions() { RecalculateAllFormulas = false });
-                        var cnt = 0;
-                        var totalPrograms = 0;
-                        Dispatcher.Invoke(new Action(() =>
+                        var wb = new XLWorkbook(fs, new ClosedXML.Excel.LoadOptions { RecalculateAllFormulas = false });
+                        var rows = wb.Worksheet(1).Rows().Skip(1).Where(r => r.Cell(1).Value.IsDateTime).ToList();
+
+                        Dispatcher.Invoke(() =>
                         {
+                            _ProgressBar.Maximum = rows.Count;
                             _ProgressBar.IsIndeterminate = false;
-                            _ProgressBar.Value = cnt;
-                            _ProgressBar.Maximum = wb.Worksheet(1).Rows().Count(r => r.Cell(1).Value.IsDateTime);
-                        }));
-                        SetStatus("Чтение файла...");
-                        foreach (var xlRow in wb.Worksheet(1).Rows().Skip(1))
+                        });
+
+                        var disqualifiedKeys = new HashSet<(string PartName, int Setup, string Machine)>();
+                        var filteredPrograms = new List<ProgramInfo>();
+
+                        for (int i = 0; i < rows.Count; i++)
                         {
-                            if (!xlRow.Cell(1).Value.IsDateTime) break;
-                            Dispatcher.Invoke(new Action(() =>
-                            {
-                                _ProgressBar.Value = cnt;
-                            }));
-                            cnt++;
+                            var xlRow = rows[i];
                             var date = xlRow.Cell(1).Value.GetDateTime();
                             var machine = xlRow.Cell(2).Value.GetText();
                             var shift = xlRow.Cell(3).Value.GetText();
@@ -124,45 +131,46 @@ namespace NCProgramStat
                             var setup = (int)xlRow.Cell(8).Value.GetNumber();
                             var status = xlRow.Cell(10).Value.IsText ? xlRow.Cell(10)?.Value.GetText() : "";
 
-                            Dispatcher.Invoke(() => NotSendedPrograms.Add(new ProgramInfo(date, machine, shift, @operator, partName, setup, status)));
-                        }
-                        SetStatus("Очистка лишнего...");
-                        cnt = 0;
+                            var key = (partName, setup, machine);
 
-                        totalPrograms = NotSendedPrograms.Count;
-                        var sended = new List<ProgramInfo>();
-                        foreach (var program in NotSendedPrograms)
-                        {
-                            Dispatcher.Invoke(new Action(() =>
+                            if (status != NotSended)
                             {
-                                _ProgressBar.IsIndeterminate = false;
-                                _ProgressBar.Value = cnt;
-                                _ProgressBar.Maximum = totalPrograms;
-                            }));
-                            cnt++;
-                            if (program.Status != NotSended)
-                            {
-                                sended.AddRange(NotSendedPrograms.Where(p => p.PartName == program.PartName && p.Setup == program.Setup));
+                                disqualifiedKeys.Add(key);
+                                filteredPrograms.RemoveAll(p => p.PartName == partName && p.Setup == setup && p.Machine == machine);
                             }
+                            else if (!disqualifiedKeys.Contains(key) && !filteredPrograms.Any(p => p.PartName == partName && p.Setup == setup && p.Machine == machine))
+                            {
+                                filteredPrograms.Add(new ProgramInfo(date, machine, shift, @operator, partName, setup, status));
+                            }
+
+                            (progress as IProgress<int>)?.Report(i);
                         }
-                        var tempList = new List<ProgramInfo>();
-                        tempList.AddRange(NotSendedPrograms);
-                        tempList.RemoveAll(sended.Contains);
+                        totalPrograms = rows.Count;
                         Dispatcher.Invoke(() =>
                         {
                             NotSendedPrograms.Clear();
-                            tempList.ForEach(x => NotSendedPrograms.Add(x));
+                            foreach (var pi in filteredPrograms)
+                            {
+                                NotSendedPrograms.Add(pi);
+                            }
                         });
-                        SetStatus($"Выполнено. Не скинуто программ: {NotSendedPrograms.Count}. Всего программ: {totalPrograms}.");
                     }
-                }
-                catch (Exception ex)
+                });
+
+                SetStatus($"Выполнено. Не скинуто программ: {NotSendedPrograms.Count} из {totalPrograms}.");
+            }
+            catch (Exception ex)
+            {
+                Dispatcher.Invoke(() =>
                 {
                     MessageBox.Show(ex.Message);
                     SetStatus("");
-                }
-                
-            });
+                });
+            }
+            finally
+            {
+                CollapseProgressBar();
+            }
         }
 
         private void SaveInfoButton_Click(object sender, RoutedEventArgs e)
@@ -189,6 +197,9 @@ namespace NCProgramStat
 
                 wb.Author = Environment.UserName;
                 var data = ws.Cell(2, 1).InsertData(NotSendedPrograms.AsEnumerable());
+                ws.RangeUsed().Style.Border.InsideBorder = XLBorderStyleValues.Thin;
+                ws.RangeUsed().Style.Border.OutsideBorder = XLBorderStyleValues.Medium;
+                var row = ws.LastRowUsed().RowNumber() + 2;
 
                 SaveFileDialog saveFileDialog = new();
                 saveFileDialog.Filter = "Таблица Excel(*.xlsx)|*.xlsx";
